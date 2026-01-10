@@ -1,0 +1,145 @@
+@import "../../../styles/variables";
+
+// Accent color from Figma
+$accent-red: #d11f00;
+
+.floatingButton {
+  display: flex;
+  align-items: center;
+  border: none;
+  cursor: pointer;
+  transition: all $transition-fast;
+
+  &Consult {
+    padding: 16px;
+    padding-right: 77px;
+    border-radius: 100px;
+    border: 1px solid var(--grayscale-20, #e4e4e4);
+    background: #fff;
+    box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.1);
+    position: relative;
+
+    &:hover {
+      box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.3);
+    }
+
+    &:active {
+      box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.3);
+    }
+
+    // 모바일: 아이콘만 표시
+    @media (max-width: $breakpoint-tablet) {
+      padding: 0;
+      background: transparent;
+      backdrop-filter: none;
+
+      &:hover,
+      &:active {
+        background: transparent;
+      }
+    }
+  }
+
+  &Top {
+    justify-content: center;
+    border: 1px solid var(--grayscale-20, #e4e4e4);
+    background: rgba(255, 255, 255, 0.8);
+    width: 56px;
+    height: 56px;
+    padding: 9px;
+    box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.05);
+    backdrop-filter: blur(5px);
+    border-radius: 50%;
+    margin-right: 9px;
+
+    &:hover {
+      background-color: $gray-5;
+    }
+
+    &:active {
+      background-color: $gray-10;
+    }
+
+    // 모바일
+    @media (max-width: $breakpoint-tablet) {
+      width: 48px;
+      height: 48px;
+
+      &:hover {
+        background-color: $gray-5;
+      }
+
+      &:active {
+        background-color: $gray-10;
+      }
+    }
+  }
+
+  &TopMobile {
+    width: 40px;
+    height: 40px;
+  }
+}
+.floatingButtonConsultMobile {
+  width: 64px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 100px;
+  border: 4px solid var(--grayscale-20, #e4e4e4);
+  background: #fff;
+  position: relative;
+
+  .floatingButtonLabel {
+    position: absolute  ;
+    bottom: -20px;
+    border-radius: 100px;
+    background: var(--grayscale-20, #e4e4e4);
+    display: flex;
+    padding: 6px 8px;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    color: black;
+    font-family: 'Pretendard', sans-serif;
+    font-size: 12px;
+    font-style: normal;
+    font-weight: 600;
+  }
+
+}
+.floatingButtonLabel {
+  @include pretendard-19-semibold;
+  color: $gray-90;
+  white-space: nowrap;
+  font-size: 17px;
+
+  // 모바일: 라벨 숨기기
+  @media (max-width: $breakpoint-tablet) {
+    display: none;
+  }
+}
+
+.floatingButtonIcon {
+  position: absolute;
+  right: 0;
+  bottom: -8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+
+  &Write {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    background-color: $primary-50;
+
+    // 모바일: 아이콘 크기 조정
+    @media (max-width: $breakpoint-tablet) {
+      width: 48px;
+      height: 48px;
+    }
+  }
+}

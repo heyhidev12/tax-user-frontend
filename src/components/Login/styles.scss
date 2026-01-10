@@ -1,0 +1,367 @@
+// Reuse the original library login styles for layout & visual design
+// Variables
+$primary-teal: #00a89e;
+$text-dark: #2D2D2D;
+$text-gray: #8e8e8e;
+$border-color: #e0e0e0;
+$error-color: #e74c3c;
+$bg-light: #f8f8f8;
+
+.login-page {
+  min-height: calc(100vh - 180px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px 240px;
+  background: #fff;
+
+  @media (max-width: 768px) {
+    padding: 40px 20px;
+    min-height: calc(100vh - 150px);
+  }
+}
+
+.login-container {
+  display: flex;
+  justify-content: center;
+  // align-items: flex-start;
+  max-width: 800px;
+  width: 100%;
+
+  @media (max-width: 900px) {
+    flex-direction: column;
+    align-items: center;
+    gap: 40px;
+  }
+
+  @media (max-width: 768px) {
+    gap: 30px;
+  }
+}
+
+// Login form wrapper
+.login-form-wrapper {
+  flex: 1;
+  max-width: 400px;
+  width: 100%;
+
+  @media (max-width: 768px) {
+    max-width: 100%;
+  }
+}
+
+.login-title {
+  font-family: "Pretendard", sans-serif;
+  font-size: 40px;
+  font-weight: 600;
+  color: $text-dark;
+  text-align: center;
+  margin-bottom: 56px;
+
+  @media (max-width: 768px) {
+    font-size: 24px;
+    margin-bottom: 30px;
+  }
+}
+
+// Form styles
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+
+  @media (max-width: 768px) {
+    gap: 16px;
+  }
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+
+  label {
+    font-family: "Pretendard", sans-serif;
+    font-size: 13px;
+    font-weight: 400;
+    color: $text-dark;
+  }
+
+  .input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+
+    input {
+      width: 100%;
+      border: 1px solid #F8F8F8;
+      border-radius: 8px;
+      font-family: "Pretendard", sans-serif;
+      font-size: 15px;
+      color: $text-dark;
+      background: #F8F8F8;
+      transition: border-color 0.2s ease;
+      padding: 16px;
+      &::placeholder {
+        color: #8E8E8E;
+      }
+
+      &:focus {
+        outline: none;
+        border-color: $primary-teal;
+        background: #fff;
+      }
+
+      @media (max-width: 768px) {
+        font-size: 14px;
+      }
+    }
+
+    .input-actions {
+      position: absolute;
+      right: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .clear-btn,
+    .toggle-password {
+      background: none;
+      border: none;
+      padding: 0;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      &:hover {
+        opacity: 0.8;
+      }
+    }
+
+    .clear-btn {
+      position: absolute;
+      right: 12px;
+    }
+
+    .input-actions .clear-btn {
+      position: static;
+    }
+  }
+
+  // Error state
+  &.error {
+    .input-wrapper input {
+      border-color: $primary-teal;
+      background: rgba($primary-teal, 0.03);
+    }
+  }
+}
+
+.form-options {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 4px;
+
+  @media (max-width: 480px) {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+}
+
+// Custom checkbox
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  font-family: "Pretendard", sans-serif;
+  font-size: 14px;
+  color: $text-gray;
+
+  input[type="checkbox"] {
+    display: none;
+  }
+
+  .checkmark {
+    width: 18px;
+    height: 18px;
+    border: 1px solid $border-color;
+    border-radius: 3px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+
+    &::after {
+      content: "";
+      width: 10px;
+      height: 6px;
+      border-left: 2px solid #fff;
+      border-bottom: 2px solid #fff;
+      transform: rotate(-45deg) translateY(-1px);
+      opacity: 0;
+    }
+  }
+
+  input[type="checkbox"]:checked + .checkmark {
+    background: $primary-teal;
+    border-color: $primary-teal;
+
+    &::after {
+      opacity: 1;
+    }
+  }
+}
+
+.find-links {
+  display: flex;
+  gap: 16px;
+
+  a {
+    font-family: "Pretendard", sans-serif;
+    font-size: 13px;
+    color: $text-gray;
+    text-decoration: none;
+    transition: color 0.2s ease;
+
+    &:hover {
+      color: $text-dark;
+    }
+  }
+}
+
+// Error message
+.error-message {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-family: "Pretendard", sans-serif;
+  font-size: 13px;
+  color: $error-color;
+  margin-top: -8px;
+
+  svg {
+    flex-shrink: 0;
+  }
+}
+
+// Login button
+.login-btn {
+  width: 100%;
+  height: 54px;
+  background: $primary-teal;
+  border: none;
+  border-radius: 4px;
+  font-family: "Pretendard", sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  color: #fff;
+  cursor: pointer;
+  transition: background 0.2s ease;
+  margin-top: 8px;
+
+  &:hover {
+    background: darken($primary-teal, 5%);
+  }
+
+  @media (max-width: 768px) {
+    height: 48px;
+    font-size: 15px;
+  }
+}
+
+// Signup link
+.signup-link {
+  text-align: center;
+  margin-top: 24px;
+  font-family: "Pretendard", sans-serif;
+  font-size: 14px;
+  color: $text-gray;
+
+  a {
+    color: $text-dark;
+    font-weight: 600;
+    text-decoration: underline;
+    margin-left: 4px;
+
+    &:hover {
+      color: $primary-teal;
+    }
+  }
+}
+
+// Divider
+.divider {
+  height: 1px;
+  background: $border-color;
+  margin: 40px 0;
+
+  @media (max-width: 768px) {
+    margin: 24px 0;
+  }
+}
+
+// SNS Login section
+.sns-login {
+  text-align: center;
+}
+
+.sns-title {
+  font-family: "Pretendard", sans-serif;
+  font-size: 15px;
+  color: $text-gray;
+  margin-bottom: 24px;
+}
+
+.sns-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 32px;
+}
+
+.sns-btn {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+  &:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+
+  // Kakao
+  &--kakao {
+    background: #fee500;
+  }
+
+  // Naver
+  &--naver {
+    background: #03c75a;
+
+    .naver-n {
+      font-family: "Arial", sans-serif;
+      font-size: 24px;
+      font-weight: 700;
+      color: #fff;
+    }
+  }
+
+  // Google
+  &--google {
+    background: #fff;
+    border: 1px solid $border-color;
+  }
+}
+
+

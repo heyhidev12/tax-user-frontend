@@ -1,0 +1,884 @@
+// Variables
+$primary-teal: #00a89e;
+$text-dark: #002c2c;
+$text-gray: #8e8e8e;
+$border-color: #E4E4E4;
+$error-color: #e74c3c;
+$success-color: #00a89e;
+$bg-light: #f8f8f8;
+
+// ==========================================
+// Signup Page
+// ==========================================
+.signup-page {
+  min-height: 100vh;
+  background: #fff;
+}
+
+// ==========================================
+// Hero Banner
+// ==========================================
+.signup-hero {
+  position: relative;
+  height: 320px;
+  // background: url("../../../public/images/signup.png") center/cover;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  @media (max-width: 768px) {
+    height: 180px;
+  }
+
+  &__overlay {
+    position: absolute;
+    inset: 0;
+    // background: linear-gradient(135deg, rgba(0, 40, 40, 0.85) 0%, rgba(0, 60, 60, 0.7) 100%);
+  }
+
+  &__content {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    color: #fff;
+  }
+
+  &__label {
+    display: block;
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 2px;
+    margin-bottom: 12px;
+    opacity: 0.9;
+
+    @media (max-width: 768px) {
+      font-size: 12px;
+    }
+  }
+
+  &__title {
+    font-family: "Pretendard", sans-serif;
+    font-size: 36px;
+    font-weight: 600;
+    margin: 0;
+
+    @media (max-width: 768px) {
+      font-size: 24px;
+    }
+  }
+}
+
+// ==========================================
+// Main Content
+// ==========================================
+.signup-content {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 100px 20px 280px;
+
+  @media (max-width: 768px) {
+    padding: 50px 16px 160px;
+  }
+}
+
+// ==========================================
+// Step Indicator
+// ==========================================
+.step-indicator {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  margin-top: 340px;
+  margin-bottom: 48px;
+  gap: 0;
+
+  @media (max-width: 768px) {
+    margin-bottom: 30px;
+  }
+}
+
+.step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  min-width: 90px;
+
+  @media (max-width: 768px) {
+    min-width: 70px;
+  }
+
+  &__circle {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #ccc;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+
+    @media (max-width: 768px) {
+      width: 32px;
+      height: 32px;
+    }
+
+    svg {
+      color: #fff;
+      width: 18px;
+      height: 18px;
+
+      @media (max-width: 768px) {
+        width: 14px;
+        height: 14px;
+      }
+    }
+  }
+
+  &__label {
+    font-size: 12px;
+    color: $text-gray;
+    font-weight: 500;
+    margin-top: 4px;
+
+    @media (max-width: 768px) {
+      font-size: 10px;
+    }
+  }
+
+  &__name {
+    font-size: 14px;
+    color: $text-gray;
+    font-weight: 600;
+
+    @media (max-width: 768px) {
+      font-size: 12px;
+    }
+  }
+
+  &__line {
+    width: 56px;
+    height: 2px;
+    background: #F0F0F0;
+    margin: 20px 11px 0;
+
+    @media (max-width: 768px) {
+      width: 30px;
+      margin: 16px 4px 0;
+    }
+  }
+
+  // Active state - current step
+  &.active {
+    .step__circle {
+      background: transparent;
+      border: 2px solid $primary-teal;
+
+      svg {
+        color: $primary-teal;
+      }
+    }
+
+    .step__label {
+      color: $primary-teal;
+    }
+
+    .step__name {
+      color: #1D1D1D;
+    }
+  }
+
+  // Completed state - previous steps
+  &.completed {
+    .step__circle {
+      background: #ccc;
+      border: none;
+
+      svg {
+        color: #fff;
+      }
+    }
+
+    .step__label {
+      color: $text-gray;
+    }
+
+    .step__name {
+      color: $text-gray;
+      text-decoration: none;
+    }
+  }
+}
+
+// ==========================================
+// Signup Card
+// ==========================================
+.signup-card {
+  background: #fff;
+  border: 1px solid $border-color;
+  border-radius: 8px;
+  padding: 80px 120px;
+  margin-bottom: 56px;
+  overflow: hidden;
+
+  @media (max-width: 768px) {
+    padding: 24px 16px;
+    margin-bottom: 24px;
+  }
+
+  &--complete {
+    text-align: center;
+    padding: 60px 40px;
+
+    @media (max-width: 768px) {
+      padding: 40px 20px;
+    }
+  }
+}
+
+// ==========================================
+// Agreement Section (Step 1)
+// ==========================================
+.agreement-section {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.agreement-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 0;
+
+  &--all {
+    background: #E9F4F4;
+    padding: 16px;
+    border-radius: 8px;
+    margin-bottom: 8px;
+    display: flex;
+    gap: 8px;
+    justify-content: flex-start;
+
+     &.disabled{
+      background: $bg-light;
+     }
+
+    .agreement-item__text{
+      color: #1D1D1D;
+      font-weight: 600;
+    }
+  }
+
+  label {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    flex: 1;
+  }
+
+  input[type="checkbox"] {
+    display: none;
+  }
+
+  .checkbox {
+    width: 20px;
+    height: 20px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: all 0.2s ease;
+
+    &::after {
+      content: "";
+      width: 12px;
+      height: 6px;
+      border-left: 2px solid #fff;
+      border-bottom: 2px solid #fff;
+      transform: rotate(-45deg) translateY(-2px);
+      opacity: 0;
+    }
+  }
+
+  input[type="checkbox"]:checked + .checkbox {
+    background: $primary-teal;
+    border-color: $primary-teal;
+
+    &::after {
+      opacity: 1;
+    }
+  }
+
+  &__text {
+    font-size: 15px;
+    color: $text-dark;
+
+    @media (max-width: 768px) {
+      font-size: 14px;
+    }
+  }
+}
+
+.agreement-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding-left: 16px;
+}
+
+.view-btn {
+  background: none;
+  border: none;
+  color: $primary-teal;
+  font-size: 14px;
+  cursor: pointer;
+  text-decoration: underline;
+  padding: 4px 8px;
+
+  &:hover {
+    color: darken($primary-teal, 10%);
+  }
+}
+
+// ==========================================
+// Signup Form (Step 2)
+// ==========================================
+.signup-form {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  width: 100%;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+
+.form-label {
+  font-size: 15px;
+  font-weight: 600;
+  color: #1D1D1D;
+
+  .required {
+    color: #F35064;
+    font-size: 17px;
+    position: relative;
+    top: 4px;
+  }
+}
+
+// Radio Group
+.radio-group {
+  display: flex;
+  gap: 12px;
+
+  @media (max-width: 768px) {
+    gap: 8px;
+  }
+}
+
+.radio-item {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 15px;
+  font-weight: 600;
+  color: $text-dark;
+  transition: all 0.2s ease;
+  background-color: $bg-light;
+
+  @media (max-width: 768px) {
+    padding: 10px 12px;
+    font-size: 13px;
+  }
+
+  input[type="radio"] {
+    display: none;
+  }
+
+  .radio-circle {
+    width: 16px;
+    height: 16px;
+    border: 1px solid #ccc;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+
+    &::after {
+      content: "";
+      width: 8px;
+      height: 8px;
+      background: $primary-teal;
+      border-radius: 50%;
+      opacity: 0;
+      transition: opacity 0.2s ease;
+    }
+  }
+
+  &.active {
+    background: #E9F4F4;
+    color: $text-dark;
+
+    .radio-circle {
+      border-color: $primary-teal;
+
+      &::after {
+        opacity: 1;
+      }
+    }
+  }
+}
+
+// Input styles
+input[type="text"],
+input[type="tel"],
+input[type="password"],
+select {
+  width: 100%;
+  height: 48px;
+  padding: 0 16px;
+  border: none;
+  border-radius: 8px;
+  font-size: 15px;
+  color: $text-dark;
+  background: $bg-light;
+  transition: border-color 0.2s ease;
+  box-sizing: border-box;
+
+  @media (max-width: 768px) {
+    height: 44px;
+    font-size: 14px;
+  }
+
+  &::placeholder {
+    color: #bbb;
+  }
+
+  &:focus {
+    outline: none;
+    border-color: $primary-teal;
+  }
+
+  &.error {
+    border-color: $error-color;
+    background: rgba($error-color, 0.03);
+  }
+
+  &.success {
+    border-color: $success-color;
+  }
+}
+
+select {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23999' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  padding-right: 32px;
+}
+
+// Input with button
+.input-with-button {
+  display: flex;
+  gap: 8px;
+  width: 100%;
+
+  input {
+    flex: 1;
+    min-width: 0;
+  }
+}
+
+.input-with-timer {
+  flex: 1;
+  position: relative;
+
+  input {
+    width: 100%;
+    padding-right: 60px;
+  }
+
+  .timer {
+    position: absolute;
+    right: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 14px;
+    color: $primary-teal;
+    font-weight: 500;
+  }
+}
+
+.action-btn {
+  height: 48px;
+  padding: 0 16px;
+  background: $bg-light;
+  border: 1px solid #C6C6C6;
+  color: #C6C6C6;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+
+  @media (max-width: 768px) {
+    height: 44px;
+    padding: 0 14px;
+    font-size: 13px;
+  }
+
+  &:hover {
+    background: #fff;
+    color: $primary-teal;
+  }
+
+  &.resend {
+    color: $primary-teal;
+    background: #fff;
+    border: 1px solid $primary-teal;
+  }
+}
+
+// Email input
+.email-input {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+
+  @media (max-width: 768px) {
+    flex-wrap: wrap;
+  }
+
+  input {
+    flex: 1;
+    min-width: 0;
+
+    @media (max-width: 768px) {
+      flex: 1 1 100px;
+    }
+  }
+
+  .email-at {
+    color: $text-gray;
+    font-size: 15px;
+    flex-shrink: 0;
+  }
+
+  select {
+    width: 140px;
+    flex-shrink: 0;
+
+    @media (max-width: 768px) {
+      width: 120px;
+    }
+  }
+}
+
+// Phone input
+.phone-input {
+  display: flex;
+  gap: 8px;
+  width: 100%;
+
+  @media (max-width: 768px) {
+    flex-wrap: nowrap;
+  }
+
+  select {
+    width: 160px;
+    flex-shrink: 0;
+
+    @media (max-width: 768px) {
+      width: 95px;
+    }
+  }
+
+  input {
+    flex: 1;
+    min-width: 0;
+  }
+}
+
+// Password input
+.password-input {
+  position: relative;
+  width: 100%;
+
+  input {
+    width: 100%;
+    padding-right: 80px;
+  }
+
+  .password-actions {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+}
+
+.icon-btn {
+  background: none;
+  border: none;
+  padding: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &:hover {
+    opacity: 0.7;
+  }
+}
+
+// Newsletter checkbox
+.newsletter-check {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  color: $text-dark;
+
+  input[type="checkbox"] {
+    display: none;
+  }
+
+  .checkbox {
+    width: 18px;
+    height: 18px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+
+    &::after {
+      content: "";
+      width: 10px;
+      height: 5px;
+      border-left: 2px solid #fff;
+      border-bottom: 2px solid #fff;
+      transform: rotate(-45deg) translateY(-1px);
+      opacity: 0;
+    }
+  }
+
+  input[type="checkbox"]:checked + .checkbox {
+    background: $primary-teal;
+    border-color: $primary-teal;
+
+    &::after {
+      opacity: 1;
+    }
+  }
+}
+
+// Error & Success messages
+.error-message {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 13px;
+  color: $error-color;
+
+  &::before {
+    content: "⚠";
+    font-size: 12px;
+  }
+}
+
+.success-message {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 13px;
+  color: $success-color;
+}
+
+// ==========================================
+// Complete Section (Step 3)
+// ==========================================
+.complete-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 32px;
+}
+
+.complete-icon {
+  width: 80px;
+  height: 80px;
+  border: 2px solid $primary-teal;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 8px;
+}
+
+.complete-title {
+  font-size: 25px;
+  font-weight: 600;
+  color: $text-dark;
+  margin: 0;
+
+  @media (max-width: 768px) {
+    font-size: 20px;
+  }
+}
+
+.complete-message {
+  font-size: 15px;
+  color: $text-gray;
+  margin: 0;
+}
+
+// ==========================================
+// Navigation Buttons
+// ==========================================
+.signup-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+}
+
+.btn {
+  height: 56px;
+  padding: 0 48px;
+  font-size: 17px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  @media (max-width: 768px) {
+    height: 48px;
+    padding: 0 32px;
+    font-size: 15px;
+  }
+
+  &--primary {
+    background: $primary-teal;
+    border: none;
+    color: #fff;
+    min-width: 230px;
+
+    &:hover {
+      background: darken($primary-teal, 5%);
+    }
+
+    &.disabled {
+      background: #ccc;
+      cursor: not-allowed;
+    }
+  }
+
+  &--outline {
+    background: #fff;
+    border: 1px solid $primary-teal;
+    color: $primary-teal;
+    padding: 0 20px;
+
+    &:hover {
+      border-color: $text-dark;
+    }
+  }
+}
+
+// ==========================================
+// Terms Modal
+// ==========================================
+.terms-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 3000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+
+  &__backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+  }
+
+  &__content {
+    position: relative;
+    background: #fff;
+    border-radius: 8px;
+    width: 100%;
+    max-width: 800px;
+    max-height: 80vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 24px;
+    border-bottom: 1px solid $border-color;
+
+    h2 {
+      font-size: 20px;
+      font-weight: 600;
+      color: $text-dark;
+      margin: 0;
+
+      @media (max-width: 768px) {
+        font-size: 18px;
+      }
+    }
+  }
+
+  &__close {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #666;
+    padding: 4px;
+
+    &:hover {
+      color: $text-dark;
+    }
+  }
+
+  &__body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 24px;
+
+    pre {
+      font-family: "Pretendard", sans-serif;
+      font-size: 14px;
+      line-height: 1.8;
+      color: $text-dark;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+      margin: 0;
+    }
+  }
+}
+

@@ -1,0 +1,407 @@
+// ==========================================
+// Toggle Menu Styles
+// ==========================================
+
+// Variables
+$primary-teal: #00a89e;
+$text-dark: #1d1d1d;
+$text-gray: #8E8E8E;
+$border-color: #e4e4e4;
+$bg-color: #f8f8f8;
+
+// ==========================================
+// Drawer Container
+// ==========================================
+.drawer {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  pointer-events: none;
+
+  &.open {
+    pointer-events: auto;
+
+    .backdrop {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .panel {
+      transform: translateX(0);
+    }
+  }
+}
+
+// ==========================================
+// Backdrop
+// ==========================================
+.backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.25s ease, visibility 0.25s ease;
+}
+
+// ==========================================
+// Panel
+// ==========================================
+.panel {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 100%;
+  height: 100%;
+  background: $bg-color;
+  display: flex;
+  flex-direction: column;
+  transform: translateX(100%);
+  transition: transform 0.3s ease;
+  overflow: hidden;
+
+  @media (min-width: 768px) {
+    width: 800px;
+    max-width: 90%;
+    border-left: 1px solid rgba(0, 0, 0, 0.08);
+  }
+}
+
+// ==========================================
+// Header - Logo & Close Button
+// ==========================================
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-shrink: 0;
+  border-bottom: 1px solid $border-color;
+
+  @media (min-width: 768px) {
+    justify-content: flex-end;
+  }
+}
+
+.logo {
+  display: block;
+
+  @media (min-width: 768px) {
+    display: none;
+  }
+
+  img {
+    height: 44px;
+    width: auto;
+  }
+}
+
+.closeBtn {
+  background: none;
+  border: none;
+  padding: 8px;
+  cursor: pointer;
+  color: #333;
+  display: flex;
+  align-items: center;
+  transition: color 0.2s ease;
+  width: 180px;
+  padding-left: 50px;
+
+  &:hover {
+    color: $primary-teal;
+  }
+
+  svg {
+    width: 24px;
+    height: 24px;
+
+    @media (min-width: 768px) {
+      width: 40px;
+      height: 40px;
+    }
+  }
+}
+
+// ==========================================
+// Auth Section - Login/Signup or MyPage
+// ==========================================
+.authSection {
+  display: flex;
+  justify-content: flex-end;
+  padding: 44px 40px 24px;
+  flex-shrink: 0;
+  border-right: 1px solid $border-color;
+
+}
+
+.authLinks {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 14px;
+
+  @media (min-width: 768px) {
+    font-size: 15px;
+  }
+
+  a {
+    color: #555;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.2s ease;
+
+    &:hover {
+      color: $primary-teal;
+    }
+  }
+
+  .divider {
+    color: #ccc;
+  }
+}
+
+.myPageLink {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #555;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+  transition: color 0.2s ease;
+
+  @media (min-width: 768px) {
+    font-size: 15px;
+  }
+
+  svg {
+    color: #666;
+    transition: color 0.2s ease;
+  }
+
+  &:hover {
+    color: $primary-teal;
+
+    svg {
+      color: $primary-teal;
+    }
+  }
+}
+
+// ==========================================
+// Menu Navigation
+// ==========================================
+.menu {
+  flex: 1;
+  overflow-y: auto;
+  padding: 56px 160px 40px 80px;
+  margin-right: 180px;
+  border-right: 1px solid $border-color;
+
+
+
+
+  @media (min-width: 768px) {
+    padding: 56px 160px 40px 80px;
+  }
+}
+
+// ==========================================
+// Menu Group (no borders between groups)
+// ==========================================
+.menuGroup {
+  display: block;
+
+    &:last-child{
+    border-top: 1px solid $border-color;
+  }
+}
+
+// ==========================================
+// Menu Item (Parent)
+// ==========================================
+.menuItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 0;
+  cursor: pointer;
+  transition: color 0.2s ease;
+
+  
+
+  @media (min-width: 768px) {
+    padding: 24px 0;
+  }
+
+  &:hover {
+    .menuTitle {
+      color: darken($text-gray, 15%);
+    }
+  }
+
+  &.active {
+    .menuTitle {
+      color: $primary-teal;
+    }
+  }
+}
+
+.menuTitle {
+  font-family: "Pretendard", sans-serif;
+  font-size: 32px;
+  font-weight: 600;
+  color: $text-gray;
+  transition: color 0.2s ease;
+
+  @media (min-width: 768px) {
+    font-size: 32px;
+  }
+}
+
+.toggleIcon {
+  font-size: 28px;
+  font-weight: 300;
+  color: $primary-teal;
+  line-height: 1;
+
+  @media (min-width: 768px) {
+    font-size: 36px;
+  }
+}
+
+.arrowIcon {
+  font-size: 24px;
+  font-weight: 300;
+  color: #999;
+  line-height: 1;
+
+  @media (min-width: 768px) {
+    font-size: 30px;
+  }
+}
+
+// ==========================================
+// Submenu
+// ==========================================
+.subMenu {
+  list-style: none;
+  margin: 0;
+  padding: 0 0 16px 8px;
+
+  @media (min-width: 768px) {
+    padding: 0 0 20px 12px;
+  }
+}
+
+.subMenuItem {
+  padding: 12px 0;
+  font-family: "Pretendard", sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+  color: $text-dark;
+  cursor: pointer;
+  transition: color 0.2s ease;
+
+  @media (min-width: 768px) {
+    font-size: 18px;
+    padding: 10px 0;
+  }
+
+  &:hover {
+    color: $primary-teal;
+  }
+}
+
+// ==========================================
+// Desktop Section Indicators (4 vertical bars)
+// ==========================================
+.sectionIndicators {
+  display: none;
+
+  @media (min-width: 768px) {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    gap: 4px;
+    padding-right: 12px;
+  }
+}
+
+.indicatorBar {
+  width: 4px;
+  height: 80px;
+  background: #d9d9d9;
+  border-radius: 2px;
+}
+
+// ==========================================
+// Desktop Logo Watermark
+// ==========================================
+.logoWatermark {
+  display: none;
+
+  @media (min-width: 768px) {
+    display: block;
+    position: absolute;
+    right: 90px;
+    bottom: 56px;
+    z-index: 1;
+
+    img {
+      width: 180px;
+      height: auto;
+    }
+  }
+}
+
+// ==========================================
+// Mobile overrides (keep current Desktop UI)
+// ==========================================
+@media (max-width: 767px) {
+  .header {
+    padding: 24px 20px;
+    border-bottom: 1px solid $border-color;
+  }
+
+  .authSection {
+    padding: 0 20px 16px;
+    border-right: none;
+  }
+
+  .menu {
+    padding: 40px 24px 40px 24px;
+    margin-right: 0;
+    border-right: none;
+  }
+
+  .menuTitle {
+    font-size: 18px;
+    color: $text-dark;
+  }
+
+  .toggleIcon {
+    font-size: 20px;
+  }
+
+  .arrowIcon {
+    font-size: 18px;
+  }
+
+  .subMenu {
+    padding-left: 16px;
+  }
+
+  .subMenuItem {
+    font-size: 15px;
+  }
+
+  .menuGroup:last-child {
+    border-top: 1px solid $border-color;
+    margin-top: 32px;
+    padding-top: 16px;
+  }
+}

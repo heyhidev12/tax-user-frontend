@@ -1,0 +1,240 @@
+// Variables
+$teal: #00a89e;
+$text-dark: #002c2c;
+$text-gray: #666;
+
+.clients-section {
+  width: 100%;
+  background: #fff;
+  padding: 180px 0 120px;
+  overflow: hidden;
+  position: relative;
+
+  @media (max-width: 768px) {
+    padding: 50px 0 40px;
+  }
+
+  &__background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    pointer-events: none;
+  }
+
+  &__bg-text {
+    font-family: 'Playfair Display', serif;
+    font-size: 200px;
+    font-weight: 400;
+    color: rgba(0, 0, 0, 0.03);
+    line-height: 1;
+    display: block;
+    margin-left: 40px;
+    margin-top: 20px;
+
+    @media (max-width: 1024px) {
+      font-size: 140px;
+    }
+
+    @media (max-width: 768px) {
+      font-size: 60px;
+      margin-left: 20px;
+      margin-top: 10px;
+    }
+  }
+
+  &__header {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+
+    @media (max-width: 1024px) {
+      padding-right: 60px;
+    }
+
+    @media (max-width: 768px) {
+      padding-right: 20px;
+      margin-bottom: 24px;
+    }
+  }
+
+  &__footer {
+    display: flex;
+    justify-content: center;
+    padding-top: 60px;
+
+    @media (max-width: 768px) {
+      padding-top: 32px;
+
+      .view-more a {
+        font-size: 14px;
+      }
+    }
+  }
+
+  &__number {
+    font-family: "Arita Buri KR";
+    font-size: 200px;
+    font-weight: 700;
+    color: #C9E9E7;
+    line-height: 1;
+    position: absolute;
+    top: -140px;
+    pointer-events: none;
+    z-index: -1;
+
+    @media (max-width: 1024px) {
+      font-size: 120px;
+      right: 40px;
+    }
+
+    @media (max-width: 768px) {
+      font-size: 110px;
+      top: -15px;
+      right: 0;
+    }
+  }
+
+  &__title-wrapper {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    margin-bottom: 20px;
+
+    @media (max-width: 768px) {
+      margin-bottom: 12px;
+      gap: 6px;
+    }
+  }
+
+  &__dot {
+    width: 10px;
+    height: 10px;
+    background: $teal;
+    border-radius: 50%;
+    margin-top: 8px;
+
+    @media (max-width: 768px) {
+      width: 6px;
+      height: 6px;
+      margin-top: 6px;
+    }
+  }
+
+  &__subtitle {
+    font-family: 'Pretendard', sans-serif;
+    font-size: 25px;
+    font-weight: 500;
+    color: $text-dark;
+    margin-top: 14px;
+
+    @media (max-width: 768px) {
+      font-size: 15px;
+      margin-top: 6px;
+    }
+  }
+
+  &__title {
+    font-family: 'Playfair Display', serif;
+    font-size: 124px;
+    font-weight: 600;
+    color: $text-dark;
+    margin: 0;
+    line-height: 1;
+
+    @media (max-width: 768px) {
+      font-size: 56px;
+    }
+  }
+}
+
+// Marquee Animation
+.clients-marquee {
+  display: flex;
+  flex-direction: column;
+  gap: 50px;
+
+  @media (max-width: 768px) {
+    gap: 20px;
+  }
+
+  &__row {
+    overflow: hidden;
+    width: 100%;
+  }
+
+  &__track {
+    display: flex;
+    width: fit-content;
+    will-change: transform;
+
+    &.scroll-left {
+      animation: scrollLeft 25s linear infinite;
+    }
+
+    &.scroll-right {
+      animation: scrollRight 25s linear infinite;
+    }
+
+    &.paused {
+      animation-play-state: paused;
+    }
+  }
+
+  &__item {
+    flex-shrink: 0;
+    padding: 0 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 80px;
+
+    @media (max-width: 768px) {
+      padding: 0 16px;
+      height: 50px;
+    }
+  }
+}
+
+// Client Logo Styles
+.client-logo {
+  height: 50px;
+  width: auto;
+  max-width: 180px;
+  object-fit: contain;
+  filter: grayscale(0%);
+  opacity: 0.85;
+  transition: all 0.3s ease;
+
+  @media (max-width: 768px) {
+    height: 28px;
+    max-width: 100px;
+  }
+
+  &:hover {
+    opacity: 1;
+    filter: grayscale(0%);
+    transform: scale(1.05);
+  }
+}
+
+// Keyframe Animations - scroll 25% of the duplicated width
+@keyframes scrollLeft {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-25%);
+  }
+}
+
+@keyframes scrollRight {
+  0% {
+    transform: translateX(-25%);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
