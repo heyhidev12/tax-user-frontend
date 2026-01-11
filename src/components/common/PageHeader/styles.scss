@@ -12,7 +12,7 @@ $color-breadcrumb: #bebec7;
 .page-header {
   display: flex;
   flex-direction: column;
-  font-family: 'Pretendard', sans-serif;
+  font-family: "Pretendard", sans-serif;
 
   // @media (max-width:576px) {
   //   display: none !important;
@@ -28,7 +28,6 @@ $color-breadcrumb: #bebec7;
     align-items: center;
     justify-content: flex-end;
     padding-top: 12px;
-
   }
 
   &__breadcrumb-home {
@@ -70,7 +69,7 @@ $color-breadcrumb: #bebec7;
     border: none;
     padding: 0 16px 0 20px;
     cursor: pointer;
-    font-family: 'Pretendard', sans-serif;
+    font-family: "Pretendard", sans-serif;
     font-weight: 400;
     font-size: 15px;
     line-height: 1.5;
@@ -84,7 +83,7 @@ $color-breadcrumb: #bebec7;
 
     &--static {
       cursor: default;
-      
+
       &:hover {
         opacity: 1;
       }
@@ -94,7 +93,7 @@ $color-breadcrumb: #bebec7;
   &__select--single {
     .page-header__select-trigger {
       cursor: default;
-      
+
       &:hover {
         opacity: 1;
       }
@@ -120,14 +119,13 @@ $color-breadcrumb: #bebec7;
     }
   }
 
-   &__option-arrow {
+  &__option-arrow {
     flex-shrink: 0;
     width: 12px;
     height: 12px;
     color: $color-gray-80;
     transform: rotate(-90deg);
   }
-
 
   &__select-dropdown {
     position: absolute;
@@ -140,8 +138,8 @@ $color-breadcrumb: #bebec7;
     overflow-y: auto;
     padding: 5px;
     border-radius: 6px;
-border: 1px solid $gray-10;
-box-shadow: 0 4px 6px 0 rgba(0, 0, 0, 0.09);
+    border: 1px solid $gray-10;
+    box-shadow: 0 4px 6px 0 rgba(0, 0, 0, 0.09);
   }
 
   &__select-option {
@@ -154,7 +152,7 @@ box-shadow: 0 4px 6px 0 rgba(0, 0, 0, 0.09);
     background: none;
     border: none;
     cursor: pointer;
-    font-family: 'Pretendard', sans-serif;
+    font-family: "Pretendard", sans-serif;
     font-weight: 400;
     font-size: 15px;
     line-height: 1.5;
@@ -182,12 +180,12 @@ box-shadow: 0 4px 6px 0 rgba(0, 0, 0, 0.09);
   }
 
   &__subtitle {
-    font-family: 'Pretendard', sans-serif;
+    font-family: "Pretendard", sans-serif;
     font-weight: 500;
     font-size: 16px;
     line-height: 1.5;
     letter-spacing: 0;
-    color: #00A89E;
+    color: #00a89e;
     margin-top: 80px;
   }
 
@@ -200,7 +198,7 @@ box-shadow: 0 4px 6px 0 rgba(0, 0, 0, 0.09);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-family: 'Pretendard', sans-serif;
+    font-family: "Pretendard", sans-serif;
     font-weight: 600;
     line-height: 1.5;
     color: $color-gray-50;
@@ -232,8 +230,6 @@ box-shadow: 0 4px 6px 0 rgba(0, 0, 0, 0.09);
   &--web {
     gap: 56px;
 
-    
-
     .page-header__breadcrumb {
       gap: 0;
       height: 44px;
@@ -246,7 +242,7 @@ box-shadow: 0 4px 6px 0 rgba(0, 0, 0, 0.09);
     .page-header__breadcrumb-home {
       width: 44px;
       height: 44px;
-      color:$gray-90;
+      color: $gray-90;
     }
 
     .page-header__breadcrumb-item {
@@ -257,7 +253,7 @@ box-shadow: 0 4px 6px 0 rgba(0, 0, 0, 0.09);
 
     .page-header__select {
       margin: 0 4px;
-      
+
       .page-header__select-trigger {
         font-size: 15px;
         gap: 4px;
@@ -298,18 +294,20 @@ box-shadow: 0 4px 6px 0 rgba(0, 0, 0, 0.09);
       left: 0px;
       top: 0;
       z-index: 0;
-      background: linear-gradient(180deg, #6BCDC7 0%, rgba(107, 205, 199, 0.00) 100%);
+      background: linear-gradient(
+        180deg,
+        #6bcdc7 0%,
+        rgba(107, 205, 199, 0) 100%
+      );
     }
 
     // 모바일 반응형
     @media (max-width: 768px) {
       gap: 24px;
 
-
       .page-header__breadcrumb {
         height: 24px;
-      display: none;
-
+        display: none;
 
         svg {
           width: 16px;
@@ -337,7 +335,7 @@ box-shadow: 0 4px 6px 0 rgba(0, 0, 0, 0.09);
         letter-spacing: 1px;
         white-space: nowrap; // 한 줄로 유지
       }
-      .page-header__subtitle{
+      .page-header__subtitle {
         margin-top: 56px;
       }
 
@@ -352,7 +350,7 @@ box-shadow: 0 4px 6px 0 rgba(0, 0, 0, 0.09);
   // ========================================
   &--mobile {
     gap: 24px;
-
+    
     .page-header__content {
       gap: 16px;
     }
@@ -360,7 +358,7 @@ box-shadow: 0 4px 6px 0 rgba(0, 0, 0, 0.09);
     .page-header__breadcrumb {
       gap: 0;
       height: 24px;
-
+      display: none;
       svg {
         width: 16px;
         height: 16px;
@@ -404,4 +402,3 @@ box-shadow: 0 4px 6px 0 rgba(0, 0, 0, 0.09);
     }
   }
 }
-

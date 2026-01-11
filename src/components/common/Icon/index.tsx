@@ -209,7 +209,7 @@ const Icon: React.FC<IconProps> = ({ type, size = 24, className = '', onClick, s
       case 'chevron-down':
         return <path d="M5 7.5L10 12.5L15 7.5" stroke="#94B9E3" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" fill="none"/>;
       case 'chevron-down-white':
-        return <path d="M5 7.5L10 12.5L15 7.5" stroke="white" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" fill="none"/>;
+        return <path d="M5 7.5L10 12.5L15 7.5" stroke="#555" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" fill="none"/>;
 
       // Arrow with line (navigation arrows)
       case 'arrow-left2-white':
