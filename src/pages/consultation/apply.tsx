@@ -185,6 +185,8 @@ const ConsultationApplyPage: React.FC = () => {
       consultationField: value,
       taxAccountant: ''
     }));
+    setSearchFieldQuery('');
+    setSearchAccountantQuery('');
     setIsFieldDropdownOpen(false);
 
     // 분야가 선택된 경우 해당 분야의 세무사 목록 조회
@@ -216,6 +218,7 @@ const ConsultationApplyPage: React.FC = () => {
 
   const handleAccountantChange = (value: string) => {
     setFormData(prev => ({ ...prev, taxAccountant: value }));
+    setSearchAccountantQuery('');
     setIsAccountantDropdownOpen(false);
   };
 
@@ -373,30 +376,18 @@ const ConsultationApplyPage: React.FC = () => {
         onLogoClick={() => router.push('/')}
       />
       <Menu isOpen={isMenuOpen} onClose={() => setIsMenuOpen(false)} />
-        <div className={styles.headerImage}></div>
+        <div className={styles.headerImage}>
+          <p>CONTACT</p>
+          <h1>세무법인 함께 상담 신청</h1>
+        </div>
 
       <div className={styles.pageContent}>
-        {/* Page Header */}
-        {/* <div className={styles.pageHeaderSection}>
-          <PageHeader
-            title="상담 신청"
-            breadcrumbs={[
-              { label: '상담 신청' }
-            ]}
-            size="web"
-          />
-        </div> */}
+      
 
         {/* Form Section */}
         <div className={styles.formSection}>
           <div className={styles.formContainer}>
-            {/* <div className={styles.formHeader}>
-              <div className={styles.formTitleBackground}>
-                <p className={styles.formTitleText}>
-                  CONTACT <span className={styles.formTitleItalic}>US</span>
-                </p>
-              </div>
-            </div> */}
+            
 
             <form onSubmit={handleSubmit} className={styles.form}>
               <div className={styles.formFields}>
@@ -410,11 +401,57 @@ const ConsultationApplyPage: React.FC = () => {
                     <div className={styles.selectWrapper}>
                       <div
                         className={`${styles.selectTrigger} ${isFieldDropdownOpen ? styles.selectTriggerOpen : ''}`}
-                        onClick={() => setIsFieldDropdownOpen(!isFieldDropdownOpen)}
+                        onClick={(e) => {
+                          if ((e.target as HTMLElement).closest(`.${styles.clearButton}`)) return;
+                          setIsFieldDropdownOpen(!isFieldDropdownOpen);
+                        }}
                       >
-                        <span className={formData.consultationField ? styles.selectValue : styles.selectPlaceholder}>
-                          {selectedFieldLabel}
-                        </span>
+                        <input
+                          type="text"
+                          className={styles.selectInput}
+                          value={searchFieldQuery || (formData.consultationField ? selectedFieldLabel : '')}
+                          onChange={(e) => {
+                            const newValue = e.target.value;
+                            setSearchFieldQuery(newValue);
+                            if (formData.consultationField) {
+                              setFormData(prev => ({ ...prev, consultationField: '' }));
+                            }
+                            setIsFieldDropdownOpen(true);
+                          }}
+                          placeholder="상담 분야를 선택해주세요"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setIsFieldDropdownOpen(true);
+                          }}
+                          onFocus={(e) => {
+                            setIsFieldDropdownOpen(true);
+                            if (formData.consultationField && !searchFieldQuery) {
+                              setSearchFieldQuery(selectedFieldLabel);
+                              e.target.setSelectionRange(0, e.target.value.length);
+                            }
+                          }}
+                        />
+                        {(formData.consultationField || searchFieldQuery) && (
+                          <button
+                            type="button"
+                            className={styles.clearButton}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setFormData(prev => ({ ...prev, consultationField: '' }));
+                              setSearchFieldQuery('');
+                              setIsFieldDropdownOpen(false);
+                            }}
+                          >
+                            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                              <path
+                                d="M15 5L5 15M5 5L15 15"
+                                stroke="#fff"
+                                strokeWidth="1.5"
+                                strokeLinecap="round"
+                              />
+                            </svg>
+                          </button>
+                        )}
                         <svg
                           width="20"
                           height="20"
@@ -424,7 +461,7 @@ const ConsultationApplyPage: React.FC = () => {
                         >
                           <path
                             d="M5 7.5L10 12.5L15 7.5"
-                            stroke="#717171"
+                            stroke="#555"
                             strokeWidth="1.5"
                             strokeLinecap="round"
                           />
@@ -432,28 +469,6 @@ const ConsultationApplyPage: React.FC = () => {
                       </div>
                       {isFieldDropdownOpen && (
                         <div className={styles.selectDropdown}>
-                          <div className={styles.selectSearch}>
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                              <path
-                                d="M11 19C15.4183 19 19 15.4183 19 11C19 6.58172 15.4183 3 11 3C6.58172 3 3 6.58172 3 11C3 15.4183 6.58172 19 11 19Z"
-                                stroke="#717171"
-                                strokeWidth="1.5"
-                              />
-                              <path
-                                d="M21 21L16.65 16.65"
-                                stroke="#717171"
-                                strokeWidth="1.5"
-                                strokeLinecap="round"
-                              />
-                            </svg>
-                            <input
-                              type="text"
-                              placeholder="검색해보세요"
-                              value={searchFieldQuery}
-                              onChange={(e) => setSearchFieldQuery(e.target.value)}
-                              className={styles.selectSearchInput}
-                            />
-                          </div>
                           <div className={styles.selectOptions}>
                             {filteredFields.map((field) => (
                               <div
@@ -481,14 +496,63 @@ const ConsultationApplyPage: React.FC = () => {
                     <div className={styles.selectWrapper}>
                       <div
                         className={`${styles.selectTrigger} ${isAccountantDropdownOpen ? styles.selectTriggerOpen : ''} ${!formData.consultationField ? styles.selectTriggerDisabled : ''}`}
-                        onClick={() => {
+                        onClick={(e) => {
+                          if ((e.target as HTMLElement).closest(`.${styles.clearButton}`)) return;
                           if (!formData.consultationField) return;
                           setIsAccountantDropdownOpen(!isAccountantDropdownOpen);
                         }}
                       >
-                        <span className={formData.taxAccountant ? styles.selectValue : styles.selectPlaceholder}>
-                          {selectedAccountantLabel}
-                        </span>
+                        <input
+                          type="text"
+                          className={styles.selectInput}
+                          value={searchAccountantQuery || (formData.taxAccountant ? selectedAccountantLabel : '')}
+                          onChange={(e) => {
+                            const newValue = e.target.value;
+                            setSearchAccountantQuery(newValue);
+                            if (formData.taxAccountant) {
+                              setFormData(prev => ({ ...prev, taxAccountant: '' }));
+                            }
+                            setIsAccountantDropdownOpen(true);
+                          }}
+                          placeholder={!formData.consultationField ? '상담 분야를 먼저 선택해주세요' : '담당 세무사를 선택해주세요'}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            if (formData.consultationField) {
+                              setIsAccountantDropdownOpen(true);
+                            }
+                          }}
+                          onFocus={(e) => {
+                            if (formData.consultationField) {
+                              setIsAccountantDropdownOpen(true);
+                              if (formData.taxAccountant && !searchAccountantQuery) {
+                                setSearchAccountantQuery(selectedAccountantLabel);
+                                e.target.setSelectionRange(0, e.target.value.length);
+                              }
+                            }
+                          }}
+                          disabled={!formData.consultationField}
+                        />
+                        {(formData.taxAccountant || searchAccountantQuery) && (
+                          <button
+                            type="button"
+                            className={styles.clearButton}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setFormData(prev => ({ ...prev, taxAccountant: '' }));
+                              setSearchAccountantQuery('');
+                              setIsAccountantDropdownOpen(false);
+                            }}
+                          >
+                            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                              <path
+                                d="M15 5L5 15M5 5L15 15"
+                                stroke="#fff"
+                                strokeWidth="1.5"
+                                strokeLinecap="round"
+                              />
+                            </svg>
+                          </button>
+                        )}
                         <svg
                           width="20"
                           height="20"
@@ -498,7 +562,7 @@ const ConsultationApplyPage: React.FC = () => {
                         >
                           <path
                             d="M5 7.5L10 12.5L15 7.5"
-                            stroke="#717171"
+                            stroke="#555"
                             strokeWidth="1.5"
                             strokeLinecap="round"
                           />
@@ -506,28 +570,6 @@ const ConsultationApplyPage: React.FC = () => {
                       </div>
                       {isAccountantDropdownOpen && (
                         <div className={styles.selectDropdown}>
-                          <div className={styles.selectSearch}>
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                              <path
-                                d="M11 19C15.4183 19 19 15.4183 19 11C19 6.58172 15.4183 3 11 3C6.58172 3 3 6.58172 3 11C3 15.4183 6.58172 19 11 19Z"
-                                stroke="#717171"
-                                strokeWidth="1.5"
-                              />
-                              <path
-                                d="M21 21L16.65 16.65"
-                                stroke="#717171"
-                                strokeWidth="1.5"
-                                strokeLinecap="round"
-                              />
-                            </svg>
-                            <input
-                              type="text"
-                              placeholder="검색해보세요"
-                              value={searchAccountantQuery}
-                              onChange={(e) => setSearchAccountantQuery(e.target.value)}
-                              className={styles.selectSearchInput}
-                            />
-                          </div>
                           <div className={styles.selectOptions}>
                             {filteredAccountants.map((accountant) => (
                               <div
@@ -555,14 +597,32 @@ const ConsultationApplyPage: React.FC = () => {
                       이름
                       <span className={styles.required}>*</span>
                     </label>
-                    <input
-                      type="text"
-                      className={`${styles.textInput} ${getFieldError('name') ? styles.textInputError : ''}`}
-                      placeholder="이름을 입력해주세요"
-                      value={formData.name}
-                      onChange={(e) => handleInputChange('name')(e.target.value)}
-                      onBlur={() => handleBlur('name')}
-                    />
+                    <div className={styles.inputWrapper}>
+                      <input
+                        type="text"
+                        className={`${styles.textInput} ${getFieldError('name') ? styles.textInputError : ''}`}
+                        placeholder="이름을 입력해주세요"
+                        value={formData.name}
+                        onChange={(e) => handleInputChange('name')(e.target.value)}
+                        onBlur={() => handleBlur('name')}
+                      />
+                      {formData.name && (
+                        <button
+                          type="button"
+                          className={styles.clearButton}
+                          onClick={() => handleInputChange('name')('')}
+                        >
+                          <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                            <path
+                              d="M15 5L5 15M5 5L15 15"
+                              stroke="#fff"
+                              strokeWidth="1.5"
+                              strokeLinecap="round"
+                            />
+                          </svg>
+                        </button>
+                      )}
+                    </div>
                     {getFieldError('name') && (
                       <p className={styles.fieldError}>{getFieldError('name')}</p>
                     )}
@@ -573,14 +633,32 @@ const ConsultationApplyPage: React.FC = () => {
                       휴대폰 번호
                       <span className={styles.required}>*</span>
                     </label>
-                    <input
-                      type="tel"
-                      className={`${styles.textInput} ${getFieldError('phone') ? styles.textInputError : ''}`}
-                      placeholder="휴대폰 번호를 입력해주세요"
-                      value={formData.phone}
-                      onChange={(e) => handleInputChange('phone')(e.target.value)}
-                      onBlur={() => handleBlur('phone')}
-                    />
+                    <div className={styles.inputWrapper}>
+                      <input
+                        type="tel"
+                        className={`${styles.textInput} ${getFieldError('phone') ? styles.textInputError : ''}`}
+                        placeholder="휴대폰 번호를 입력해주세요"
+                        value={formData.phone}
+                        onChange={(e) => handleInputChange('phone')(e.target.value)}
+                        onBlur={() => handleBlur('phone')}
+                      />
+                      {formData.phone && (
+                        <button
+                          type="button"
+                          className={styles.clearButton}
+                          onClick={() => handleInputChange('phone')('')}
+                        >
+                          <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                            <path
+                              d="M15 5L5 15M5 5L15 15"
+                              stroke="#fff"
+                              strokeWidth="1.5"
+                              strokeLinecap="round"
+                            />
+                          </svg>
+                        </button>
+                      )}
+                    </div>
                     {getFieldError('phone') && (
                       <p className={styles.fieldError}>{getFieldError('phone')}</p>
                     )}
@@ -593,14 +671,16 @@ const ConsultationApplyPage: React.FC = () => {
                     추가 요청사항
                     <span className={styles.required}>*</span>
                   </label>
-                  <textarea
-                    className={`${styles.textarea} ${getFieldError('additionalRequest') ? styles.textareaError : ''}`}
-                    placeholder="상담 내용을 입력해주세요"
-                    value={formData.additionalRequest}
-                    onChange={(e) => handleInputChange('additionalRequest')(e.target.value)}
-                    onBlur={() => handleBlur('additionalRequest')}
-                    rows={8}
-                  />
+                  <div className={styles.textareaWrapper}>
+                    <textarea
+                      className={`${styles.textarea} ${getFieldError('additionalRequest') ? styles.textareaError : ''}`}
+                      placeholder="상담 내용을 입력해주세요"
+                      value={formData.additionalRequest}
+                      onChange={(e) => handleInputChange('additionalRequest')(e.target.value)}
+                      onBlur={() => handleBlur('additionalRequest')}
+                      rows={8}
+                    />
+                  </div>
                   {getFieldError('additionalRequest') && (
                     <p className={styles.fieldError}>{getFieldError('additionalRequest')}</p>
                   )}
@@ -668,29 +748,13 @@ const ConsultationApplyPage: React.FC = () => {
       {isSuccessModalOpen && (
         <div className={styles.modalOverlay} onClick={handleSuccessModalClose}>
           <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
-            <div className={styles.modalHeader}>
-              <button
-                type="button"
-                className={styles.modalCloseButton}
-                onClick={handleSuccessModalClose}
-                aria-label="닫기"
-              >
-                <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
-                  <path
-                    d="M10 10L30 30M30 10L10 30"
-                    stroke="white"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                  />
-                </svg>
-              </button>
-            </div>
+            
             <div className={styles.modalBody}>
               <div className={styles.successIcon}>
                 <svg width="35" height="35" viewBox="0 0 35 35" fill="none">
                   <path
                     d="M2.5 17.5L12.5 27.5L32.5 7.5"
-                    stroke="#94B9E3"
+                    stroke="#00A89E"
                     strokeWidth="2"
                     strokeLinecap="round"
                     strokeLinejoin="round"
