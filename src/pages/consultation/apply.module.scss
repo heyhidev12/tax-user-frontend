@@ -5,8 +5,20 @@
   background-color: #151515;
   color: #fff;
 
-  @media (max-width: 767px) {
-    padding-top: 56px;
+ .headerImage {
+    position: relative;
+    z-index: 1;
+    margin-top: -92px; // ← header balandligi
+    padding-top: 20%;
+    background-image: url("../../../public/images/pages/contact.jpg");
+    background-size: cover;
+    background-position: center;
+    min-height: 220px;
+    max-height: 400px !important;
+    width: 100%;
+    @media (max-width: 767px) {
+      margin-top: -52px; // ← header balandligi
+    }
   }
 }
 

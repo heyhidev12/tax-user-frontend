@@ -1,7 +1,12 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import { useRouter } from "next/router";
 import dynamic from "next/dynamic";
 import "@toast-ui/editor/dist/toastui-editor-viewer.css";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Navigation } from "swiper/modules";
+import type { Swiper as SwiperType } from "swiper";
+import "swiper/css";
+import "swiper/css/navigation";
 import Header from "@/components/common/Header";
 import Menu from "@/components/Menu";
 import Footer from "@/components/Footer";
@@ -52,6 +57,23 @@ interface MemberDetail {
   displayOrder: number;
 }
 
+interface Expert {
+  id: number;
+  name: string;
+  position?: string;
+  affiliation?: string;
+  tel?: string;
+  phoneNumber?: string;
+  email?: string;
+  imageUrl?: string;
+  mainPhoto?: {
+    id: number;
+    url: string;
+  };
+  workAreas?: string[] | Array<{ id: number; value: string }>;
+  tags?: string[];
+}
+
 interface InsightItem {
   id: number;
   title: string;
@@ -61,7 +83,7 @@ interface InsightItem {
   };
   createdAt?: string;
   category?: string | { id: number; name: string; type: string };
-  author?: string;
+  authorName?: string;
 }
 
 interface InsightResponse {
@@ -76,8 +98,18 @@ const ExpertDetailPage: React.FC = () => {
   const [data, setData] = useState<MemberDetail | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [experts, setExperts] = useState<Expert[]>([]);
   const [relatedNews, setRelatedNews] = useState<InsightItem[]>([]);
-  const [newsPage, setNewsPage] = useState(0);
+  const expertsSwiperRef = useRef<SwiperType | null>(null);
+  const newsSwiperRef = useRef<SwiperType | null>(null);
+  const [expertsButtonsDisabled, setExpertsButtonsDisabled] = useState({
+    prev: true,
+    next: false,
+  });
+  const [newsButtonsDisabled, setNewsButtonsDisabled] = useState({
+    prev: true,
+    next: false,
+  });
   const [imageError, setImageError] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
 
@@ -91,12 +123,70 @@ const ExpertDetailPage: React.FC = () => {
     return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
+  // Update button states helper
+  const updateExpertsButtons = useCallback(() => {
+    if (expertsSwiperRef.current) {
+      setExpertsButtonsDisabled({
+        prev: expertsSwiperRef.current.isBeginning,
+        next: expertsSwiperRef.current.isEnd,
+      });
+    }
+  }, []);
+
+  const updateNewsButtons = useCallback(() => {
+    if (newsSwiperRef.current) {
+      setNewsButtonsDisabled({
+        prev: newsSwiperRef.current.isBeginning,
+        next: newsSwiperRef.current.isEnd,
+      });
+    }
+  }, []);
+
+  // Set up event listeners when Swiper instances are ready
+  useEffect(() => {
+    const swiper = expertsSwiperRef.current;
+    if (!swiper) return;
+
+    swiper.on("slideChange", updateExpertsButtons);
+    swiper.on("init", updateExpertsButtons);
+    updateExpertsButtons(); // Initial state
+
+    return () => {
+      swiper.off("slideChange", updateExpertsButtons);
+      swiper.off("init", updateExpertsButtons);
+    };
+  }, [experts.length, updateExpertsButtons]);
+
+  useEffect(() => {
+    const swiper = newsSwiperRef.current;
+    if (!swiper) return;
+
+    swiper.on("slideChange", updateNewsButtons);
+    swiper.on("init", updateNewsButtons);
+    updateNewsButtons(); // Initial state
+
+    return () => {
+      swiper.off("slideChange", updateNewsButtons);
+      swiper.off("init", updateNewsButtons);
+    };
+  }, [relatedNews.length, updateNewsButtons]);
+
   useEffect(() => {
     if (id) {
       fetchExpertDetail();
       fetchRelatedNews();
     }
   }, [id]);
+
+  useEffect(() => {
+    if (
+      data?.workAreas &&
+      data.workAreas.length > 0 &&
+      typeof id === "string"
+    ) {
+      fetchRelatedExperts();
+    }
+  }, [data?.workAreas, id]);
 
   const fetchExpertDetail = async () => {
     setLoading(true);
@@ -122,7 +212,7 @@ const ExpertDetailPage: React.FC = () => {
   const fetchRelatedNews = async () => {
     try {
       const response = await get<InsightResponse>(
-        `${API_ENDPOINTS.INSIGHTS}?page=1&limit=4`
+        `${API_ENDPOINTS.INSIGHTS}?page=1&limit=20`
       );
 
       if (response.data) {
@@ -130,6 +220,56 @@ const ExpertDetailPage: React.FC = () => {
       }
     } catch (err) {
       console.error("관련 소식을 불러오는 중 오류:", err);
+    }
+  };
+
+  const fetchRelatedExperts = async () => {
+    try {
+      if (!data?.workAreas || data.workAreas.length === 0) return;
+
+      // Get first work area ID
+      const firstWorkArea = data.workAreas[0];
+      const workAreaId =
+        typeof firstWorkArea === "object" ? firstWorkArea.id : null;
+
+      if (!workAreaId) return;
+
+      const url = `${API_ENDPOINTS.MEMBERS}?page=1&limit=20&workArea=${workAreaId}`;
+      const membersResponse = await get<
+        Expert[] | { items: Expert[]; data: Expert[] }
+      >(url);
+
+      if (membersResponse.data) {
+        let expertsList: Expert[] = [];
+        if (Array.isArray(membersResponse.data)) {
+          expertsList = membersResponse.data;
+        } else {
+          const response = membersResponse.data as {
+            items?: Expert[];
+            data?: Expert[];
+          };
+          expertsList = response.items || response.data || [];
+        }
+
+        // Filter out current expert and transform data
+        expertsList = expertsList
+          .filter((expert) => expert.id !== data?.id)
+          .map((expert) => ({
+            ...expert,
+            tags: expert.workAreas
+              ? expert.workAreas.map((area) =>
+                  typeof area === "string" ? area : area.value
+                )
+              : expert.tags || [],
+            tel: expert.tel || expert.phoneNumber,
+            position: expert.position || expert.affiliation || "세무사",
+          }));
+
+        setExperts(expertsList);
+      }
+    } catch (err) {
+      console.error("관련 세무사를 불러오는 중 오류:", err);
+      setExperts([]);
     }
   };
 
@@ -150,16 +290,20 @@ const ExpertDetailPage: React.FC = () => {
     router.push("/consultation/apply");
   };
 
+  const handleExpertPrev = () => {
+    expertsSwiperRef.current?.slidePrev();
+  };
+
+  const handleExpertNext = () => {
+    expertsSwiperRef.current?.slideNext();
+  };
+
   const handleNewsPrev = () => {
-    if (newsPage > 0) {
-      setNewsPage(newsPage - 1);
-    }
+    newsSwiperRef.current?.slidePrev();
   };
 
   const handleNewsNext = () => {
-    if (newsPage < Math.ceil(relatedNews.length / 4) - 1) {
-      setNewsPage(newsPage + 1);
-    }
+    newsSwiperRef.current?.slideNext();
   };
 
   const handleDownloadVCard = () => {
@@ -171,6 +315,11 @@ const ExpertDetailPage: React.FC = () => {
   const handleDownloadPDF = () => {
     if (data?.pdf?.url) {
       window.open(data.pdf.url, "_blank");
+    }
+  };
+  const handlePrint = () => {
+    if (typeof window !== "undefined") {
+      window.print();
     }
   };
 
@@ -226,74 +375,19 @@ const ExpertDetailPage: React.FC = () => {
     );
   }
 
-  // Breadcrumb 생성
-  const breadcrumbs = [
-    { label: "전문가 소개", href: "/experts" },
-    { label: `${data.name} 세무사` },
-  ];
-
   return (
     <div className={styles.page}>
-      <Header variant="transparent" onMenuClick={() => setIsMenuOpen(true)} />
+      <Header variant="transparent" onMenuClick={() => setIsMenuOpen(true)} isFixed={true} />
       <Menu isOpen={isMenuOpen} onClose={() => setIsMenuOpen(false)} />
       <div className="container">
         {/* Hero Section - Full Width */}
         <div className={styles.heroSection}>
-          {/* Breadcrumb */}
-          {/* <div className={styles.heroBreadcrumb}>
-          <div className={styles.container}>
-            <div className={styles.breadcrumbRow}>
-              
-              {!isMobile && (
-                <div className={styles.desktopActionButtons}>
-                  <button
-                    className={styles.desktopActionButton}
-                    onClick={() => router.push(`/experts/${id}`)}
-                    aria-label="이력서 보기"
-                  >
-                    <Icon type="resume" size={20} />
-                  </button>
-                  <span className={styles.desktopActionDivider} />
-                  {data.vcard?.url && (
-                    <>
-                      <button
-                        className={styles.desktopActionButton}
-                        onClick={handleDownloadVCard}
-                        aria-label="연락처 저장"
-                      >
-                        <Icon type="vcard" size={20} />
-                      </button>
-                      <span className={styles.desktopActionDivider} />
-                    </>
-                  )}
-                  {data.pdf?.url && (
-                    <>
-                      <button
-                        className={styles.desktopActionButton}
-                        onClick={handleDownloadPDF}
-                        aria-label="PDF 다운로드"
-                      >
-                        <Icon type="pdf" size={20} />
-                      </button>
-                      <span className={styles.desktopActionDivider} />
-                    </>
-                  )}
-                  <button
-                    className={styles.desktopActionButton}
-                    onClick={handleShare}
-                    aria-label="공유하기"
-                  >
-                    <Icon type="share" size={20} />
-                  </button>
-                </div>
-              )}
-            </div>
-          </div>
-        </div> */}
-          <div className={styles.heroBackground} />
-          <div className="container">
+          <div className="container" style={{ height: "100%" }}>
             <div className={styles.heroContainer}>
               <div className={styles.heroImageWrapper}>
+                <div className={styles.logoWatermark}>
+                  <img src="/images/home/Vector.svg" alt="" />
+                </div>
                 {data.mainPhoto?.url && !imageError ? (
                   <img
                     src={data.mainPhoto.url}
@@ -346,12 +440,38 @@ const ExpertDetailPage: React.FC = () => {
                       </span>
                     </div>
                   )}
+                  
                 </div>
-                {/* 주요 업무 분야 */}
+                {isMobile && data.workAreas && data.workAreas.length > 0 && (
+                  <div className={styles.sidebarWorkAreas}>
+                    <h2>주요 업무 분야</h2>
+                    <div className={styles.sidebarWorkAreasTags}>
+                      {data.workAreas.map((area, index) => {
+                        const areaName =
+                          typeof area === "string"
+                            ? area
+                            : area?.value || String(area?.id || "");
+                        const indicator =
+                          index === 0 ? "■■■" : index === 1 ? "■■□" : "■□□";
+                        return (
+                          <span
+                            key={index}
+                            className={styles.sidebarWorkAreaTag}
+                          >
+                            {areaName}
+                            {indicator}
+                          </span>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
 
-                {/* 모바일 액션 버튼 - 주요 업무 분야 아래 */}
-                {!isMobile && (
-                  <div className={styles.heroActionButtons}>
+                {/* 모바일 인용구 - 아이콘 아래 */}
+              </div>
+            </div>
+          </div>
+          <div className={styles.heroActionButtons}>
                     {data.vcard?.url && (
                       <button
                         className={styles.heroActionButton}
@@ -374,7 +494,7 @@ const ExpertDetailPage: React.FC = () => {
                     )}
                     <button
                       className={styles.heroActionButton}
-                      onClick={() => router.push(`/experts/${id}`)}
+                      onClick={handlePrint}
                       aria-label="이력서 보기"
                     >
                       <svg
@@ -398,19 +518,6 @@ const ExpertDetailPage: React.FC = () => {
                       <Icon type="share" size={20} />
                     </button>
                   </div>
-                )}
-                {/* 모바일 인용구 - 아이콘 아래 */}
-                {/* {isMobile && data.oneLineIntro && (
-              <div className={styles.heroQuoteMobile}>
-                <div className={styles.heroQuoteMobileContent}>
-                  <img src="/images/experts/icons/quote-right.svg" alt="" className={styles.quoteMarkMobile} />
-                  <p className={styles.heroQuoteMobileText}>{data.oneLineIntro}</p>
-                </div>
-              </div>
-            )} */}
-              </div>
-            </div>
-          </div>
         </div>
 
         {/* About the Expert Section with Sidebar */}
@@ -498,7 +605,7 @@ const ExpertDetailPage: React.FC = () => {
 
               {/* Main Content */}
               <div className={styles.mainContent}>
-                {!isMobile && data.oneLineIntro && (
+                {data.oneLineIntro && (
                   <div className={styles.heroQuote}>
                     <div className={styles.heroQuoteContent}>
                       <svg
@@ -531,6 +638,7 @@ const ExpertDetailPage: React.FC = () => {
                     </div>
                   </div>
                 )}
+
                 {data.expertIntro && (
                   <section className={styles.aboutSection}>
                     <div className={styles.aboutHeader}>
@@ -549,7 +657,7 @@ const ExpertDetailPage: React.FC = () => {
                 )}
                 {/* Main Cases Section */}
                 {data.mainCases && (
-                  <section className={styles.section}>
+                  <section className={styles.sectionWrapper}>
                     <div className={styles.sectionHeader}>
                       <h2 className={styles.sectionTitle}>주요 처리 사례</h2>
                     </div>
@@ -565,7 +673,7 @@ const ExpertDetailPage: React.FC = () => {
 
                 {/* Education Section */}
                 {data.education && (
-                  <section className={styles.section}>
+                  <section className={styles.sectionWrapper}>
                     <div className={styles.sectionHeader}>
                       <h2 className={styles.sectionTitle}>학력</h2>
                     </div>
@@ -581,7 +689,7 @@ const ExpertDetailPage: React.FC = () => {
 
                 {/* Career and Awards Section */}
                 {data.careerAndAwards && (
-                  <section className={styles.section}>
+                  <section className={styles.sectionWrapper}>
                     <div className={styles.sectionHeader}>
                       <h2 className={styles.sectionTitle}>경력 및 수상 실적</h2>
                     </div>
@@ -597,7 +705,7 @@ const ExpertDetailPage: React.FC = () => {
 
                 {/* Books, Activities, Other Section */}
                 {data.booksActivitiesOther && (
-                  <section className={styles.section}>
+                  <section className={styles.sectionWrapper}>
                     <div className={styles.sectionHeader}>
                       <h2 className={styles.sectionTitle}>저서·활동·기타</h2>
                     </div>
@@ -614,108 +722,304 @@ const ExpertDetailPage: React.FC = () => {
             </div>
           </div>
         </div>
+        {isMobile && (
+          <button className={styles.getConsult}>
+            이 전문가에게 바로 상담신청
+          </button>
+        )}
+
+        {/* Related Experts Section */}
+        {experts.length > 0 && (
+          <div className={styles.fullWidthSection}>
+            <div className="container">
+              <div className={styles.fullWidthContainer}>
+                <section className={styles.section}>
+                  <div className={styles.sectionHeader}>
+                    <div className={styles.sectionHeaderContent}>
+                      <div>
+                        <h2 className={styles.sectionTitleEn}>
+                          RELATED EXPERTS
+                        </h2>
+                        <p className={styles.sectionSubtitle}>
+                          <span /> 관련 업무 세무사
+                        </p>
+                      </div>
+                      <div className={styles.navigationButtons}>
+                        <button
+                          className={styles.navButton}
+                          onClick={handleExpertPrev}
+                          id="experts-prev-btn"
+                          disabled={expertsButtonsDisabled.prev}
+                        >
+                          <Icon
+                            type="arrow-left2-green"
+                            className={styles.arrow}
+                            size={20}
+                          />
+                        </button>
+                        <button
+                          className={styles.navButton}
+                          onClick={handleExpertNext}
+                          id="experts-next-btn"
+                          disabled={expertsButtonsDisabled.next}
+                        >
+                          <Icon type="arrow-right2-green" size={20} />
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                  <div className={styles.expertsContent}>
+                    <Swiper
+                      modules={[Navigation]}
+                      grabCursor={true}
+                      allowTouchMove={true}
+                      navigation={{
+                        prevEl: "#experts-prev-btn",
+                        nextEl: "#experts-next-btn",
+                      }}
+                      breakpoints={{
+                        0: {
+                          slidesPerView: 1.3,
+                          spaceBetween: 16,
+                        },
+                        576: {
+                          slidesPerView: 2,
+                          spaceBetween: 18,
+                        },
+                        768: {
+                          slidesPerView: 3,
+                          spaceBetween: 20,
+                        },
+                        1024: {
+                          slidesPerView: 4,
+                          spaceBetween: 24,
+                        },
+                      }}
+                      onSwiper={(swiper) => {
+                        expertsSwiperRef.current = swiper;
+                        updateExpertsButtons();
+                      }}
+                      onSlideChange={() => {
+                        updateExpertsButtons();
+                      }}
+                      className={styles.expertsSwiper}
+                    >
+                      {experts.map((expert, index) => (
+                        <SwiperSlide key={expert.id || index}>
+                          <div
+                            className={styles.expertCard}
+                            onClick={() => router.push(`/experts/${expert.id}`)}
+                          >
+                            <div className={styles.expertImage}>
+                              <img
+                                src={
+                                  expert.mainPhoto?.url ||
+                                  expert.imageUrl ||
+                                  "/images/common/default-avatar.png"
+                                }
+                                alt={expert.name}
+                                onError={(e) => {
+                                  (e.target as HTMLImageElement).src =
+                                    "/images/common/default-avatar.png";
+                                }}
+                              />
+                            </div>
+
+                            <div className={styles.expertInfo}>
+                              <div className={styles.expertNameRow}>
+                                <p className={styles.expertName}>
+                                  {expert.name}
+                                </p>
+                                <p className={styles.expertPositionLabel}>
+                                  {expert.position || "세무사"}
+                                </p>
+                              </div>
+
+                              <div className={styles.expertContact}>
+                                {(expert.tel || expert.phoneNumber) && (
+                                  <div className={styles.expertContactItem}>
+                                    <span className={styles.expertContactLabel}>
+                                      TEL
+                                    </span>
+                                    <span className={styles.expertContactValue}>
+                                      {expert.tel || expert.phoneNumber}
+                                    </span>
+                                  </div>
+                                )}
+
+                                {expert.email && (
+                                  <div className={styles.expertContactItem}>
+                                    <span className={styles.expertContactLabel}>
+                                      EMAIL
+                                    </span>
+                                    <span className={styles.expertContactValue}>
+                                      {expert.email}
+                                    </span>
+                                  </div>
+                                )}
+                              </div>
+
+                              {expert.tags && expert.tags.length > 0 && (
+                                <div className={styles.expertTags}>
+                                  {" "}
+                                  {expert.tags.map((tag, tagIndex) => {
+                                    let indicator = "";
+                                    if (tagIndex === 0) {
+                                      indicator = " ■■■";
+                                    } else if (tagIndex === 1) {
+                                      indicator = " ■■□";
+                                    } else if (tagIndex === 2) {
+                                      indicator = " ■□□";
+                                    }
+                                    return (
+                                      <span
+                                        key={tagIndex}
+                                        className={styles.expertTag}
+                                      >
+                                        {" "}
+                                        {tag} {indicator}{" "}
+                                      </span>
+                                    );
+                                  })}{" "}
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        </SwiperSlide>
+                      ))}
+                    </Swiper>
+                  </div>
+                </section>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Related News Section */}
         {relatedNews.length > 0 && (
           <div className={styles.fullWidthSection}>
-            <div className={styles.fullWidthContainer}>
-              <section className={styles.section}>
-                <div className={styles.sectionHeader}>
-                  <div className={styles.sectionHeaderContent}>
-                    <div>
-                      <h2 className={styles.sectionTitleEn}>RELATED NEWS</h2>
-                      <p className={styles.sectionSubtitle}>관련 소식</p>
-                    </div>
-                    <div className={styles.navigationButtons}>
-                      <button
-                        className={styles.navButton}
-                        onClick={handleNewsPrev}
-                        disabled={newsPage === 0}
-                      >
-                        <Icon type="arrow-left2-white" size={20} />
-                      </button>
-                      <button
-                        className={styles.navButton}
-                        onClick={handleNewsNext}
-                        disabled={
-                          newsPage >= Math.ceil(relatedNews.length / 4) - 1
-                        }
-                      >
-                        <Icon type="arrow-right2-white" size={20} />
-                      </button>
+            <div className="container">
+              <div className={styles.fullWidthContainer}>
+                <section className={styles.section}>
+                  <div className={styles.sectionHeader}>
+                    <div className={styles.sectionHeaderContent}>
+                      <div>
+                        <h2 className={styles.sectionTitleEn}>RELATED NEWS</h2>
+                        <p className={styles.sectionSubtitle}>
+                          <span></span> 관련 소식
+                        </p>
+                      </div>
+                      <div className={styles.navigationButtons}>
+                        <button
+                          className={styles.navButton}
+                          onClick={handleNewsPrev}
+                          id="news-prev-btn"
+                          disabled={newsButtonsDisabled.prev}
+                        >
+                          <Icon type="arrow-left2-green" size={20} />
+                        </button>
+                        <button
+                          className={styles.navButton}
+                          onClick={handleNewsNext}
+                          id="news-next-btn"
+                          disabled={newsButtonsDisabled.next}
+                        >
+                          <Icon type="arrow-right2-green" size={20} />
+                        </button>
+                      </div>
                     </div>
                   </div>
-                </div>
-                <div className={styles.newsContent}>
-                  <div
-                    className={styles.newsGrid}
-                    style={{
-                      transform: `translateX(-${newsPage * 100}%)`,
-                    }}
-                  >
-                    {Array.from({
-                      length: Math.ceil(relatedNews.length / 4),
-                    }).map((_, pageIndex) => (
-                      <div key={pageIndex} className={styles.newsPage}>
-                        {relatedNews
-                          .slice(pageIndex * 4, (pageIndex + 1) * 4)
-                          .map((news) => (
-                            <div
-                              key={news.id}
-                              className={styles.newsCard}
-                              onClick={() =>
-                                router.push(`/insights/${news.id}`)
-                              }
-                            >
-                              {news.thumbnail?.url && (
-                                <div className={styles.newsThumbnail}>
-                                  <img
-                                    src={news.thumbnail.url}
-                                    alt={news.title}
-                                  />
-                                </div>
-                              )}
-                              <div className={styles.newsInfo}>
-                                <div className={styles.newsHeader}>
-                                  {news.category && (
-                                    <p className={styles.newsCategory}>
-                                      {typeof news.category === "string"
-                                        ? news.category
-                                        : typeof news.category === "object" &&
-                                          news.category?.name
-                                        ? news.category.name
-                                        : "카테고리"}
-                                    </p>
-                                  )}
-                                  <h3 className={styles.newsTitle}>
-                                    {news.title}
-                                  </h3>
-                                </div>
-                                <div className={styles.newsMeta}>
-                                  {news.author && (
-                                    <>
-                                      <span className={styles.newsAuthor}>
-                                        {news.author}
-                                      </span>
-                                      <span className={styles.newsSeparator}>
-                                        •
-                                      </span>
-                                    </>
-                                  )}
-                                  {news.createdAt && (
-                                    <span className={styles.newsDate}>
-                                      {formatDate(news.createdAt)}
+                  <div className={styles.newsContent}>
+                    <Swiper
+                      modules={[Navigation]}
+                      grabCursor={true}
+                      allowTouchMove={true}
+                      navigation={{
+                        prevEl: "#news-prev-btn",
+                        nextEl: "#news-next-btn",
+                      }}
+                      breakpoints={{
+                        0: {
+                          slidesPerView: 1.3,
+                          spaceBetween: 16,
+                        },
+                        576: {
+                          slidesPerView: 2,
+                          spaceBetween: 18,
+                        },
+                        768: {
+                          slidesPerView: 3,
+                          spaceBetween: 20,
+                        },
+                        1024: {
+                          slidesPerView: 4,
+                          spaceBetween: 24,
+                        },
+                      }}
+                      onSwiper={(swiper) => {
+                        newsSwiperRef.current = swiper;
+                        updateNewsButtons();
+                      }}
+                      onSlideChange={() => {
+                        updateNewsButtons();
+                      }}
+                      className={styles.newsSwiper}
+                    >
+                      {relatedNews.map((news) => (
+                        <SwiperSlide key={news.id}>
+                          <div
+                            className={styles.newsCard}
+                            onClick={() => router.push(`/insights/${news.id}`)}
+                          >
+                            {news.thumbnail && (
+                              <div className={styles.newsThumbnail}>
+                                <img
+                                  src={news.thumbnail.url}
+                                  alt={news.title}
+                                />
+                              </div>
+                            )}
+                            <div className={styles.newsInfo}>
+                              <div className={styles.newsHeader}>
+                                {news.category && (
+                                  <p className={styles.newsCategory}>
+                                    {typeof news.category === "string"
+                                      ? news.category
+                                      : typeof news.category === "object" &&
+                                        news.category?.name
+                                      ? news.category.name
+                                      : "카테고리"}
+                                  </p>
+                                )}
+                                <h3 className={styles.newsTitle}>
+                                  {news.title}
+                                </h3>
+                              </div>
+                              <div className={styles.newsMeta}>
+                                {news.authorName && (
+                                  <>
+                                    <span className={styles.newsAuthor}>
+                                      {news.authorName}
                                     </span>
-                                  )}
-                                </div>
+                                    <span className={styles.newsSeparator}>
+                                      •
+                                    </span>
+                                  </>
+                                )}
+                                {news.createdAt && (
+                                  <span className={styles.newsDate}>
+                                    {formatDate(news.createdAt)}
+                                  </span>
+                                )}
                               </div>
                             </div>
-                          ))}
-                      </div>
-                    ))}
+                          </div>
+                        </SwiperSlide>
+                      ))}
+                    </Swiper>
                   </div>
-                </div>
-              </section>
+                </section>
+              </div>
             </div>
           </div>
         )}
@@ -725,11 +1029,13 @@ const ExpertDetailPage: React.FC = () => {
 
       {/* Floating Buttons */}
       <div className={styles.floatingButtons}>
-        <FloatingButton
-          variant="consult"
-          label="상담 신청하기"
-          onClick={handleConsultClick}
-        />
+        {!isMobile && (
+          <FloatingButton
+            variant="consult"
+            label="상담 신청하기"
+            onClick={handleConsultClick}
+          />
+        )}
         <FloatingButton variant="top" onClick={handleTopClick} />
       </div>
     </div>

@@ -1188,7 +1188,7 @@ const BusinessAreaDetailPage: React.FC = () => {
                       }}
                       breakpoints={{
                         0: {
-                          slidesPerView: 1,
+                          slidesPerView: 1.3,
                           spaceBetween: 16,
                         },
                         576: {
@@ -1346,7 +1346,7 @@ const BusinessAreaDetailPage: React.FC = () => {
                 }}
                       breakpoints={{
                         0: {
-                          slidesPerView: 1,
+                          slidesPerView: 1.3,
                           spaceBetween: 16,
                         },
                         576: {
@@ -1453,7 +1453,7 @@ const BusinessAreaDetailPage: React.FC = () => {
                       }}
                       breakpoints={{
                         0: {
-                          slidesPerView: 1,
+                          slidesPerView: 1.3,
                           spaceBetween: 16,
                         },
                         576: {

@@ -368,15 +368,16 @@ const ConsultationApplyPage: React.FC = () => {
   return (
     <div className={styles.consultationPage}>
       <Header
-        variant="transparent"
+        variant="white"
         onMenuClick={() => setIsMenuOpen(true)}
         onLogoClick={() => router.push('/')}
       />
       <Menu isOpen={isMenuOpen} onClose={() => setIsMenuOpen(false)} />
+        <div className={styles.headerImage}></div>
 
       <div className={styles.pageContent}>
         {/* Page Header */}
-        <div className={styles.pageHeaderSection}>
+        {/* <div className={styles.pageHeaderSection}>
           <PageHeader
             title="상담 신청"
             breadcrumbs={[
@@ -384,18 +385,18 @@ const ConsultationApplyPage: React.FC = () => {
             ]}
             size="web"
           />
-        </div>
+        </div> */}
 
         {/* Form Section */}
         <div className={styles.formSection}>
           <div className={styles.formContainer}>
-            <div className={styles.formHeader}>
+            {/* <div className={styles.formHeader}>
               <div className={styles.formTitleBackground}>
                 <p className={styles.formTitleText}>
                   CONTACT <span className={styles.formTitleItalic}>US</span>
                 </p>
               </div>
-            </div>
+            </div> */}
 
             <form onSubmit={handleSubmit} className={styles.form}>
               <div className={styles.formFields}>

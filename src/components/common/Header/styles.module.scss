@@ -103,10 +103,10 @@ $breakpoint-mobile: 767px;
   // Variant: Transparent
   // ========================================
   &--transparent {
-    background-color: transparent !important;
+    // background-color: transparent !important;
 
     @media (max-width: $breakpoint-mobile) {
-      background-color: #151515;
+      // background-color: #151515;
     }
   }
 
