@@ -76,21 +76,13 @@ interface ConsultationApiResponse {
 }
 
 interface MyApplicationsResponse {
-  type: string;
-  seminars: {
-    items: TrainingSeminarApplication[];
-    total: number;
-    page: number;
-    limit: number;
-  };
-  consultations: {
-    items: ConsultationApiResponse[];
-    total: number;
-    page: number;
-    limit: number;
-  };
-  summary: ApplicationSummary;
-  isExposed: boolean;
+  type: "consultation" | "seminar";
+  items: TrainingSeminarApplication[] | ConsultationApiResponse[];
+  total: number;
+  page: number;
+  limit: number;
+  summary?: ApplicationSummary;
+  isExposed?: boolean;
 }
 
 const MyPage: React.FC = () => {
@@ -341,44 +333,197 @@ const MyPage: React.FC = () => {
     };
   };
 
+  // 날짜 형식 변환: "YYYY. MM. DD" -> "YYYY-MM-DD"
+  const convertDateToApiFormat = (dateStr: string): string => {
+    if (!dateStr) return "";
+    // "2025. 05. 19" -> "2025-05-19"
+    return dateStr.replace(/\.\s*/g, "-").replace(/\s+/g, "");
+  };
+
+  // API 호출을 위한 쿼리 파라미터 빌더
+  const buildQueryParams = (
+    type: "seminar" | "consultation",
+    page: number,
+    limit: number = 20,
+    startDateParam?: string,
+    endDateParam?: string
+  ): string => {
+    const params = new URLSearchParams();
+    params.append("type", type);
+    params.append("page", page.toString());
+    params.append("limit", limit.toString());
+    
+    if (startDateParam) {
+      params.append("startDate", convertDateToApiFormat(startDateParam));
+    }
+    if (endDateParam) {
+      params.append("endDate", convertDateToApiFormat(endDateParam));
+    }
+    
+    return params.toString();
+  };
+
+  // 세미나/교육 신청 내역 조회
+  const fetchSeminarApplications = async (
+    page: number = 1,
+    startDateParam?: string,
+    endDateParam?: string
+  ) => {
+    try {
+      setTrainingLoading(true);
+      const queryString = buildQueryParams(
+        "seminar",
+        page,
+        20,
+        startDateParam,
+        endDateParam
+      );
+      const response = await get<MyApplicationsResponse>(
+        `${API_ENDPOINTS.AUTH.MY_APPLICATIONS}?${queryString}`
+      );
+
+      if (response.error) {
+        if (response.status === 401 || response.status === 403) {
+          setTrainingApplications([]);
+          setTrainingTotal(0);
+        } else {
+          console.error("세미나 신청 내역을 불러오는 중 오류:", response.error);
+        }
+      } else if (response.data) {
+        const { items = [], total = 0 } = response.data;
+        setTrainingApplications((items as TrainingSeminarApplication[]) || []);
+        setTrainingTotal(total);
+      } else {
+        setTrainingApplications([]);
+        setTrainingTotal(0);
+      }
+    } catch (err) {
+      console.error("세미나 신청 내역을 불러오는 중 오류:", err);
+      setTrainingApplications([]);
+      setTrainingTotal(0);
+    } finally {
+      setTrainingLoading(false);
+    }
+  };
+
+  // 상담 신청 내역 조회
+  const fetchConsultationApplications = async (
+    page: number = 1,
+    startDateParam?: string,
+    endDateParam?: string
+  ) => {
+    try {
+      setConsultationLoading(true);
+      const queryString = buildQueryParams(
+        "consultation",
+        page,
+        20,
+        startDateParam,
+        endDateParam
+      );
+      const response = await get<MyApplicationsResponse>(
+        `${API_ENDPOINTS.AUTH.MY_APPLICATIONS}?${queryString}`
+      );
+
+      if (response.error) {
+        if (response.status === 401 || response.status === 403) {
+          setConsultationApplications([]);
+          setConsultationTotal(0);
+        } else {
+          console.error("상담 신청 내역을 불러오는 중 오류:", response.error);
+        }
+      } else if (response.data) {
+        const { items = [], total = 0 } = response.data;
+        const consultationItems = (items as ConsultationApiResponse[]) || [];
+        const mappedConsultations = consultationItems.map(
+          mapConsultationResponse
+        );
+        setConsultationApplications(mappedConsultations);
+        setConsultationTotal(total);
+      } else {
+        setConsultationApplications([]);
+        setConsultationTotal(0);
+      }
+    } catch (err) {
+      console.error("상담 신청 내역을 불러오는 중 오류:", err);
+      setConsultationApplications([]);
+      setConsultationTotal(0);
+    } finally {
+      setConsultationLoading(false);
+    }
+  };
+
+  // 검색 버튼 클릭 핸들러
+  const handleSearch = (type: "seminar" | "consultation") => {
+    // 페이지를 1로 리셋
+    if (type === "seminar") {
+      setTrainingPage(1);
+      fetchSeminarApplications(1, startDate, endDate);
+    } else {
+      setConsultationPage(1);
+      fetchConsultationApplications(1, startDate, endDate);
+    }
+  };
+
   useEffect(() => {
     const fetchAllApplications = async () => {
       try {
-        const response = await get<MyApplicationsResponse>(
-          API_ENDPOINTS.AUTH.MY_APPLICATIONS
-        );
+        // Fetch both seminar and consultation applications separately
+        const [seminarResponse, consultationResponse] = await Promise.all([
+          get<MyApplicationsResponse>(
+            `${API_ENDPOINTS.AUTH.MY_APPLICATIONS}?type=seminar&page=1&limit=20`
+          ),
+          get<MyApplicationsResponse>(
+            `${API_ENDPOINTS.AUTH.MY_APPLICATIONS}?type=consultation&page=1&limit=20`
+          ),
+        ]);
 
-        if (response.error) {
-          // 인증 오류인 경우 기본값 사용
-          if (response.status === 401 || response.status === 403) {
-            setApplicationSummary({
-              seminarTotal: 0,
-              consultationTotal: 0,
-              total: 0,
-            });
+        // Handle seminar response
+        if (seminarResponse.error) {
+          if (seminarResponse.status === 401 || seminarResponse.status === 403) {
+            setTrainingApplications([]);
+            setTrainingTotal(0);
           } else {
-            console.error("신청 내역을 불러오는 중 오류:", response.error);
+            console.error("세미나 신청 내역을 불러오는 중 오류:", seminarResponse.error);
           }
-        } else if (response.data) {
-          // summary 설정
-          setApplicationSummary(response.data.summary);
-          // 세미나/교육 신청 내역 설정
-          setTrainingApplications(response.data.seminars.items || []);
-          setTrainingTotal(response.data.seminars.total || 0);
-          // 상담 신청 내역 설정 (API 응답을 UI 형식으로 변환)
-          const consultationItems = response.data.consultations.items || [];
+        } else if (seminarResponse.data) {
+          const { items = [], total = 0 } = seminarResponse.data;
+          setTrainingApplications((items as TrainingSeminarApplication[]) || []);
+          setTrainingTotal(total);
+        } else {
+          setTrainingApplications([]);
+          setTrainingTotal(0);
+        }
+
+        // Handle consultation response
+        if (consultationResponse.error) {
+          if (consultationResponse.status === 401 || consultationResponse.status === 403) {
+            setConsultationApplications([]);
+            setConsultationTotal(0);
+          } else {
+            console.error("상담 신청 내역을 불러오는 중 오류:", consultationResponse.error);
+          }
+        } else if (consultationResponse.data) {
+          const { items = [], total = 0 } = consultationResponse.data;
+          const consultationItems = (items as ConsultationApiResponse[]) || [];
           const mappedConsultations = consultationItems.map(
             mapConsultationResponse
           );
           setConsultationApplications(mappedConsultations);
-          setConsultationTotal(response.data.consultations.total || 0);
+          setConsultationTotal(total);
         } else {
-          setApplicationSummary({
-            seminarTotal: 0,
-            consultationTotal: 0,
-            total: 0,
-          });
+          setConsultationApplications([]);
+          setConsultationTotal(0);
         }
+
+        // Calculate summary from totals
+        const seminarTotal = seminarResponse.data?.total || 0;
+        const consultationTotal = consultationResponse.data?.total || 0;
+        setApplicationSummary({
+          seminarTotal,
+          consultationTotal,
+          total: seminarTotal + consultationTotal,
+        });
       } catch (err) {
         // 오류 발생 시 기본값 사용
         setApplicationSummary({
@@ -1661,7 +1806,10 @@ const MyPage: React.FC = () => {
                           className={styles.mobileDateIcon}
                         />
                       </div>
-                      <button className={styles.mobileSearchButton}>
+                      <button 
+                        className={styles.mobileSearchButton}
+                        onClick={() => handleSearch("consultation")}
+                      >
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
                           width="17"
@@ -1689,7 +1837,7 @@ const MyPage: React.FC = () => {
                     <p className={styles.mobileResultsCount}>
                       총{" "}
                       <span className={styles.mobileCountHighlight}>
-                        {trainingTotal}
+                        {consultationTotal}
                       </span>
                       건
                     </p>
@@ -1832,7 +1980,10 @@ const MyPage: React.FC = () => {
                           className={styles.mobileDateIcon}
                         />
                       </div>
-                      <button className={styles.mobileSearchButton}>
+                      <button 
+                        className={styles.mobileSearchButton}
+                        onClick={() => handleSearch("consultation")}
+                      >
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
                           width="17"
@@ -2924,7 +3075,10 @@ const MyPage: React.FC = () => {
                                   className={styles.calendarIcon}
                                 />
                               </div>
-                              <button className={styles.searchButton}>
+                              <button 
+                                className={styles.searchButton}
+                                onClick={() => handleSearch("seminar")}
+                              >
                                 <img
                                   src="/images/common/search-icon.svg"
                                   alt="검색"
@@ -3106,7 +3260,10 @@ const MyPage: React.FC = () => {
                                   className={styles.calendarIcon}
                                 />
                               </div>
-                              <button className={styles.searchButton}>
+                              <button 
+                                className={styles.searchButton}
+                                onClick={() => handleSearch("consultation")}
+                              >
                                 <img
                                   src="/images/common/search-icon.svg"
                                   alt="검색"

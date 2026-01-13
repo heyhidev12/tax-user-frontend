@@ -26,6 +26,18 @@ interface DataRoomsResponse {
   items: DataRoom[];
 }
 
+interface MajorCategory {
+  id: number;
+  name: string;
+  isExposed: boolean;
+  displayOrder: number;
+}
+
+interface HierarchicalData {
+  majorCategory: MajorCategory;
+  minorCategories: unknown[];
+}
+
 const Menu: React.FC<MenuProps> = ({ isOpen, onClose }) => {
   const router = useRouter();
   const [selectedItem, setSelectedItem] = useState<string>('services');
@@ -41,8 +53,22 @@ const Menu: React.FC<MenuProps> = ({ isOpen, onClose }) => {
   // 자료실 목록
   const [dataRooms, setDataRooms] = useState<DataRoom[]>([]);
 
+  // Business Area categories from API
+  const [businessAreaCategories, setBusinessAreaCategories] = useState<MajorCategory[]>([]);
+
   // 연혁 노출 여부 및 자료실 목록에 따라 메뉴 아이템 동적 생성
   const menuItems: MenuItemConfig[] = MENU_ITEMS.map(item => {
+    if (item.id === 'services') {
+      // Business Area categories from API
+      const exposedCategories = businessAreaCategories
+        .filter(cat => cat.isExposed)
+        .sort((a, b) => a.displayOrder - b.displayOrder);
+      return {
+        ...item,
+        subItems: exposedCategories.map(cat => cat.name),
+        subItemIds: exposedCategories.map(cat => cat.id),
+      };
+    }
     if (item.id === 'about') {
       return {
         ...item,
@@ -107,12 +133,17 @@ const Menu: React.FC<MenuProps> = ({ isOpen, onClose }) => {
         }
       } else if (pathname === '/business-areas/hierarchical' || pathname.startsWith('/business-areas/')) {
         setSelectedItem('services');
-        // 업무분야 서브메뉴 선택
+        // 업무분야 서브메뉴 선택 - API 데이터 기반으로 동적 매칭
         const tab = query.tab as string;
-        if (tab === 'consulting') {
-          setSelectedSubItem(1); // 컨설팅
+        if (tab && businessAreaCategories.length > 0) {
+          const categoryIndex = businessAreaCategories.findIndex(cat => String(cat.id) === tab);
+          if (categoryIndex !== -1) {
+            setSelectedSubItem(categoryIndex);
+          } else {
+            setSelectedSubItem(null);
+          }
         } else {
-          setSelectedSubItem(0); // 업종별 (기본값)
+          setSelectedSubItem(null);
         }
       } else {
         // 기본값은 첫 번째 메뉴 항목
@@ -120,7 +151,7 @@ const Menu: React.FC<MenuProps> = ({ isOpen, onClose }) => {
         setSelectedSubItem(null);
       }
     }
-  }, [isOpen, router.pathname, router.query, historyExposed]);
+  }, [isOpen, router.pathname, router.query, historyExposed, businessAreaCategories, dataRooms]);
 
   useEffect(() => {
     if (isOpen && !hasBeenOpened) {
@@ -211,6 +242,31 @@ const Menu: React.FC<MenuProps> = ({ isOpen, onClose }) => {
     }
   }, [isOpen]);
 
+  // 메뉴가 열릴 때 Business Area categories 확인
+  useEffect(() => {
+    if (isOpen) {
+      const fetchBusinessAreaCategories = async () => {
+        try {
+          const response = await get<HierarchicalData[]>(
+            `${API_ENDPOINTS.BUSINESS_AREAS_HIERARCHICAL}?limit=20&page=1`
+          );
+          if (response.data && Array.isArray(response.data)) {
+            const categories = response.data
+              .map(item => item.majorCategory)
+              .filter(cat => cat.isExposed)
+              .sort((a, b) => a.displayOrder - b.displayOrder);
+            setBusinessAreaCategories(categories);
+          } else {
+            setBusinessAreaCategories([]);
+          }
+        } catch {
+          setBusinessAreaCategories([]);
+        }
+      };
+      fetchBusinessAreaCategories();
+    }
+  }, [isOpen]);
+
   const handleClose = () => {
     setIsClosing(true);
     setTimeout(() => {
@@ -267,12 +323,15 @@ const Menu: React.FC<MenuProps> = ({ isOpen, onClose }) => {
     handleClose();
     
     if (selectedItem === 'services') {
-      // 업무분야 서브메뉴
-      if (subItem === '업종별') {
-        setTimeout(() => router.push('/business-areas/hierarchical'), 500);
-      } else if (subItem === '컨설팅') {
-        // 컨설팅 탭으로 이동 - URL에 탭 정보를 포함할 수 있도록 처리
-        setTimeout(() => router.push('/business-areas/hierarchical?tab=consulting'), 500);
+      // 업무분야 서브메뉴 - API 데이터 기반으로 동적 라우팅
+      const servicesMenuItem = menuItems.find(item => item.id === 'services');
+      if (servicesMenuItem && servicesMenuItem.subItemIds) {
+        const categoryIndex = servicesMenuItem.subItems.findIndex(name => name === subItem);
+        if (categoryIndex !== -1 && servicesMenuItem.subItemIds[categoryIndex]) {
+          const categoryId = servicesMenuItem.subItemIds[categoryIndex];
+          // Navigate with category ID to auto-open the category
+          setTimeout(() => router.push(`/business-areas/hierarchical?tab=${categoryId}`), 500);
+        }
       }
     } else if (selectedItem === 'about') {
       // 함께소개 서브메뉴

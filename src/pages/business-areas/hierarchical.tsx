@@ -91,14 +91,20 @@ const HierarchicalPage: React.FC = () => {
 
           // 탭 목록에서 기본 활성 탭 결정 (URL 쿼리 우선)
           const tabIds = apiData.map((item) => String(item.majorCategory.id));
+          let selectedTabId: string;
           if (tabFromQuery && tabIds.includes(tabFromQuery)) {
+            selectedTabId = tabFromQuery;
             setActiveTab(tabFromQuery);
           } else {
+            selectedTabId = tabIds[0];
             setActiveTab(tabIds[0]);
           }
 
-          // 첫 번째 대분류의 첫 번째 소분류를 기본으로 펼침
-          const firstMinorId = apiData[0]?.minorCategories?.[0]?.id;
+          // 선택된 대분류의 첫 번째 소분류를 기본으로 펼침
+          const selectedMajor = apiData.find(
+            (item) => String(item.majorCategory.id) === selectedTabId
+          );
+          const firstMinorId = selectedMajor?.minorCategories?.[0]?.id;
           if (firstMinorId) {
             setExpandedCategories(new Set([firstMinorId]));
           }
@@ -195,6 +201,14 @@ const HierarchicalPage: React.FC = () => {
                 undefined,
                 { shallow: true }
               );
+              // 선택된 대분류의 첫 번째 소분류를 자동으로 펼침
+              const selectedMajor = data.find(
+                (item) => String(item.majorCategory.id) === id
+              );
+              const firstMinorId = selectedMajor?.minorCategories?.[0]?.id;
+              if (firstMinorId) {
+                setExpandedCategories(new Set([firstMinorId]));
+              }
             }}
           />
 

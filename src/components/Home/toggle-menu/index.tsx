@@ -77,10 +77,14 @@ export default function ToggleMenu({
     if (!rootId) return;
 
     if (rootId === "services") {
-      if (subItem === "업종별") {
+      // Use subItemIds if available (from API data)
+      const servicesItem = effectiveMenuItems.find(mi => mi.id === "services");
+      if (servicesItem && servicesItem.subItemIds && servicesItem.subItemIds.length > index) {
+        const categoryId = servicesItem.subItemIds[index];
+        router.push(`/business-areas/hierarchical?tab=${categoryId}`);
+      } else {
+        // Fallback for standalone use without API data
         router.push("/business-areas/hierarchical");
-      } else if (subItem === "컨설팅") {
-        router.push("/business-areas/hierarchical?tab=consulting");
       }
     } else if (rootId === "about") {
       const tabMap: { [key: string]: string } = {

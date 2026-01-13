@@ -2,6 +2,7 @@ export interface MenuItemConfig {
   id: string;
   title: string;
   subItems: string[];
+  subItemIds?: (string | number)[]; // Store category IDs for navigation
 }
 
 // 공통 헤더 메뉴 구성 (라벨 및 서브메뉴 이름)
@@ -9,7 +10,8 @@ export const MENU_ITEMS: MenuItemConfig[] = [
   {
     id: 'services',
     title: '업무분야',
-    subItems: ['업종별', '컨설팅'],
+    subItems: [], // Will be populated from API
+    subItemIds: [], // Will be populated from API
   },
   {
     id: 'experts',
