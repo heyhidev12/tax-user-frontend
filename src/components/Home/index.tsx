@@ -112,7 +112,7 @@ export default function Home() {
               <h1>
                 Your <br /> Trusted Partner
               </h1>
-              <ViewMore />
+              <ViewMore target="about-intro" />
             </div>
 
             <div className={styles.right}>

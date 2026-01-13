@@ -173,7 +173,7 @@ const Clients: React.FC = () => {
       </div>
 
       <div className={styles['clients-section__footer']}>
-        <ViewMore />
+        <ViewMore target="clients-customers" />
       </div>
     </section>
   );

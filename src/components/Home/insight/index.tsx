@@ -107,9 +107,9 @@ const Insight: React.FC = () => {
             grabCursor={true}
             breakpoints={{
 
-              375: {
+              300: {
                 slidesPerView: 1.2,
-                spaceBetween: 20,
+                spaceBetween: 16,
               },
               640: {
                 slidesPerView: 2,
@@ -164,7 +164,7 @@ const Insight: React.FC = () => {
         </div>
 
         <div className={styles['insight-footer']}>
-          <ViewMore />
+          <ViewMore target="insights" />
         </div>
       </div>
     </section>

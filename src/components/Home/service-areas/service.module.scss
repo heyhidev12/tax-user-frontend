@@ -309,9 +309,14 @@ $bg-light: #f8f8f8;
 
     .swiper-slide {
       height: auto;
+      display: flex;
+      justify-content: center;
+      box-sizing: border-box;
 
-      @media (max-width: 767px) {
+      // Ensure cards scale properly on tablet/mobile
+      @media (max-width: 1349px) {
         width: auto !important;
+        flex-shrink: 0;
       }
     }
   }
@@ -359,22 +364,27 @@ $bg-light: #f8f8f8;
     }
   }
 
-  // Mobile grid (2 columns with vertical cards)
+  // Mobile grid (2 columns x 2 rows = 4 cards per slide)
   &--mobile {
-    display: flex;
-    flex-direction: row;
-    gap: 12px;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    gap: 24px 16px;
+    width: 100%;
     padding-right: 0;
-    width: auto;
+  }
 
-    .cards-column {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
+  // Tablet grid (3 columns x 2 rows = 6 cards per slide)
+  &--tablet {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    gap: 24px;
+    width: 100%;
+    padding-right: 0;
 
-      &--offset {
-        margin-top: 40px;
-      }
+    @media (max-width: 1024px) {
+      gap: 20px;
     }
   }
 
@@ -412,7 +422,9 @@ $bg-light: #f8f8f8;
   overflow: hidden;
   cursor: pointer;
   height: 400px;
-  width: 320px;
+  width: 100%;
+  max-width: 320px;
+  min-width: 0; // Allow card to shrink below max-width when needed
   transition: all 0.3s ease;
   flex-shrink: 0;
 
@@ -422,7 +434,7 @@ $bg-light: #f8f8f8;
 
   @media (max-width: 767px) {
     height: 190px;
-    width: 150px;
+    // width: 150px;
   }
 
   &:hover,
