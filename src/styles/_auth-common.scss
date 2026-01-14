@@ -8,9 +8,9 @@
   flex-direction: column;
   position: relative;
 
-  @media (max-width: 767px) {
-    padding-top: 56px;
-  }
+  // @media (max-width: 767px) {
+  //   padding-top: 56px;
+  // }
 }
 
 .auth-content-section {
@@ -113,7 +113,7 @@
 border: 1px solid  #E4E4E4;
 
   @media (max-width: $breakpoint-tablet) {
-    padding: 48px 24px 60px;
+    padding: 48px 20px 60px;
   }
 }
 

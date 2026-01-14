@@ -11,6 +11,9 @@
   display: flex;
   align-items: center;
   justify-content: center;
+   @media (max-width: 767px) {
+    height: 250px;
+  }
 }
 
 // Step Indicator
@@ -193,6 +196,9 @@
       background: $gray-40; // #555 (grayscale-70)
       color: white; // #8E8E8E (grayscale-50)
     }
+     @media (max-width: 767px) {
+    width: 100%;
+  }
   }
 }
 
@@ -482,6 +488,12 @@
   }
 }
 
+.signup-phone-input-verification{
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
 .signup-carrier-select-wrapper {
   position: relative;
   width: 148px;
@@ -569,8 +581,9 @@
 
 .signup-request-verification-button {
   width: 101px; // Figma 디자인: 101px width
-  height: 48px; // Figma 디자인: 48px height
+  height: 48px !important; // Figma 디자인: 48px height
   flex-shrink: 0;
+  padding: 6px !important;
 }
 
 // Verification Code Input Group

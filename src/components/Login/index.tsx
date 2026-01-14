@@ -106,7 +106,7 @@ const Login: React.FC = () => {
 
   return (
     <div className="auth-page-container">
-      <Header variant="white" onMenuClick={() => setIsMenuOpen(true)} />
+      <Header variant="transparent" onMenuClick={() => setIsMenuOpen(true)} />
       <Menu isOpen={isMenuOpen} onClose={() => setIsMenuOpen(false)} />
 
       <div className="login-page">

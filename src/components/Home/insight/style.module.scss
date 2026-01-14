@@ -2,7 +2,7 @@
 $teal: #00a89e;
 $teal-light: #c9e9e7;
 $text-dark: #002c2c;
-$text-gray: #8E8E8E;
+$text-gray: #8e8e8e;
 $bg-light: #f5f5f5;
 
 .insight-section {
@@ -25,7 +25,7 @@ $bg-light: #f5f5f5;
     background-color: #f8f8f8;
 
     @media (max-width: 767px) {
-      width: 60%;
+      width: 88%;
       height: 200px;
     }
   }
@@ -71,6 +71,7 @@ $bg-light: #f5f5f5;
     @media (max-width: 767px) {
       font-size: 110px;
       left: auto;
+      top: -12px;
     }
   }
 
@@ -96,9 +97,8 @@ $bg-light: #f5f5f5;
     align-items: flex-start;
     gap: 12px;
 
-
     @media (max-width: 767px) {
-      font-size: 56px;
+      font-size: 44px;
       gap: 6px;
       margin-bottom: 12px;
     }
@@ -135,6 +135,11 @@ $bg-light: #f5f5f5;
 // Slider
 .insight-slider {
   margin-bottom: 80px;
+  margin-left: 22.5%;
+
+  @media (max-width: 1024px) {
+    margin-left: 0;
+  }
 
   @media (max-width: 767px) {
     margin-bottom: 24px;
@@ -148,8 +153,8 @@ $bg-light: #f5f5f5;
     height: auto;
 
     @media (max-width: 767px) {
-    width: 260px !important;
-  }
+      // width: 260px !important;
+    }
   }
 }
 
@@ -164,11 +169,11 @@ $bg-light: #f5f5f5;
   display: flex;
   flex-direction: column;
   border: 3px solid transparent;
-  // width: 400px;
-  // height: 385px;
+  width: 100%;
+  cursor: pointer;
+    aspect-ratio: 1 / 1;
 
   @media (max-width: 767px) {
-    // width: 260px;
     height: auto;
     min-height: 280px;
     border-width: 2px;
@@ -182,23 +187,15 @@ $bg-light: #f5f5f5;
 
   &__image {
     width: 100%;
-    height: 250px;
+    aspect-ratio: 5 / 3;
+    // ← 인사이트 카드 비율 (Figma 기준)
     overflow: hidden;
-
-    @media (max-width: 450px) {
-      height: 160px;
-      border-radius: 8px 8px 0 0;
-    }
 
     img {
       width: 100%;
       height: 100%;
       object-fit: cover;
       transition: transform 0.4s ease;
-
-      @media (max-width: 767px) {
-        border-radius: 6px 6px 0 0;
-      }
     }
   }
 
@@ -224,6 +221,8 @@ $bg-light: #f5f5f5;
     -webkit-box-orient: vertical;
     overflow: hidden;
     flex: 1;
+    max-height: 56px;
+    min-height: 56px;
 
     @media (max-width: 767px) {
       font-size: 14px;
@@ -246,10 +245,15 @@ $bg-light: #f5f5f5;
 
 // Progress Bar
 .insight-progress {
-  max-width: 700px;
+   max-width: 1440px;
   margin: 0 auto;
   cursor: pointer;
-  padding: 10px 0;
+  padding: 10px 2rem 10px 22.5%;
+
+  @media (max-width: 1024px) {
+    padding-left:0;
+    padding-right:0;
+  }
 
   @media (max-width: 767px) {
     display: none;

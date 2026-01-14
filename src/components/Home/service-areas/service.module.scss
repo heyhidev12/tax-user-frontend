@@ -40,7 +40,7 @@ $bg-light: #f8f8f8;
     @media (max-width: 767px) {
       width: 400px;
       height: 400px;
-      top: 80px;
+      top: 245px;
       left: -100px;
     }
 
@@ -71,7 +71,7 @@ $bg-light: #f8f8f8;
     padding-left: 30px;
 
     @media (max-width: 767px) {
-      padding-left: 20px;
+      padding-left: 0px;
       margin-left: 0;
     }
 
@@ -86,7 +86,6 @@ $bg-light: #f8f8f8;
 
       @media (max-width: 767px) {
         font-size: 110px;
-        margin-bottom: -45px;
         margin-left: -10px;
       }
     }
@@ -94,6 +93,7 @@ $bg-light: #f8f8f8;
     .title-wrapper {
       display: flex;
       align-items: flex-start;
+      margin-bottom: 48px;
     }
 
     .title {
@@ -109,7 +109,7 @@ $bg-light: #f8f8f8;
       }
 
       @media (max-width: 767px) {
-        font-size: 56px;
+        font-size: 44px;
         line-height: 1.1;
       }
     }
@@ -184,7 +184,6 @@ $bg-light: #f8f8f8;
     padding-top: 20px;
 
     @media (max-width: 767px) {
-      padding: 0 20px;
       min-width: auto;
       padding-top: 0;
     }
@@ -263,7 +262,6 @@ $bg-light: #f8f8f8;
     }
 
     @media (max-width: 767px) {
-      padding-left: 20px;
       overflow: visible;
     }
 
@@ -368,7 +366,6 @@ $bg-light: #f8f8f8;
   &--mobile {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    grid-template-rows: repeat(2, 1fr);
     gap: 24px 16px;
     width: 100%;
     padding-right: 0;
@@ -421,19 +418,21 @@ $bg-light: #f8f8f8;
   position: relative;
   overflow: hidden;
   cursor: pointer;
-  height: 400px;
-  width: 100%;
+  // height: 400px;
   max-width: 320px;
   min-width: 0; // Allow card to shrink below max-width when needed
   transition: all 0.3s ease;
   flex-shrink: 0;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
 
   .service-card__arrow {
     transform: rotate(45deg);
   }
 
   @media (max-width: 767px) {
-    height: 190px;
+    // height: 190px;
     // width: 150px;
   }
 
@@ -454,11 +453,10 @@ $bg-light: #f8f8f8;
   }
 
   &__image {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
+    width: 100%;
+    aspect-ratio: 3 / 4; // FIGMA ga mos nisbat
+    overflow: hidden;
+    border-radius: 12px;
 
     @media (max-width: 767px) {
       border-radius: 4px;

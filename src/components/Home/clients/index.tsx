@@ -122,6 +122,9 @@ const Clients: React.FC = () => {
           <span className={styles['clients-section__subtitle']}>주요 고객</span>
           <h2 className={styles['clients-section__title']}>CLIENTS</h2>
         </div>
+        <div className={styles['clients-section__view']}>
+        <ViewMore target="clients-customers" />
+      </div>
       </div>
 
       <div className={styles['clients-marquee']}>

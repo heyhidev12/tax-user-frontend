@@ -91,6 +91,7 @@ const TrustedExperts: React.FC = () => {
 
   return (
     <section className={styles["trusted-experts"]}>
+      
       <div className={styles["trusted-experts__header"]}>
         <div className={styles["trusted-experts__square"]}></div>
 
@@ -107,7 +108,7 @@ const TrustedExperts: React.FC = () => {
               EXPERTS
             </h2>
           </div>
-          <div className="view-more">
+          <div className={styles.viewMore}>
             <ViewMore target="experts" />
           </div>
         </div>
@@ -130,7 +131,7 @@ const TrustedExperts: React.FC = () => {
           }}
           breakpoints={{
             0: {
-              slidesPerView: 1.3,
+              slidesPerView: 1.2,
               spaceBetween: 16,
             },
             576: {
@@ -143,11 +144,11 @@ const TrustedExperts: React.FC = () => {
             },
             1024: {
               slidesPerView: 3.5,
-              spaceBetween: 18,
+              spaceBetween: 20,
             },
             1280: {
               slidesPerView: 4.5,
-              spaceBetween: 20,
+              spaceBetween: 24,
             },
           }}
           onInit={(swiper) => {

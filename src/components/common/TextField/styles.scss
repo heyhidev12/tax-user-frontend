@@ -1,10 +1,15 @@
-@import '../../../styles/variables';
+@import "../../../styles/variables";
 
 // ==================== TextField ====================
+
 .textfield {
   display: flex;
   flex-direction: column;
   gap: 8px;
+
+  &__input {
+    caret-color: #00a89e;
+  }
 
   &--full-width {
     width: 100%;
@@ -85,7 +90,7 @@
     &:hover {
       // opacity: 0.8;
     }
-    
+
     svg {
       width: 20px;
       height: 20px;
@@ -491,7 +496,7 @@
 
   // Focus state
   &--focus {
-    border-color: $navy-30; // #94B9E3
+    border-color: $primary-50; // #94B9E3
 
     .searchfield__input::placeholder {
       color: $gray-60; // #717171
@@ -537,7 +542,8 @@
 
 // ==================== Animations ====================
 @keyframes blink {
-  0%, 100% {
+  0%,
+  100% {
     opacity: 1;
   }
   50% {

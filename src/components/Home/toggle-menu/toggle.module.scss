@@ -58,7 +58,8 @@ $bg-color: #f8f8f8;
   flex-direction: column;
   transform: translateX(100%);
   transition: transform 0.3s ease;
-  overflow: hidden;
+    overflow-y: auto;
+
 
   @media (min-width: 767px) {
     width: 800px;
@@ -193,7 +194,6 @@ $bg-color: #f8f8f8;
 // ==========================================
 .menu {
   flex: 1;
-  overflow-y: auto;
   padding: 56px 160px 40px 80px;
   margin-right: 180px;
   border-right: 1px solid $border-color;
@@ -363,36 +363,47 @@ $bg-color: #f8f8f8;
 // ==========================================
 @media (max-width: 767px) {
   .header {
-    padding: 24px 20px;
-    border-bottom: 1px solid $border-color;
+    padding: 12px 20px;
+    border-bottom: none;
+    position: relative;
   }
 
   .authSection {
-    padding: 0 20px 16px;
-    border-right: none;
+    position: absolute;
+    right: 0;
+    top: 100%;
+    padding: 16px 40px 32px;
+  }
+
+  .closeBtn{
+    padding: 0;
+    width: auto;
+    svg{
+      width: 32px;
+      height: 32px;
+    }
   }
 
   .menu {
-    padding: 40px 24px 40px 24px;
+    padding: 48px 40px;
     margin-right: 0;
     border-right: none;
   }
 
   .menuTitle {
-    font-size: 18px;
-    color: $text-dark;
+    font-size: 25px;
   }
 
   .toggleIcon {
-    font-size: 20px;
+    font-size: 25px;
   }
 
   .arrowIcon {
-    font-size: 18px;
+    font-size: 25px;
   }
 
   .subMenu {
-    padding-left: 16px;
+    padding-left: 15px;
   }
 
   .subMenuItem {
