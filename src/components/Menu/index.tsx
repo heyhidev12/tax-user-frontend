@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/router';
 import { get } from '@/lib/api';
 import { API_ENDPOINTS } from '@/config/api';
@@ -72,6 +72,12 @@ const Menu: React.FC<MenuProps> = ({ isOpen, onClose }) => {
 
   // Insights categories from API
   const [insightCategories, setInsightCategories] = useState<InsightCategory[]>([]);
+
+  // Cache flags to prevent redundant API calls
+  const historyFetchedRef = useRef<boolean>(false);
+  const dataRoomsFetchedRef = useRef<boolean>(false);
+  const businessAreaCategoriesFetchedRef = useRef<boolean>(false);
+  const insightCategoriesFetchedRef = useRef<boolean>(false);
 
   // 연혁 노출 여부 및 자료실 목록에 따라 메뉴 아이템 동적 생성
   const menuItems: MenuItemConfig[] = MENU_ITEMS.map(item => {
@@ -245,9 +251,10 @@ const Menu: React.FC<MenuProps> = ({ isOpen, onClose }) => {
     };
   }, [isOpen]);
 
-  // 메뉴가 열릴 때 연혁 노출 여부 확인
+  // 메뉴가 열릴 때 연혁 노출 여부 확인 (캐시된 경우 재요청하지 않음)
   useEffect(() => {
-    if (isOpen) {
+    if (isOpen && !historyFetchedRef.current) {
+      console.log('[Menu] Fetching history exposed status (first time)');
       const checkHistoryExposed = async () => {
         try {
           const response = await get<HistoryResponse>(API_ENDPOINTS.HISTORY);
@@ -256,17 +263,22 @@ const Menu: React.FC<MenuProps> = ({ isOpen, onClose }) => {
           } else {
             setHistoryExposed(false);
           }
+          historyFetchedRef.current = true; // 캐시 플래그 설정
         } catch {
           setHistoryExposed(false);
+          historyFetchedRef.current = true; // 에러가 발생해도 재시도하지 않음
         }
       };
       checkHistoryExposed();
+    } else if (isOpen && historyFetchedRef.current) {
+      console.log('[Menu] History exposed status already cached, skipping API call');
     }
   }, [isOpen]);
 
-  // 메뉴가 열릴 때 자료실 목록 확인
+  // 메뉴가 열릴 때 자료실 목록 확인 (캐시된 경우 재요청하지 않음)
   useEffect(() => {
-    if (isOpen) {
+    if (isOpen && !dataRoomsFetchedRef.current) {
+      console.log('[Menu] Fetching data rooms (first time)');
       const fetchDataRooms = async () => {
         try {
           const response = await get<DataRoomsResponse>(API_ENDPOINTS.DATA_ROOMS);
@@ -275,17 +287,22 @@ const Menu: React.FC<MenuProps> = ({ isOpen, onClose }) => {
           } else {
             setDataRooms([]);
           }
+          dataRoomsFetchedRef.current = true; // 캐시 플래그 설정
         } catch {
           setDataRooms([]);
+          dataRoomsFetchedRef.current = true; // 에러가 발생해도 재시도하지 않음
         }
       };
       fetchDataRooms();
+    } else if (isOpen && dataRoomsFetchedRef.current) {
+      console.log('[Menu] Data rooms already cached, skipping API call');
     }
   }, [isOpen]);
 
-  // 메뉴가 열릴 때 Business Area categories 확인
+  // 메뉴가 열릴 때 Business Area categories 확인 (캐시된 경우 재요청하지 않음)
   useEffect(() => {
-    if (isOpen) {
+    if (isOpen && !businessAreaCategoriesFetchedRef.current) {
+      console.log('[Menu] Fetching business area categories (first time)');
       const fetchBusinessAreaCategories = async () => {
         try {
           const response = await get<HierarchicalData[]>(
@@ -300,17 +317,22 @@ const Menu: React.FC<MenuProps> = ({ isOpen, onClose }) => {
           } else {
             setBusinessAreaCategories([]);
           }
+          businessAreaCategoriesFetchedRef.current = true; // 캐시 플래그 설정
         } catch {
           setBusinessAreaCategories([]);
+          businessAreaCategoriesFetchedRef.current = true; // 에러가 발생해도 재시도하지 않음
         }
       };
       fetchBusinessAreaCategories();
+    } else if (isOpen && businessAreaCategoriesFetchedRef.current) {
+      console.log('[Menu] Business area categories already cached, skipping API call');
     }
   }, [isOpen]);
 
-  // 메뉴가 열릴 때 Insights categories 확인
+  // 메뉴가 열릴 때 Insights categories 확인 (캐시된 경우 재요청하지 않음)
   useEffect(() => {
-    if (isOpen) {
+    if (isOpen && !insightCategoriesFetchedRef.current) {
+      console.log('[Menu] Fetching insight categories (first time)');
       const fetchInsightCategories = async () => {
         try {
           const response = await get<InsightHierarchicalData>(
@@ -326,11 +348,15 @@ const Menu: React.FC<MenuProps> = ({ isOpen, onClose }) => {
           } else {
             setInsightCategories([]);
           }
+          insightCategoriesFetchedRef.current = true; // 캐시 플래그 설정
         } catch {
           setInsightCategories([]);
+          insightCategoriesFetchedRef.current = true; // 에러가 발생해도 재시도하지 않음
         }
       };
       fetchInsightCategories();
+    } else if (isOpen && insightCategoriesFetchedRef.current) {
+      console.log('[Menu] Insight categories already cached, skipping API call');
     }
   }, [isOpen]);
 
