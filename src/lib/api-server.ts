@@ -138,9 +138,10 @@ export const del = <T = unknown>(endpoint: string, options?: RequestOptions) =>
 
 /**
  * 쿠키에서 토큰 가져오기 (서버 사이드)
+ * Note: Only works with getServerSideProps, not getStaticProps (no request context at build time)
  */
-export const getTokenFromCookies = (context: GetServerSidePropsContext | GetStaticPropsContext): string | null => {
-  const cookies = context.req?.headers?.cookie || '';
+export const getTokenFromCookies = (context: GetServerSidePropsContext): string | null => {
+  const cookies = context.req.headers.cookie || '';
   if (!cookies) return null;
 
   const tokenMatch = cookies.match(/(?:^|;\s*)accessToken=([^;]*)/);

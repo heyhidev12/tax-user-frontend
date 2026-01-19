@@ -1530,7 +1530,7 @@ const BusinessAreaDetailPage: React.FC<BusinessAreaDetailPageProps> = ({ data: i
       </section>
       <Footer />
       </div>
-    </>
+    // </>
   );
 };
 

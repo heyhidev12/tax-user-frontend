@@ -119,27 +119,27 @@ const ConsultationApplyPage: React.FC = () => {
       if (!router.isReady) {
         return;
       }
-      
+
       // expertId가 있으면 스킵 (expert-specific workAreas가 로드될 것임)
       if (router.query.expertId) {
         console.log('[Consultation Apply] Skipping initial categories fetch, expertId present');
         return;
       }
-      
+
       // expert-specific workAreas가 이미 로드되었으면 스킵
       if (expertWorkAreasLoadedRef.current) {
         console.log('[Consultation Apply] Skipping initial categories fetch, expert workAreas already loaded');
         return;
       }
-      
+
       try {
         const response = await get<CategoryItem[]>(API_ENDPOINTS.BUSINESS_AREAS_CATEGORIES);
         if (response.data) {
           const options: SelectOption[] = response.data
-              .filter(item => item.isExposed)
-              .map(item => ({
-                value: item.id.toString(),
-                label: item.name
+            .filter(item => item.isExposed)
+            .map(item => ({
+              value: item.id.toString(),
+              label: item.name
             }));
           setConsultationFields(options);
         }
@@ -155,15 +155,15 @@ const ConsultationApplyPage: React.FC = () => {
   useEffect(() => {
     // router가 준비될 때까지 대기
     if (!router.isReady) return;
-    
+
     const expertId = router.query.expertId as string;
-    
+
     // expertId가 없거나 이미 해당 expertId로 설정되어 있으면 스킵
     if (!expertId) {
       console.log('[Consultation Apply] No expertId in query, skipping');
       return;
     }
-    
+
     // 이미 같은 expertId로 설정되어 있으면 스킵
     if (formData.taxAccountant === expertId) {
       console.log('[Consultation Apply] Expert already selected, skipping');
@@ -182,12 +182,12 @@ const ConsultationApplyPage: React.FC = () => {
 
         if (expertResponse.data) {
           const expert = expertResponse.data;
-          
+
           // 첫 번째 workArea ID 추출
           let firstWorkAreaId: string | null = null;
           if (expert.workAreas && expert.workAreas.length > 0) {
             const firstWorkArea = expert.workAreas[0];
-            
+
             if (typeof firstWorkArea === 'object' && firstWorkArea.id) {
               firstWorkAreaId = firstWorkArea.id.toString();
               console.log('[Consultation Apply] Extracted workAreaId from object:', firstWorkAreaId);
@@ -215,7 +215,7 @@ const ConsultationApplyPage: React.FC = () => {
           const categoriesResponse = await get<CategoryItem[]>(
             `${API_ENDPOINTS.BUSINESS_AREAS_CATEGORIES}?memberId=${expertId}`
           );
-          
+
           if (categoriesResponse.data && categoriesResponse.data.length > 0) {
             const workAreaOptions: SelectOption[] = categoriesResponse.data
               .filter(item => item.isExposed)
@@ -227,7 +227,7 @@ const ConsultationApplyPage: React.FC = () => {
             // 전문가의 모든 업무 분야를 consultationFields에 설정 (드롭다운에 모두 표시됨)
             setConsultationFields(workAreaOptions);
             expertWorkAreasLoadedRef.current = true; // 플래그 설정하여 초기 fetch가 덮어쓰지 않도록 함
-            
+
             // 첫 번째 workArea ID가 가져온 목록에 있는지 확인
             let workAreaIdToSet = firstWorkAreaId;
             if (firstWorkAreaId) {
@@ -242,14 +242,14 @@ const ConsultationApplyPage: React.FC = () => {
               workAreaIdToSet = workAreaOptions[0].value;
               console.log('[Consultation Apply] No workAreaId found, using first available:', workAreaIdToSet);
             }
-            
+
             // 2. 해당 workArea의 전문가 목록 가져오기
             if (workAreaIdToSet) {
               console.log('[Consultation Apply] Step 2: Fetching experts for workArea:', workAreaIdToSet);
               const expertsResponse = await get<MembersResponse>(
                 `${API_ENDPOINTS.MEMBERS}?page=1&limit=100&workArea=${workAreaIdToSet}`
               );
-              
+
               if (expertsResponse.data?.items) {
                 const expertOptions: SelectOption[] = expertsResponse.data.items
                   .filter(item => item.isExposed)
@@ -258,12 +258,12 @@ const ConsultationApplyPage: React.FC = () => {
                     label: item.name
                   }));
                 console.log('[Consultation Apply] Step 2: Fetched experts:', expertOptions.length);
-                
+
                 // 선택한 전문가가 목록에 있는지 확인
                 const expertExists = expertOptions.some(opt => opt.value === expertId);
                 if (expertExists) {
                   setTaxAccountants(expertOptions);
-                  
+
                   // 3. 양쪽 모두 설정
                   console.log('[Consultation Apply] Step 3: Setting both expert and workArea');
                   setFormData(prev => ({
@@ -402,20 +402,20 @@ const ConsultationApplyPage: React.FC = () => {
         );
         if (response.data?.items) {
           const options: SelectOption[] = response.data.items
-              .filter(item => item.isExposed)
-              .map(item => ({
-                value: item.id.toString(),
-                label: item.name
+            .filter(item => item.isExposed)
+            .map(item => ({
+              value: item.id.toString(),
+              label: item.name
             }));
           console.log('[handleFieldChange] Fetched experts for workArea:', options.length, 'experts');
           setTaxAccountants(options);
-          
+
           // 이전에 선택된 세무사가 새로운 목록에 있는지 확인
-          const isValidAccountant = previousTaxAccountant && 
+          const isValidAccountant = previousTaxAccountant &&
             options.some(opt => opt.value === previousTaxAccountant);
-          
+
           console.log('[handleFieldChange] isValidAccountant:', isValidAccountant, 'for expertId:', previousTaxAccountant);
-          
+
           // 유효하지 않으면 세무사 선택 초기화
           setFormData(prev => ({
             ...prev,
@@ -449,7 +449,7 @@ const ConsultationApplyPage: React.FC = () => {
         taxAccountant: ''
       }));
     }
-    
+
     setSearchFieldQuery('');
     setSearchAccountantQuery('');
     setIsFieldDropdownOpen(false);
@@ -458,7 +458,7 @@ const ConsultationApplyPage: React.FC = () => {
   const handleAccountantChange = async (value: string) => {
     const previousConsultationField = formData.consultationField;
     console.log('[handleAccountantChange] Called with value:', value, 'previousConsultationField:', previousConsultationField);
-    
+
     // 세무사가 선택된 경우 해당 세무사의 업무 분야 목록 조회
     if (value) {
       try {
@@ -474,13 +474,13 @@ const ConsultationApplyPage: React.FC = () => {
             }));
           console.log('[handleAccountantChange] Fetched workAreas for expert:', options.length, 'workAreas');
           setConsultationFields(options);
-          
+
           // 이전에 선택된 분야가 새로운 목록에 있는지 확인
-          const isValidField = previousConsultationField && 
+          const isValidField = previousConsultationField &&
             options.some(opt => opt.value === previousConsultationField);
-          
+
           console.log('[handleAccountantChange] isValidField:', isValidField, 'for workAreaId:', previousConsultationField);
-          
+
           // 유효하지 않으면 분야 선택 초기화
           setFormData(prev => ({
             ...prev,
@@ -521,9 +521,9 @@ const ConsultationApplyPage: React.FC = () => {
       } catch (error) {
         console.error('Failed to fetch categories:', error);
       }
-    setFormData(prev => ({ ...prev, taxAccountant: value }));
+      setFormData(prev => ({ ...prev, taxAccountant: value }));
     }
-    
+
     setSearchAccountantQuery('');
     setIsAccountantDropdownOpen(false);
   };
@@ -647,6 +647,15 @@ const ConsultationApplyPage: React.FC = () => {
       }
 
       setIsSuccessModalOpen(true);
+      console.log("GA EVENT FIRED");
+
+      if (window.gtag) {
+        window.gtag("event", "consultation_submit", {
+          event_category: "lead",
+          event_label: "consultation_form",
+        });
+      }
+
     } catch (error) {
       console.error('Consultation submission error:', error);
       const errorMessage = error instanceof Error ? error.message : '상담 신청에 실패했습니다. 다시 시도해주세요.';
@@ -680,18 +689,18 @@ const ConsultationApplyPage: React.FC = () => {
         onLogoClick={() => router.push('/')}
       />
       <Menu isOpen={isMenuOpen} onClose={() => setIsMenuOpen(false)} />
-        <div className={styles.headerImage}>
-          <p>CONTACT</p>
-          <h1>세무법인 함께 상담 신청</h1>
-        </div>
+      <div className={styles.headerImage}>
+        <p>CONTACT</p>
+        <h1>세무법인 함께 상담 신청</h1>
+      </div>
 
       <div className={styles.pageContent}>
-      
+
 
         {/* Form Section */}
         <div className={styles.formSection}>
           <div className={styles.formContainer}>
-            
+
 
             <form onSubmit={handleSubmit} className={styles.form}>
               <div className={styles.formFields}>
@@ -767,20 +776,20 @@ const ConsultationApplyPage: React.FC = () => {
                           </button>
                         )}
                         {focusedField !== 'consultationField' && (
-                        <svg
-                          width="20"
-                          height="20"
-                          viewBox="0 0 20 20"
-                          fill="none"
-                          className={`${styles.selectArrow} ${isFieldDropdownOpen ? styles.selectArrowOpen : ''}`}
-                        >
-                          <path
-                            d="M5 7.5L10 12.5L15 7.5"
+                          <svg
+                            width="20"
+                            height="20"
+                            viewBox="0 0 20 20"
+                            fill="none"
+                            className={`${styles.selectArrow} ${isFieldDropdownOpen ? styles.selectArrowOpen : ''}`}
+                          >
+                            <path
+                              d="M5 7.5L10 12.5L15 7.5"
                               stroke="#555"
-                            strokeWidth="1.5"
-                            strokeLinecap="round"
-                          />
-                        </svg>
+                              strokeWidth="1.5"
+                              strokeLinecap="round"
+                            />
+                          </svg>
                         )}
                       </div>
                       {isFieldDropdownOpen && (
@@ -886,20 +895,20 @@ const ConsultationApplyPage: React.FC = () => {
                           </button>
                         )}
                         {focusedField !== 'taxAccountant' && (
-                        <svg
-                          width="20"
-                          height="20"
-                          viewBox="0 0 20 20"
-                          fill="none"
-                          className={`${styles.selectArrow} ${isAccountantDropdownOpen ? styles.selectArrowOpen : ''}`}
-                        >
-                          <path
-                            d="M5 7.5L10 12.5L15 7.5"
+                          <svg
+                            width="20"
+                            height="20"
+                            viewBox="0 0 20 20"
+                            fill="none"
+                            className={`${styles.selectArrow} ${isAccountantDropdownOpen ? styles.selectArrowOpen : ''}`}
+                          >
+                            <path
+                              d="M5 7.5L10 12.5L15 7.5"
                               stroke="#555"
-                            strokeWidth="1.5"
-                            strokeLinecap="round"
-                          />
-                        </svg>
+                              strokeWidth="1.5"
+                              strokeLinecap="round"
+                            />
+                          </svg>
                         )}
                       </div>
                       {isAccountantDropdownOpen && (
@@ -932,13 +941,13 @@ const ConsultationApplyPage: React.FC = () => {
                       <span className={styles.required}>*</span>
                     </label>
                     <div className={styles.inputWrapper}>
-                    <input
-                      ref={nameInputRef}
-                      type="text"
-                      className={`${styles.textInput} ${getFieldError('name') ? styles.textInputError : ''}`}
-                      placeholder="이름을 입력해주세요"
-                      value={formData.name}
-                      onChange={(e) => handleInputChange('name')(e.target.value)}
+                      <input
+                        ref={nameInputRef}
+                        type="text"
+                        className={`${styles.textInput} ${getFieldError('name') ? styles.textInputError : ''}`}
+                        placeholder="이름을 입력해주세요"
+                        value={formData.name}
+                        onChange={(e) => handleInputChange('name')(e.target.value)}
                         onFocus={() => setFocusedField('name')}
                         onBlur={() => {
                           handleBlur('name');
@@ -982,13 +991,13 @@ const ConsultationApplyPage: React.FC = () => {
                       <span className={styles.required}>*</span>
                     </label>
                     <div className={styles.inputWrapper}>
-                    <input
-                      ref={phoneInputRef}
-                      type="tel"
-                      className={`${styles.textInput} ${getFieldError('phone') ? styles.textInputError : ''}`}
-                      placeholder="휴대폰 번호를 입력해주세요"
-                      value={formData.phone}
-                      onChange={(e) => handleInputChange('phone')(e.target.value)}
+                      <input
+                        ref={phoneInputRef}
+                        type="tel"
+                        className={`${styles.textInput} ${getFieldError('phone') ? styles.textInputError : ''}`}
+                        placeholder="휴대폰 번호를 입력해주세요"
+                        value={formData.phone}
+                        onChange={(e) => handleInputChange('phone')(e.target.value)}
                         onFocus={() => setFocusedField('phone')}
                         onBlur={() => {
                           handleBlur('phone');
@@ -1034,14 +1043,14 @@ const ConsultationApplyPage: React.FC = () => {
                     <span className={styles.required}>*</span>
                   </label>
                   <div className={styles.textareaWrapper}>
-                  <textarea
-                    className={`${styles.textarea} ${getFieldError('additionalRequest') ? styles.textareaError : ''}`}
-                    placeholder="상담 내용을 입력해주세요"
-                    value={formData.additionalRequest}
-                    onChange={(e) => handleInputChange('additionalRequest')(e.target.value)}
-                    onBlur={() => handleBlur('additionalRequest')}
-                    rows={8}
-                  />
+                    <textarea
+                      className={`${styles.textarea} ${getFieldError('additionalRequest') ? styles.textareaError : ''}`}
+                      placeholder="상담 내용을 입력해주세요"
+                      value={formData.additionalRequest}
+                      onChange={(e) => handleInputChange('additionalRequest')(e.target.value)}
+                      onBlur={() => handleBlur('additionalRequest')}
+                      rows={8}
+                    />
                   </div>
                   {getFieldError('additionalRequest') && (
                     <p className={styles.fieldError}>{getFieldError('additionalRequest')}</p>
@@ -1110,7 +1119,7 @@ const ConsultationApplyPage: React.FC = () => {
       {isSuccessModalOpen && (
         <div className={styles.modalOverlay} onClick={handleSuccessModalClose}>
           <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
-            
+
             <div className={styles.modalBody}>
               <div className={styles.successIcon}>
                 <svg width="35" height="35" viewBox="0 0 35 35" fill="none">

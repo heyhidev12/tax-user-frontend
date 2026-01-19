@@ -68,7 +68,7 @@ interface InsightsPageProps {
   initialTotal: number;
   initialTotalPages: number;
   initialActiveTab: InsightTab;
-  initialLibraryDisplayType?: LibraryDisplayType;
+  initialLibraryDisplayType?: LibraryDisplayType | null;
   error: string | null;
 }
 
@@ -82,7 +82,7 @@ const InsightsPage: React.FC<InsightsPageProps> = ({
 }) => {
   const router = useRouter();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  
+
   // Query-based tab management (like History page)
   const tabFromQuery = router.query.tab as string;
   const validTabs = ["column", "library", "newsletter"];
@@ -97,59 +97,59 @@ const InsightsPage: React.FC<InsightsPageProps> = ({
   const [sortField, setSortField] = useState<SortField>(null);
   const [sortOrder, setSortOrder] = useState<SortOrder>("asc");
   const [newsletterName, setNewsletterName] = useState('');
-    const [newsletterEmail, setNewsletterEmail] = useState('');
-    const [privacyAgreed, setPrivacyAgreed] = useState(false);
-    const [optionalAgreed, setOptionalAgreed] = useState(false);
-    const [nameError, setNameError] = useState('');
-    const [emailError, setEmailError] = useState('');
-    const [isSubmitting, setIsSubmitting] = useState(false);
-    const [newsletterExposed, setNewsletterExposed] = useState(true);
-  
-    // 로그인된 사용자 정보로 뉴스레터 폼 미리 채우기
-    useEffect(() => {
-      const userStr = localStorage.getItem('user');
-      if (userStr) {
-        try {
-          const user = JSON.parse(userStr);
-          if (user.name && !newsletterName) {
-            setNewsletterName(user.name);
-          }
-          // email 또는 loginId(이메일 형식인 경우) 사용
-          const email = user.email || (user.loginId && user.loginId.includes('@') ? user.loginId : '');
-          if (email && !newsletterEmail) {
-            setNewsletterEmail(email);
-          }
-        } catch (e) {
-          // 파싱 실패 시 무시
+  const [newsletterEmail, setNewsletterEmail] = useState('');
+  const [privacyAgreed, setPrivacyAgreed] = useState(false);
+  const [optionalAgreed, setOptionalAgreed] = useState(false);
+  const [nameError, setNameError] = useState('');
+  const [emailError, setEmailError] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [newsletterExposed, setNewsletterExposed] = useState(true);
+
+  // 로그인된 사용자 정보로 뉴스레터 폼 미리 채우기
+  useEffect(() => {
+    const userStr = localStorage.getItem('user');
+    if (userStr) {
+      try {
+        const user = JSON.parse(userStr);
+        if (user.name && !newsletterName) {
+          setNewsletterName(user.name);
         }
+        // email 또는 loginId(이메일 형식인 경우) 사용
+        const email = user.email || (user.loginId && user.loginId.includes('@') ? user.loginId : '');
+        if (email && !newsletterEmail) {
+          setNewsletterEmail(email);
+        }
+      } catch (e) {
+        // 파싱 실패 시 무시
       }
-    }, []);
-  
-    // 뉴스레터 탭 노출 여부 확인
-    useEffect(() => {
-      const checkNewsletterExposed = async () => {
-        try {
-          const response = await get<{ isExposed: boolean }>(API_ENDPOINTS.NEWSLETTER.PAGE);
-          if (response.data) {
-            setNewsletterExposed(response.data.isExposed);
-          } else {
-            setNewsletterExposed(false);
-          }
-        } catch {
+    }
+  }, []);
+
+  // 뉴스레터 탭 노출 여부 확인
+  useEffect(() => {
+    const checkNewsletterExposed = async () => {
+      try {
+        const response = await get<{ isExposed: boolean }>(API_ENDPOINTS.NEWSLETTER.PAGE);
+        if (response.data) {
+          setNewsletterExposed(response.data.isExposed);
+        } else {
           setNewsletterExposed(false);
         }
-      };
-      checkNewsletterExposed();
-    }, []);
-  
-    // 뉴스레터 탭이 숨겨진 상태에서 newsletter 탭에 접근하면 column으로 리다이렉트
-    useEffect(() => {
-      if (!newsletterExposed && activeTab === 'newsletter') {
-        router.replace("/insights?tab=column", undefined, { shallow: true });
-        setActiveTab('column');
+      } catch {
+        setNewsletterExposed(false);
       }
-    }, [newsletterExposed, activeTab, router]);
-  
+    };
+    checkNewsletterExposed();
+  }, []);
+
+  // 뉴스레터 탭이 숨겨진 상태에서 newsletter 탭에 접근하면 column으로 리다이렉트
+  useEffect(() => {
+    if (!newsletterExposed && activeTab === 'newsletter') {
+      router.replace("/insights?tab=column", undefined, { shallow: true });
+      setActiveTab('column');
+    }
+  }, [newsletterExposed, activeTab, router]);
+
   // URL 쿼리 파라미터가 변경되면 탭 업데이트 (like History page)
   // Remove dataRoom from query if present
   useEffect(() => {
@@ -195,84 +195,88 @@ const InsightsPage: React.FC<InsightsPageProps> = ({
       );
     }
   }, [tabFromQuery, router]);
-  
-    // Email validation
-    const validateEmail = (email: string) => {
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      return emailRegex.test(email);
-    };
-    
-    // Handle newsletter subscription
-    const handleNewsletterSubmit = async () => {
-      // Reset errors
-      setNameError('');
-      setEmailError('');
-      
-      // Validate name
-      if (!newsletterName.trim()) {
-        setNameError('이름을 입력해주세요');
-        return;
-      }
-      
-      // Validate email
-      if (!newsletterEmail.trim()) {
-        setEmailError('이메일을 입력해주세요');
-        return;
-      }
-      
-      if (!validateEmail(newsletterEmail)) {
-        setEmailError('올바른 이메일 주소를 입력해주세요');
-        return;
-      }
-      
-      // Validate privacy agreement
-      if (!privacyAgreed) {
-        alert('개인정보 처리 방침 이용 동의는 필수입니다.');
-        return;
-      }
-      
-      // Prevent double submission
-      if (isSubmitting) {
-        return;
-      }
-      
-      setIsSubmitting(true);
-      
-      try {
-        const response = await post(
-          API_ENDPOINTS.NEWSLETTER.SUBSCRIBE,
-          {
-            name: newsletterName.trim(),
-            email: newsletterEmail.trim(),
-          }
-        );
-        
-        if (response.error) {
-          alert(response.error || '뉴스레터 구독 중 오류가 발생했습니다.');
-          return;
+
+  // Email validation
+  const validateEmail = (email: string) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
+  // Handle newsletter subscription
+  const handleNewsletterSubmit = async () => {
+    // Reset errors
+    setNameError('');
+    setEmailError('');
+
+    // Validate name
+    if (!newsletterName.trim()) {
+      setNameError('이름을 입력해주세요');
+      return;
+    }
+
+    // Validate email
+    if (!newsletterEmail.trim()) {
+      setEmailError('이메일을 입력해주세요');
+      return;
+    }
+
+    if (!validateEmail(newsletterEmail)) {
+      setEmailError('올바른 이메일 주소를 입력해주세요');
+      return;
+    }
+
+    // Validate privacy agreement
+    if (!privacyAgreed) {
+      alert('개인정보 처리 방침 이용 동의는 필수입니다.');
+      return;
+    }
+
+    // Prevent double submission
+    if (isSubmitting) {
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      const response = await post(
+        API_ENDPOINTS.NEWSLETTER.SUBSCRIBE,
+        {
+          name: newsletterName.trim(),
+          email: newsletterEmail.trim(),
         }
-        
-        // Success
-        alert('뉴스레터 구독이 완료되었습니다.');
-        
-        // Reset form
-        setNewsletterName('');
-        setNewsletterEmail('');
-        setPrivacyAgreed(false);
-        setOptionalAgreed(false);
-      } catch (error) {
-        console.error('Newsletter subscription error:', error);
-        alert('뉴스레터 구독 중 오류가 발생했습니다. 다시 시도해주세요.');
-      } finally {
-        setIsSubmitting(false);
+      );
+
+      if (response.error) {
+        alert(response.error || '뉴스레터 구독 중 오류가 발생했습니다.');
+        return;
       }
-    };
-    
-    // Check if form is valid
-    const isFormValid = newsletterName.trim() !== '' && 
-                        newsletterEmail.trim() !== '' && 
-                        validateEmail(newsletterEmail) && 
-                        privacyAgreed;
+
+      // Success
+      alert('뉴스레터 구독이 완료되었습니다.');
+      window.gtag?.("event", "newsletter_submit", {
+        event_category: "engagement",
+        event_label: "newsletter_form",
+      });
+
+      // Reset form
+      setNewsletterName('');
+      setNewsletterEmail('');
+      setPrivacyAgreed(false);
+      setOptionalAgreed(false);
+    } catch (error) {
+      console.error('Newsletter subscription error:', error);
+      alert('뉴스레터 구독 중 오류가 발생했습니다. 다시 시도해주세요.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  // Check if form is valid
+  const isFormValid = newsletterName.trim() !== '' &&
+    newsletterEmail.trim() !== '' &&
+    validateEmail(newsletterEmail) &&
+    privacyAgreed;
   // 자료실 노출 타입 - API 응답에서 설정
   const [libraryDisplayType, setLibraryDisplayType] =
     useState<LibraryDisplayType>(initialLibraryDisplayType || "gallery");
@@ -421,14 +425,14 @@ const InsightsPage: React.FC<InsightsPageProps> = ({
           typeof a.subcategory?.name === "string"
             ? a.subcategory.name
             : typeof a.category?.name === "string"
-            ? a.category.name
-            : "";
+              ? a.category.name
+              : "";
         bValue =
           typeof b.subcategory?.name === "string"
             ? b.subcategory.name
             : typeof b.category?.name === "string"
-            ? b.category.name
-            : "";
+              ? b.category.name
+              : "";
       } else if (sortField === "author") {
         // 현재 작성자명이 하드코딩되어 있어서 실제로는 정렬이 안되지만,
         // API에서 author 정보가 오면 여기서 처리
@@ -514,7 +518,7 @@ const InsightsPage: React.FC<InsightsPageProps> = ({
         isFixed={true}
       />
       <Menu isOpen={isMenuOpen} onClose={() => setIsMenuOpen(false)} />
-      <div className={activeTab === "newsletter" ? `${styles.headerImageNews} + ${styles.headerImage}` : `${styles.headerImage}`}  />
+      <div className={activeTab === "newsletter" ? `${styles.headerImageNews} + ${styles.headerImage}` : `${styles.headerImage}`} />
 
       <div className={styles.content}>
         <div className="container">
@@ -522,19 +526,19 @@ const InsightsPage: React.FC<InsightsPageProps> = ({
             <PageHeader
               breadcrumbs={breadcrumbs}
               size="web"
-               selects={{
-              level2: {
-                value: activeTab,
-                options: filteredTabItems.map((tab) => ({
-                  label: tab.label,
-                  value: tab.id,
-                })),
-                onChange: (value) => {
-                  const tabId = String(value);
-                  handleTabChange(tabId);
+              selects={{
+                level2: {
+                  value: activeTab,
+                  options: filteredTabItems.map((tab) => ({
+                    label: tab.label,
+                    value: tab.id,
+                  })),
+                  onChange: (value) => {
+                    const tabId = String(value);
+                    handleTabChange(tabId);
+                  },
                 },
-              },
-            }}
+              }}
             />
           </div>
 
@@ -559,47 +563,44 @@ const InsightsPage: React.FC<InsightsPageProps> = ({
                 </div>
 
                 <div className={styles.columnContent}>
-                    <nav className={styles.categoryNav}>
-                      <button
-                        className={`${styles.categoryItem} ${
-                          categoryFilter === "all"
-                            ? styles.categoryItemActive
-                            : ""
+                  <nav className={styles.categoryNav}>
+                    <button
+                      className={`${styles.categoryItem} ${categoryFilter === "all"
+                        ? styles.categoryItemActive
+                        : ""
                         }`}
-                        onClick={() => handleCategoryChange("all")}
-                      >
-                        {categoryFilter === "all" && (
-                          <span className={styles.activeDot} />
-                        )}
-                        <span>전체</span>
-                      </button>
-                      <button
-                        className={`${styles.categoryItem} ${
-                          categoryFilter === "industry"
-                            ? styles.categoryItemActive
-                            : ""
+                      onClick={() => handleCategoryChange("all")}
+                    >
+                      {categoryFilter === "all" && (
+                        <span className={styles.activeDot} />
+                      )}
+                      <span>전체</span>
+                    </button>
+                    <button
+                      className={`${styles.categoryItem} ${categoryFilter === "industry"
+                        ? styles.categoryItemActive
+                        : ""
                         }`}
-                        onClick={() => handleCategoryChange("industry")}
-                      >
-                        {categoryFilter === "industry" && (
-                          <span className={styles.activeDot} />
-                        )}
-                        <span>업종별</span>
-                      </button>
-                      <button
-                        className={`${styles.categoryItem} ${
-                          categoryFilter === "consulting"
-                            ? styles.categoryItemActive
-                            : ""
+                      onClick={() => handleCategoryChange("industry")}
+                    >
+                      {categoryFilter === "industry" && (
+                        <span className={styles.activeDot} />
+                      )}
+                      <span>업종별</span>
+                    </button>
+                    <button
+                      className={`${styles.categoryItem} ${categoryFilter === "consulting"
+                        ? styles.categoryItemActive
+                        : ""
                         }`}
-                        onClick={() => handleCategoryChange("consulting")}
-                      >
-                        {categoryFilter === "consulting" && (
-                          <span className={styles.activeDot} />
-                        )}
-                        <span>컨설팅</span>
-                      </button>
-                    </nav>
+                      onClick={() => handleCategoryChange("consulting")}
+                    >
+                      {categoryFilter === "consulting" && (
+                        <span className={styles.activeDot} />
+                      )}
+                      <span>컨설팅</span>
+                    </button>
+                  </nav>
 
                   <div className={styles.mainSection}>
                     <div className={styles.toolbar}>
@@ -659,8 +660,8 @@ const InsightsPage: React.FC<InsightsPageProps> = ({
                                   typeof item.subcategory?.name === "string"
                                     ? item.subcategory.name
                                     : typeof item.category?.name === "string"
-                                    ? item.category.name
-                                    : "카테고리명"
+                                      ? item.category.name
+                                      : "카테고리명"
                                 }
                                 description={
                                   plainContent.length > 150
@@ -723,11 +724,10 @@ const InsightsPage: React.FC<InsightsPageProps> = ({
                 {/* 모바일 카테고리 탭 */}
                 <div className={styles.mobileCategoryTabs}>
                   <button
-                    className={`${styles.mobileCategoryTab} ${
-                      categoryFilter === "all"
-                        ? styles.mobileCategoryTabActive
-                        : ""
-                    }`}
+                    className={`${styles.mobileCategoryTab} ${categoryFilter === "all"
+                      ? styles.mobileCategoryTabActive
+                      : ""
+                      }`}
                     onClick={() => handleCategoryChange("all")}
                   >
                     {categoryFilter === "all" && (
@@ -736,11 +736,10 @@ const InsightsPage: React.FC<InsightsPageProps> = ({
                     전체
                   </button>
                   <button
-                    className={`${styles.mobileCategoryTab} ${
-                      categoryFilter === "industry"
-                        ? styles.mobileCategoryTabActive
-                        : ""
-                    }`}
+                    className={`${styles.mobileCategoryTab} ${categoryFilter === "industry"
+                      ? styles.mobileCategoryTabActive
+                      : ""
+                      }`}
                     onClick={() => handleCategoryChange("industry")}
                   >
                     {categoryFilter === "industry" && (
@@ -749,11 +748,10 @@ const InsightsPage: React.FC<InsightsPageProps> = ({
                     업종별
                   </button>
                   <button
-                    className={`${styles.mobileCategoryTab} ${
-                      categoryFilter === "consulting"
-                        ? styles.mobileCategoryTabActive
-                        : ""
-                    }`}
+                    className={`${styles.mobileCategoryTab} ${categoryFilter === "consulting"
+                      ? styles.mobileCategoryTabActive
+                      : ""
+                      }`}
                     onClick={() => handleCategoryChange("consulting")}
                   >
                     {categoryFilter === "consulting" && (
@@ -782,11 +780,10 @@ const InsightsPage: React.FC<InsightsPageProps> = ({
                     </h2>
                     <nav className={styles.libraryCategoryNav}>
                       <button
-                        className={`${styles.libraryCategoryItem} ${
-                          categoryFilter === "all"
-                            ? styles.libraryCategoryItemActive
-                            : ""
-                        }`}
+                        className={`${styles.libraryCategoryItem} ${categoryFilter === "all"
+                          ? styles.libraryCategoryItemActive
+                          : ""
+                          }`}
                         onClick={() => handleCategoryChange("all")}
                       >
                         {categoryFilter === "all" && (
@@ -795,11 +792,10 @@ const InsightsPage: React.FC<InsightsPageProps> = ({
                         <span>전체</span>
                       </button>
                       <button
-                        className={`${styles.libraryCategoryItem} ${
-                          categoryFilter === "industry"
-                            ? styles.libraryCategoryItemActive
-                            : ""
-                        }`}
+                        className={`${styles.libraryCategoryItem} ${categoryFilter === "industry"
+                          ? styles.libraryCategoryItemActive
+                          : ""
+                          }`}
                         onClick={() => handleCategoryChange("industry")}
                       >
                         {categoryFilter === "industry" && (
@@ -808,11 +804,10 @@ const InsightsPage: React.FC<InsightsPageProps> = ({
                         <span>업종별</span>
                       </button>
                       <button
-                        className={`${styles.libraryCategoryItem} ${
-                          categoryFilter === "consulting"
-                            ? styles.libraryCategoryItemActive
-                            : ""
-                        }`}
+                        className={`${styles.libraryCategoryItem} ${categoryFilter === "consulting"
+                          ? styles.libraryCategoryItemActive
+                          : ""
+                          }`}
                         onClick={() => handleCategoryChange("consulting")}
                       >
                         {categoryFilter === "consulting" && (
@@ -861,11 +856,10 @@ const InsightsPage: React.FC<InsightsPageProps> = ({
                             {insights.map((item) => (
                               <div
                                 key={item.id}
-                                className={`${styles.libraryCard} ${
-                                  item.isMainExposed
-                                    ? styles.libraryCardFeatured
-                                    : ""
-                                }`}
+                                className={`${styles.libraryCard} ${item.isMainExposed
+                                  ? styles.libraryCardFeatured
+                                  : ""
+                                  }`}
                                 onClick={() => handleItemClick(item.id)}
                               >
                                 <div className={styles.libraryCardImage}>
@@ -882,12 +876,12 @@ const InsightsPage: React.FC<InsightsPageProps> = ({
                                   <div className={styles.libraryCardHeader}>
                                     <p className={styles.libraryCardCategory}>
                                       {typeof item.subcategory?.name ===
-                                      "string"
+                                        "string"
                                         ? item.subcategory.name
                                         : typeof item.category?.name ===
                                           "string"
-                                        ? item.category.name
-                                        : "카테고리명"}
+                                          ? item.category.name
+                                          : "카테고리명"}
                                     </p>
                                     <h3 className={styles.libraryCardTitle}>
                                       {item.title}
@@ -925,13 +919,11 @@ const InsightsPage: React.FC<InsightsPageProps> = ({
                               return (
                                 <div
                                   key={item.id}
-                                  className={`${styles.libraryCard} ${
-                                    styles.libraryCardTransparent
-                                  } ${
-                                    item.isMainExposed
+                                  className={`${styles.libraryCard} ${styles.libraryCardTransparent
+                                    } ${item.isMainExposed
                                       ? styles.libraryCardFeatured
                                       : ""
-                                  }`}
+                                    }`}
                                   onClick={() => handleItemClick(item.id)}
                                 >
                                   <div className={styles.libraryCardImage}>
@@ -950,12 +942,12 @@ const InsightsPage: React.FC<InsightsPageProps> = ({
                                     <div className={styles.libraryCardHeader}>
                                       <p className={styles.libraryCardCategory}>
                                         {typeof item.subcategory?.name ===
-                                        "string"
+                                          "string"
                                           ? item.subcategory.name
                                           : typeof item.category?.name ===
                                             "string"
-                                          ? item.category.name
-                                          : "카테고리명"}
+                                            ? item.category.name
+                                            : "카테고리명"}
                                       </p>
                                       <h3
                                         className={
@@ -1008,7 +1000,7 @@ const InsightsPage: React.FC<InsightsPageProps> = ({
                                   <Icon
                                     type={
                                       sortField === "category" &&
-                                      sortOrder === "asc"
+                                        sortOrder === "asc"
                                         ? "arrow-up"
                                         : "arrow-down"
                                     }
@@ -1027,7 +1019,7 @@ const InsightsPage: React.FC<InsightsPageProps> = ({
                                   <Icon
                                     type={
                                       sortField === "author" &&
-                                      sortOrder === "asc"
+                                        sortOrder === "asc"
                                         ? "arrow-up"
                                         : "arrow-down"
                                     }
@@ -1054,7 +1046,7 @@ const InsightsPage: React.FC<InsightsPageProps> = ({
                                 <Icon
                                   type={
                                     sortField === "category" &&
-                                    sortOrder === "asc"
+                                      sortOrder === "asc"
                                       ? "arrow-up"
                                       : "arrow-down"
                                   }
@@ -1070,7 +1062,7 @@ const InsightsPage: React.FC<InsightsPageProps> = ({
                                 <Icon
                                   type={
                                     sortField === "author" &&
-                                    sortOrder === "asc"
+                                      sortOrder === "asc"
                                       ? "arrow-up"
                                       : "arrow-down"
                                   }
@@ -1097,8 +1089,8 @@ const InsightsPage: React.FC<InsightsPageProps> = ({
                                     {typeof item.subcategory?.name === "string"
                                       ? item.subcategory.name
                                       : typeof item.category?.name === "string"
-                                      ? item.category.name
-                                      : "카테고리 명"}
+                                        ? item.category.name
+                                        : "카테고리 명"}
                                   </div>
                                   <div
                                     className={`${styles.libraryListCell} ${styles.titleCell}`}
@@ -1133,12 +1125,12 @@ const InsightsPage: React.FC<InsightsPageProps> = ({
                                   <div className={styles.mobileListRowTop}>
                                     <span className={styles.mobileListCategory}>
                                       {typeof item.subcategory?.name ===
-                                      "string"
+                                        "string"
                                         ? item.subcategory.name
                                         : typeof item.category?.name ===
                                           "string"
-                                        ? item.category.name
-                                        : "카테고리 명"}
+                                          ? item.category.name
+                                          : "카테고리 명"}
                                     </span>
                                     <span className={styles.mobileListDate}>
                                       {item.createdAt
@@ -1187,90 +1179,90 @@ const InsightsPage: React.FC<InsightsPageProps> = ({
             )}
 
             {activeTab === 'newsletter' && (
-          <div className={styles.newsletterSection}>
-            <div className={styles.newsletterHero}>
-               <p className={styles.newsletterLabel}>NEWSLETTER</p>
-                <h2 className={styles.newsletterTitle}>뉴스레터</h2>
-              <div className={styles.newsletterHeroContent}>
-                <div className={styles.newsletterLeft}>
-                 
-                  <img src="/images/pages/newsletter.png" alt="" />
-                </div>
-                <div className={styles.newsletterRight}>
-                <div className={styles.newsletterRighTitle}>
-                  <p>Newsletter</p>
-                  <h2>알면 이익이 되는 세무 정보, <br /> 구독하고 빠르게 전달 받으세요</h2>
-                  </div>
-                  <div className={styles.newsletterForm}>
-                    <div className={styles.newsletterFormFields}>
-                      <TextField
-                        variant="line"
-                        label="이름"
-                        required
-                        placeholder="수신자 명"
-                        value={newsletterName}
-                        onChange={(value) => {
-                          setNewsletterName(value);
-                          if (nameError) setNameError('');
-                        }}
-                        error={!!nameError}
-                        errorMessage={nameError}
-                        fullWidth
-                        className={styles.newsletterTextField}
-                      />
-                      <TextField
-                        variant="line"
-                        label="이메일"
-                        required
-                        type="email"
-                        placeholder="뉴스레터를 받을 이메일 주소"
-                        value={newsletterEmail}
-                        onChange={(value) => {
-                          setNewsletterEmail(value);
-                          if (emailError) setEmailError('');
-                        }}
-                        error={!!emailError}
-                        errorMessage={emailError}
-                        fullWidth
-                        className={styles.newsletterTextField}
-                      />
+              <div className={styles.newsletterSection}>
+                <div className={styles.newsletterHero}>
+                  <p className={styles.newsletterLabel}>NEWSLETTER</p>
+                  <h2 className={styles.newsletterTitle}>뉴스레터</h2>
+                  <div className={styles.newsletterHeroContent}>
+                    <div className={styles.newsletterLeft}>
+
+                      <img src="/images/pages/newsletter.png" alt="" />
                     </div>
-                    <div className={styles.newsletterCheckboxes}>
-                      <div className={styles.newsletterCheckboxRow}>
-                        <Checkbox
-                          variant="square"
-                          checked={privacyAgreed}
-                          onChange={setPrivacyAgreed}
-                          label="[필수] 개인정보 처리 방침 이용 동의"
-                        />
-                        <button className={styles.newsletterLink}>보기</button>
+                    <div className={styles.newsletterRight}>
+                      <div className={styles.newsletterRighTitle}>
+                        <p>Newsletter</p>
+                        <h2>알면 이익이 되는 세무 정보, <br /> 구독하고 빠르게 전달 받으세요</h2>
                       </div>
-                      <div className={styles.newsletterCheckboxRow}>
-                        <Checkbox
-                          variant="square"
-                          checked={optionalAgreed}
-                          onChange={setOptionalAgreed}
-                          label="[선택] OO OOOOO 이용 동의"
-                        />
-                        <button className={styles.newsletterLink}>보기</button>
+                      <div className={styles.newsletterForm}>
+                        <div className={styles.newsletterFormFields}>
+                          <TextField
+                            variant="line"
+                            label="이름"
+                            required
+                            placeholder="수신자 명"
+                            value={newsletterName}
+                            onChange={(value) => {
+                              setNewsletterName(value);
+                              if (nameError) setNameError('');
+                            }}
+                            error={!!nameError}
+                            errorMessage={nameError}
+                            fullWidth
+                            className={styles.newsletterTextField}
+                          />
+                          <TextField
+                            variant="line"
+                            label="이메일"
+                            required
+                            type="email"
+                            placeholder="뉴스레터를 받을 이메일 주소"
+                            value={newsletterEmail}
+                            onChange={(value) => {
+                              setNewsletterEmail(value);
+                              if (emailError) setEmailError('');
+                            }}
+                            error={!!emailError}
+                            errorMessage={emailError}
+                            fullWidth
+                            className={styles.newsletterTextField}
+                          />
+                        </div>
+                        <div className={styles.newsletterCheckboxes}>
+                          <div className={styles.newsletterCheckboxRow}>
+                            <Checkbox
+                              variant="square"
+                              checked={privacyAgreed}
+                              onChange={setPrivacyAgreed}
+                              label="[필수] 개인정보 처리 방침 이용 동의"
+                            />
+                            <button className={styles.newsletterLink}>보기</button>
+                          </div>
+                          <div className={styles.newsletterCheckboxRow}>
+                            <Checkbox
+                              variant="square"
+                              checked={optionalAgreed}
+                              onChange={setOptionalAgreed}
+                              label="[선택] OO OOOOO 이용 동의"
+                            />
+                            <button className={styles.newsletterLink}>보기</button>
+                          </div>
+                        </div>
+                        <Button
+                          type="primary"
+                          size="large"
+                          fullWidth
+                          disabled={!isFormValid || isSubmitting}
+                          onClick={handleNewsletterSubmit}
+                          className={styles.newsletterButton}
+                        >
+                          {isSubmitting ? '구독 중...' : '구독하기'}
+                        </Button>
                       </div>
                     </div>
-                    <Button
-                      type="primary"
-                      size="large"
-                      fullWidth
-                      disabled={!isFormValid || isSubmitting}
-                      onClick={handleNewsletterSubmit}
-                      className={styles.newsletterButton}
-                    >
-                      {isSubmitting ? '구독 중...' : '구독하기'}
-                    </Button>
                   </div>
                 </div>
               </div>
-            </div>
-          </div>
-        )}
+            )}
           </div>
         </div>
       </div>
@@ -1288,7 +1280,7 @@ const InsightsPage: React.FC<InsightsPageProps> = ({
       </div>
 
       <Footer />
-      </div>
+    </div>
     // </div>
   );
 };
@@ -1327,7 +1319,7 @@ export const getServerSideProps: GetServerSideProps<InsightsPageProps> = async (
           initialActiveTab: activeTab,
           initialLibraryDisplayType: activeTab === "library" && data.displayType
             ? data.displayType
-            : undefined,
+            : null,
           error: null,
         },
       };
@@ -1338,7 +1330,7 @@ export const getServerSideProps: GetServerSideProps<InsightsPageProps> = async (
           initialTotal: 0,
           initialTotalPages: 1,
           initialActiveTab: activeTab,
-          initialLibraryDisplayType: undefined,
+          initialLibraryDisplayType: null,
           error: response.error || null,
         },
       };

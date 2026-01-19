@@ -1,4 +1,6 @@
 import '@/styles/global.scss';
+import Script from "next/script";
+
 // Component styles (Next.js requires global CSS imports in _app)
 import '@/components/Menu/styles.scss';
 import '@/components/Login/styles.scss';
@@ -6,7 +8,6 @@ import '@/components/Signup/styles.scss';
 import '@/components/FindUsername/styles.scss';
 import '@/components/FindPassword/styles.scss';
 import '@/components/ResetPassword/styles.scss';
-import '@/components/TestMotion/styles.scss';
 // Design System Component styles
 import '@/components/common/Button/styles.scss';
 import '@/components/common/TextField/styles.scss';
@@ -24,7 +25,23 @@ export default function App({ Component, pageProps }: AppProps) {
     <>
       <Head>
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-      </Head>
+      </Head><Script
+        strategy="afterInteractive"
+        src={`https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_GA_ID}`}
+      />
+
+      <Script id="ga-init" strategy="afterInteractive">
+        {`
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', '${process.env.NEXT_PUBLIC_GA_ID}', {
+      page_path: window.location.pathname,
+      debug_mode: true,
+    });
+  `}
+      </Script>
+
       <Component {...pageProps} />
     </>
   );
