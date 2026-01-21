@@ -2,6 +2,8 @@
   min-height: 100vh;
   overflow-x: hidden;
 
+  
+
   main {
     position: relative;
     height: 100vh;
@@ -9,7 +11,7 @@
     margin-bottom: 80px;
 
     .videoTag {
-      height: 100%;
+      min-height: 1080px;
       width: 100%;
       float: left;
       top: 0;
@@ -23,19 +25,22 @@
       }
     }
 
+    
+
     .main-container {
-      padding: 700px 300px 140px;
       position: absolute;
+      left: 300px;
+      bottom: 140px;
 
       @media (max-width: 1024px) {
-        padding: 500px 100px 100px;
+        left: 100px;
       }
 
       @media (max-width: 767px) {
-        // padding: 0 20px;
-        // top: 50%;
-        // transform: translateY(-50%);
-        padding: 500px 30px;
+        left: 50%;
+        bottom: 50%;
+        transform: translate(-50%, 50%);
+        // padding: 500px 30px;
         width: 100%;
         box-sizing: border-box;
         text-align: center;
@@ -47,6 +52,9 @@
         font-size: 19px;
         font-style: normal;
         font-weight: 600;
+        // 0115
+        line-height: 300%;
+        // 0115
 
         @media (max-width: 767px) {
           font-size: 12px;
@@ -61,6 +69,10 @@
         font-size: 68px;
         font-style: normal;
         font-weight: 700;
+        // 0115
+        letter-spacing: -3.5px;
+        line-height: 1.4;
+        // 0115
 
         @media (max-width: 1024px) {
           font-size: 48px;
@@ -68,13 +80,15 @@
 
         @media (max-width: 767px) {
           font-size: 36px;
-          line-height: 1.5;
+          line-height: 1.4;
           letter-spacing: -0.5px;
+          padding: 0 20px;
         }
 
         span {
-          font-weight: 300;
+          font-weight: 500;
         }
+        // 0115 고객이 걸어갈 길 폰트두께 수정
       }
     }
   }
@@ -84,7 +98,7 @@
     // padding: 0 24px;
 
     @media (max-width: 767px) {
-      padding: 0px 0px 40px;
+      padding: 0px 0px 56px;
     }
 
     .line-center {
@@ -125,7 +139,7 @@
     h3 {
       color: #002c2c;
       text-align: center;
-      font-family: "Noto Serif CJK KR";
+      font-family: 'Playfair', serif;
       font-size: 28px;
       font-style: normal;
       font-weight: 400;
@@ -136,14 +150,12 @@
       width: 80%;
 
       @media (max-width: 767px) {
-        font-size: 20px;
+        font-size: 19px;
         margin-bottom: 0;
         line-height: 1.7;
-        letter-spacing: -0.3px;
+        letter-spacing: -1.3px;
 
-        br {
-          display: none;
-        }
+      
       }
     }
 
@@ -155,7 +167,7 @@
       @media (max-width: 767px) {
         flex-direction: column;
         align-items: flex-start;
-        gap: 20px;
+        gap: 40px;
       }
 
       .left {
@@ -182,9 +194,9 @@
           @media (max-width: 767px) {
             font-size: 64px;
             top: 0;
-            margin-bottom: 12px;
-            letter-spacing: -1px;
-            line-height: 1.1;
+            margin-bottom: 16px;
+            letter-spacing: -2.6px;
+            line-height: 0.9;
           }
         }
 
@@ -216,8 +228,6 @@
           @media (max-width: 767px) {
             font-size: 15px;
             line-height: 1.6;
-
-
           }
 
           span {
@@ -266,16 +276,14 @@
 
       .left-img {
         width: 57%;
-         img {
-            width: 100%;
-            height: auto;
-          }
+        img {
+          width: 100%;
+          height: auto;
+        }
         @media (max-width: 767px) {
           width: 100%;
           padding-right: 20px;
           box-sizing: border-box;
-
-         
         }
       }
 
@@ -309,7 +317,10 @@
         }
 
         @media (max-width: 450px) {
-          top: 55%;
+          top: 57%;
+          font-size: 70px;
+          text-align: start;
+          line-height: 1;
         }
       }
     }
@@ -325,12 +336,12 @@
         top: 0;
         gap: 20px;
         margin-top: 215px;
-
       }
 
       @media (max-width: 450px) {
-          margin-top: 130px;
-        }
+        margin-top: 130px;
+        margin-bottom: 50px;
+      }
 
       h3 {
         color: #1d1d1d;
@@ -343,9 +354,8 @@
 
         @media (max-width: 767px) {
           font-size: 17px;
-          margin-top: 40px;
+          margin-top: 0px;
           line-height: 1.6;
-
         }
 
         span {
@@ -355,7 +365,7 @@
 
       .right-img {
         width: 33%;
-        img{
+        img {
           width: 100%;
         }
         @media (max-width: 767px) {
@@ -373,6 +383,22 @@
           }
         }
       }
+    }
+  }
+  .floatingButtons {
+    position: fixed;
+    bottom: 60px;
+    right: 20px;
+    display: flex;
+    flex-direction: column-reverse;
+    gap: 20px;
+    z-index: 1000;
+    align-items: flex-end;
+
+    @media (max-width: 767px) {
+      bottom: 40px;
+      right: 20px;
+      gap: 12px;
     }
   }
 }

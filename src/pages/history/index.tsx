@@ -418,7 +418,7 @@ const HistoryPage: React.FC = () => {
       try {
         setBranchesLoading(true);
         const response = await get<BranchResponse>(
-          `${API_ENDPOINTS.BRANCHES}?page=1&limit=20`
+          `${API_ENDPOINTS.BRANCHES}?page=1&limit=20`,
         );
 
         if (response.error) {
@@ -459,7 +459,7 @@ const HistoryPage: React.FC = () => {
     // 인증 실패 처리 함수 설정 (공식 문서 권장)
     (window as any).navermap_authFailure = function () {
       console.error(
-        "네이버 지도 API 인증이 실패했습니다. 클라이언트 아이디와 웹 서비스 URL을 확인해 주세요."
+        "네이버 지도 API 인증이 실패했습니다. 클라이언트 아이디와 웹 서비스 URL을 확인해 주세요.",
       );
     };
 
@@ -489,7 +489,7 @@ const HistoryPage: React.FC = () => {
         // 좌표가 있는 지점들만 필터링 (문자열을 숫자로 변환)
         const branchesWithCoords = branchesData
           .filter(
-            (branch) => branch.latitude !== null && branch.longitude !== null
+            (branch) => branch.latitude !== null && branch.longitude !== null,
           )
           .map((branch) => ({
             ...branch,
@@ -569,7 +569,7 @@ const HistoryPage: React.FC = () => {
             const marker = new (window as any).naver.maps.Marker({
               position: new (window as any).naver.maps.LatLng(
                 branch.lat,
-                branch.lng
+                branch.lng,
               ),
               map: mapInstance,
               title: branch.name,
@@ -719,7 +719,7 @@ const HistoryPage: React.FC = () => {
           <>
             <div className={styles.headerInfo}>
               <p>Company Philosophy</p>
-              <h2>고객과 신뢰로 이어가는 미래</h2>
+              <h2>고객과 신뢰로 <br className="mobileBr" /> 이어가는 미래</h2>
             </div>
 
             {/* Section 1: 전문성 */}
@@ -788,7 +788,10 @@ const HistoryPage: React.FC = () => {
                   </div>
                 </div>
               </div>
-
+              <div className={styles.mobileText} >
+              <p>대표 인사말</p>
+              <h1>세무법인 함께 대표 <br /> 최영우 세무사입니다.</h1>
+              </div>
               <div className={styles.pencilImage}>
                 <img src="/images/about/about4.png" alt="Pencil" />
               </div>
@@ -897,18 +900,21 @@ const HistoryPage: React.FC = () => {
             {sortedData.map((yearData, yearIndex) => {
               // 각 연도의 항목들을 displayOrder로 정렬
               const sortedItems = [...yearData.items].sort(
-                (a, b) => a.displayOrder - b.displayOrder
+                (a, b) => a.displayOrder - b.displayOrder,
               );
 
               // 월별로 그룹화
-              const groupedByMonth = sortedItems.reduce((acc, item) => {
-                const monthKey = formatMonth(item);
-                if (!acc[monthKey]) {
-                  acc[monthKey] = [];
-                }
-                acc[monthKey].push(item);
-                return acc;
-              }, {} as Record<string, HistoryItem[]>);
+              const groupedByMonth = sortedItems.reduce(
+                (acc, item) => {
+                  const monthKey = formatMonth(item);
+                  if (!acc[monthKey]) {
+                    acc[monthKey] = [];
+                  }
+                  acc[monthKey].push(item);
+                  return acc;
+                },
+                {} as Record<string, HistoryItem[]>,
+              );
 
               const monthGroups = Object.entries(groupedByMonth);
 
@@ -949,7 +955,7 @@ const HistoryPage: React.FC = () => {
                                     {contentItem.content}
                                   </div>
                                 </div>
-                              )
+                              ),
                             )}
                           </div>
                         </div>
@@ -1049,11 +1055,11 @@ const HistoryPage: React.FC = () => {
               {/* Main Logo Block */}
               <div className={styles.ciMainLogoBlock}>
                 <div className={styles.ciMainLogo}>
-                  <img src="/images/logo/logo_main.png" alt="세무법인 함께" />
+                  <img src="/images/logo/logo_big.png" alt="세무법인 함께" />
                 </div>
                 <div className={styles.ciDivider} />
                 <p className={styles.ciTagline}>
-                  세무법인 함께 컬러는,{" "}
+                  세무법인 함께 컬러는,{" "} <br className="mobileBr" />
                   <span className={styles.ciTaglineHighlight}>신뢰</span>,{" "}
                   <span className={styles.ciTaglineHighlight}>전문성</span>,{" "}
                   <span className={styles.ciTaglineHighlight}>안정감</span>을
@@ -1070,9 +1076,10 @@ const HistoryPage: React.FC = () => {
                   <h3 className={styles.ciValueTitle}>신뢰</h3>
                   <p className={styles.ciValueSubtitle}>Trust</p>
                   <p className={styles.ciValueDescription}>
-                    풍부한 경험과 체계적인 분석을 바탕으로 정확한 해결책을
-                    도출하며, 세무, 회계, 재무의 통합 전문성을 통해 고객의
-                    비즈니스에 실질적인 가치를 더합니다.
+                    풍부한 경험과 체계적인 분석으로 <br /> 정확한 해결책을
+                    제시합니다. <br />
+                    세무, 회계, 재무를 아우르는 통합 전문성으로 <br />
+                    고객의 비즈니스에 실질적인 가치를 더합니다.
                   </p>
                 </div>
                 <div className={styles.ciValueDivider} />
@@ -1084,9 +1091,10 @@ const HistoryPage: React.FC = () => {
                   <h3 className={styles.ciValueTitle}>전문성</h3>
                   <p className={styles.ciValueSubtitle}>Expertise</p>
                   <p className={styles.ciValueDescription}>
-                    풍부한 경험과 체계적인 분석을 바탕으로 정확한 해결책을
-                    도출하며, 세무, 회계, 재무의 통합 전문성을 통해 고객의
-                    비즈니스에 실질적인 가치를 더합니다.
+                    풍부한 경험과 체계적인 분석으로 <br /> 정확한 해결책을
+                    제시합니다. <br />
+                    세무, 회계, 재무를 아우르는 통합 전문성으로 <br />
+                    고객의 비즈니스에 실질적인 가치를 더합니다.
                   </p>
                 </div>
                 <div className={styles.ciValueDivider} />
@@ -1098,9 +1106,9 @@ const HistoryPage: React.FC = () => {
                   <h3 className={styles.ciValueTitle}>안정감</h3>
                   <p className={styles.ciValueSubtitle}>Stability</p>
                   <p className={styles.ciValueDescription}>
-                    변화하는 세법 속에서도 일관된 관리와 지속가능한 지원을
-                    제공하여 고객의 현재를 보호하고 미래의 불안을 덜어드리는
-                    든든한 버팀목이 되겠습니다.
+                    변화하는 세법 속에서도 일관된 관리와 <br /> 지속 가능한
+                    지원을 제공합니다. <br /> 고객의 현재를 지키고, <br />
+                    미래의 불안을 덜어주는 든든한 버팀목이 됩니다.
                   </p>
                 </div>
               </div>
@@ -1169,10 +1177,17 @@ const HistoryPage: React.FC = () => {
                           >
                             TOGETHER Green
                           </span>
-                          <p className={`${styles.ciColorValues} ${styles.ciColorValuesWhite}`}>RGB 0/158/149</p>
-                        <p className={`${styles.ciColorValues} ${styles.ciColorValuesWhite}`}>CMYK 100/0/6/38</p>
+                          <p
+                            className={`${styles.ciColorValues} ${styles.ciColorValuesWhite}`}
+                          >
+                            RGB 0/158/149
+                          </p>
+                          <p
+                            className={`${styles.ciColorValues} ${styles.ciColorValuesWhite}`}
+                          >
+                            CMYK 100/0/6/38
+                          </p>
                         </div>
-                        
                       </div>
 
                       <div className={styles.ciColorSwatch}>
@@ -1184,10 +1199,17 @@ const HistoryPage: React.FC = () => {
                           >
                             TOGETHER Gray
                           </span>
-                          <p className={`${styles.ciColorValues} ${styles.ciColorValuesWhite}`}>RGB 62/58/57</p>
-                        <p className={`${styles.ciColorValues} ${styles.ciColorValuesWhite}`}>CMYK 0/6/8/76</p>
+                          <p
+                            className={`${styles.ciColorValues} ${styles.ciColorValuesWhite}`}
+                          >
+                            RGB 62/58/57
+                          </p>
+                          <p
+                            className={`${styles.ciColorValues} ${styles.ciColorValuesWhite}`}
+                          >
+                            CMYK 0/6/8/76
+                          </p>
                         </div>
-                        
                       </div>
 
                       <div className={styles.ciColorSwatch}>
@@ -1197,10 +1219,11 @@ const HistoryPage: React.FC = () => {
                           <span className={styles.ciColorName}>
                             TOGETHER White
                           </span>
-                          <p className={styles.ciColorValues}>RGB 255/255/255</p>
-                        <p className={styles.ciColorValues}>CMYK 0/0/0/0</p>
+                          <p className={styles.ciColorValues}>
+                            RGB 255/255/255
+                          </p>
+                          <p className={styles.ciColorValues}>CMYK 0/0/0/0</p>
                         </div>
-                        
                       </div>
                     </div>
                   </div>

@@ -36,7 +36,6 @@
   background: #f3f9f9;
   margin-top: -92px;
 
-
   @media (max-width: $breakpoint-desktop) {
     // padding-bottom: 0px;
   }
@@ -47,8 +46,6 @@
     margin-top: -52px;
   }
 }
-
-
 
 .heroContainer {
   position: relative;
@@ -61,13 +58,14 @@
   // align-items: flex-start;
   gap: 160px;
 
-  @media (max-width: $breakpoint-desktop) {
-    gap: 40px;
-  }
+  // @media (max-width: $breakpoint-desktop) {
+  //   gap: 40px;
+  // }
 
-  @media (max-width: $breakpoint-tablet) {
+  @media (max-width: $breakpoint-desktop) {
     flex-direction: column;
-    padding: 40px 0 0 0;
+    padding: 92px 0 0 0;
+    gap: 0px;
   }
 }
 
@@ -98,19 +96,19 @@
   }
 }
 
-.logoWatermark{
+.logoWatermark {
   position: absolute;
   bottom: 150px;
   left: 0px;
   width: 45%;
 
-  img{
+  img {
     width: 100%;
   }
   @media (max-width: $breakpoint-tablet) {
-      left: initial;
-      right: 0;
-    }
+    left: initial;
+    right: 0;
+  }
 }
 
 .heroImage {
@@ -154,7 +152,7 @@
   position: relative;
   height: 100%;
 
-  @media (max-width: $breakpoint-desktop) {
+  @media (max-width: 1320px) {
     padding-top: 20px;
     // padding-right: 120px;
     // padding-left: 30px;
@@ -163,7 +161,12 @@
   @media (max-width: $breakpoint-tablet) {
     position: relative;
     z-index: 3;
-    padding: 24px 0;
+    padding: 38px 0;
+    background-color: #fff;
+    top: -6px;
+    width: 100vw;
+    margin-left: -20px;
+    padding-left: 20px;
   }
 }
 
@@ -175,20 +178,23 @@
   font-weight: 600;
   line-height: 98%;
   letter-spacing: 0.57px;
+  @media (max-width: $breakpoint-tablet) {
+    font-size: 16px;
+  }
 }
 
 .heroNameRow {
   display: flex;
   align-items: baseline;
-  gap: 16px;
+  gap: 12px;
   margin-bottom: 24px;
-  margin-top: 20px;
+  margin-top: 10px;
 
   @media (max-width: $breakpoint-tablet) {
     flex-direction: row;
     align-items: baseline;
-    gap: 12px;
     margin-bottom: 20px;
+    gap: 4px;
   }
 }
 
@@ -209,17 +215,19 @@
   margin-top: 32px;
   padding: 40px 0;
   padding-left: calc(50% + 130px);
-  
-@media (max-width: $breakpoint-desktop) {
-  padding-left: calc(50% + 50px);
-    
+
+  @media (max-width: $breakpoint-desktop) {
+    padding-left: calc(50% + 50px);
   }
   @media (max-width: $breakpoint-tablet) {
     position: relative;
-    margin:0;
+    margin: 0;
     width: 100%;
     background: transparent;
     padding: 24px 20px;
+    background: #fff;
+    top: -6px;
+    height: auto;
   }
 }
 
@@ -227,6 +235,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  gap: 4px;
   height: 48px;
   background: transparent;
   border: none;
@@ -241,37 +250,42 @@
   border: 1px solid $primary-60;
   padding: 16px;
   background: #fff;
+  font-weight: 600;
   svg {
     stroke: $primary-60;
     path {
       fill: $primary-60;
     }
   }
-
 }
-
 
 .heroName {
   font-family: $font-pretendard;
   font-weight: $font-weight-bold;
-  font-size: 35px;
+  font-size: 66px;
   line-height: 1.5;
   letter-spacing: -0.175px;
   color: $gray-90;
   margin: 0;
+  @media (max-width: 1320px) {
+    font-size: 42px;
+  }
 
   @media (max-width: $breakpoint-tablet) {
-    font-size: 28px;
+    font-size: 40px;
   }
 }
 
 .heroPosition {
   font-family: $font-pretendard;
-  font-weight: $font-weight-regular;
-  font-size: 23px;
+  font-weight: $font-weight-semibold;
+  font-size: 40px;
   line-height: 1.5;
   letter-spacing: -0.115px;
   color: $gray-90;
+  @media (max-width: $breakpoint-tablet) {
+    font-size: 19px;
+  }
 }
 
 .heroContact {
@@ -281,8 +295,18 @@
   margin-bottom: 32px;
 
   @media (max-width: $breakpoint-tablet) {
-    gap: 12px;
-    margin-bottom: 24px;
+    gap: 8px;
+    margin-bottom: 40px;
+  }
+}
+.mainWorkAreas {
+  margin-bottom: 64px;
+  .sidebarWorkAreasTags {
+    gap: 8px;
+  }
+
+  .sidebarWorkAreaTag {
+    margin: 0;
   }
 }
 
@@ -392,7 +416,6 @@
   flex-direction: column;
   border-radius: 0 0 0 24px;
   background: var(--grayscale-5, #f8f8f8);
-
   @media (max-width: $breakpoint-tablet) {
     width: 100vw;
     margin-left: -20px;
@@ -421,9 +444,12 @@
     flex-direction: column;
     justify-content: center;
     & > *:last-child {
-    display: none;
-
-  }
+      display: none;
+    }
+    svg {
+      width: 24px;
+      height: 24px;
+    }
   }
 }
 
@@ -466,7 +492,7 @@
 
 .heroQuoteText {
   flex: 1;
-  font-family: $font-pretendard;
+  font-family: $font-noto;
   font-weight: $font-weight-bold;
   font-size: 28px;
   font-style: normal;
@@ -475,7 +501,7 @@
   color: $gray-90; // grayscale-10
   margin: 0;
   text-align: center;
-  max-width: 350px;
+  max-width: 380px;
   word-break: keep-all;
 
   @media (max-width: $breakpoint-desktop) {
@@ -500,7 +526,7 @@
   padding: 120px 0;
 
   @media (max-width: $breakpoint-tablet) {
-    padding: 0 0 60px 0;
+    padding: 0 0 100px 0;
   }
 }
 
@@ -523,7 +549,9 @@
   @media (max-width: $breakpoint-tablet) {
     flex-direction: column;
     gap: 40px;
-    margin-top: 40px;
+    margin-top: -6px;
+    position: relative;
+    z-index: 10;
   }
 }
 
@@ -533,11 +561,12 @@
   padding-bottom: 140px;
   @media (max-width: $breakpoint-tablet) {
     padding-top: 64px;
+    padding-bottom: 24px;
   }
 }
 
 .aboutHeader {
-  margin-bottom: 28px;
+  margin-bottom: 16px;
 
   @media (max-width: $breakpoint-tablet) {
     margin-bottom: 12px;
@@ -545,7 +574,7 @@
 }
 
 .aboutTitle {
-  font-family: $font-montserrat;
+  font-family: $font-noto;
   font-style: normal;
   font-weight: 600;
   font-size: 46px;
@@ -557,13 +586,14 @@
 
   @media (max-width: $breakpoint-tablet) {
     font-size: 38px;
+    line-height: 1;
   }
 }
 
 .aboutFieldTitle {
-  font-family: $font-pretendard;
-  font-weight: $font-weight-semibold;
-  font-size: 32px;
+  font-family: $font-noto;
+  font-weight: $font-weight-medium;
+  font-size: 20px;
   line-height: 1.5;
   letter-spacing: -0.16px;
   color: $gray-90;
@@ -583,27 +613,13 @@
   @media (max-width: $breakpoint-tablet) {
     font-size: 20px;
     width: 100%;
+    margin-bottom: 40px;
 
-    span{
+    span {
       display: none;
     }
   }
 }
-
-// .aboutDivider {
-//   flex-shrink: 0;
-//   width: 1px;
-//   background-color: rgba(255, 255, 255, 0.2);
-//   height: auto;
-//   align-self: stretch;
-//   margin: 0;
-
-//   @media (max-width: $breakpoint-tablet) {
-//     width: 100%;
-//     height: 1px;
-//     align-self: auto;
-//   }
-// }
 
 .aboutContentInner {
   position: relative;
@@ -612,9 +628,9 @@
   min-width: 0;
   padding-left: 48px;
 
-   @media (max-width: $breakpoint-tablet) {
-      padding-left: 0;
-    }
+  @media (max-width: $breakpoint-tablet) {
+    padding-left: 0;
+  }
 
   :global(.toastui-editor-contents) {
     font-family: $font-pretendard;
@@ -627,11 +643,15 @@
     @media (max-width: $breakpoint-tablet) {
       font-size: 14px;
       line-height: 1.6;
+      p {
+        font-size: 15px !important;
+      }
     }
 
     p {
       margin: 0 0 16px 0;
       color: $gray-90 !important;
+      font-size: 19px;
 
       &:last-child {
         margin-bottom: 0;
@@ -728,13 +748,11 @@
   }
 }
 
-
 .sectionHeader {
- margin: 64px 0 40px;
-
+  margin: 64px 0 40px;
 
   @media (max-width: $breakpoint-tablet) {
-    margin: 64px 0 32px;
+    margin: 0 0 32px;
   }
 }
 
@@ -751,8 +769,8 @@
 }
 
 .sectionTitle {
-  font-family: $font-pretendard;
-  font-weight: $font-weight-semibold;
+  font-family: $font-noto;
+  font-weight: $font-weight-regular;
   font-size: 28px;
   line-height: 1.5;
   letter-spacing: -0.115px;
@@ -771,17 +789,15 @@
   }
 
   @media (max-width: $breakpoint-tablet) {
-    font-size: 20px;
     &::before {
       display: none;
     }
-    
   }
 }
 
 // 영문 섹션 타이틀 (RELATED NEWS 등)
 .sectionTitleEn {
-  font-family: $font-montserrat;
+  font-family: $font-playfair;
   font-weight: 600;
   font-size: 44px;
   line-height: 110%;
@@ -790,14 +806,12 @@
   margin: 0;
 
   @media (max-width: $breakpoint-tablet) {
-    font-size: 28px;
   }
 }
 
 .sectionSubtitle {
-  font-family: $font-pretendard;
-  font-weight: $font-weight-semibold;
-  font-size: 32px;
+  font-family: $font-noto;
+  font-size: 28px;
   line-height: 1.5;
   letter-spacing: -0.16px;
   color: $gray-90;
@@ -820,7 +834,7 @@
 
   @media (max-width: $breakpoint-tablet) {
     font-size: 18px;
-
+    margin-top: 8px;
     span {
       display: none;
     }
@@ -935,7 +949,7 @@
       padding-left: 20px;
       position: relative;
       color: $gray-70 !important; // var(--grayscale-30, #D8D8D8)
-
+      font-size: 17px;
       &:last-child {
         margin-bottom: 0;
       }
@@ -1048,7 +1062,7 @@
 // Sidebar
 .sidebar {
   position: sticky;
-  top: 0px;
+  top: 45px;
   width: 350px;
   flex-shrink: 0;
   align-self: flex-start;
@@ -1142,8 +1156,8 @@
 .sidebarContact {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  margin-top: 8px;
+  gap: 6px;
+  margin-bottom: 12px;
 }
 
 .sidebarContactItem {
@@ -1175,7 +1189,7 @@
 .sidebarWorkAreasTags {
   display: flex;
   flex-wrap: wrap;
-  gap: 0;
+  gap: 8px;
 }
 
 .sidebarWorkAreaTag {
@@ -1188,8 +1202,7 @@
   color: $primary-60;
   border: none;
   border-radius: 4px;
-  padding: 8px;
-  margin: 4px;
+  padding: 4px 8px;
   box-sizing: border-box;
   width: auto;
   min-height: 22.5px; // line-height
@@ -1198,6 +1211,19 @@
   align-items: center;
   justify-content: center;
   background: rgba(0, 132, 124, 0.1);
+}
+.getConsultWrapper {
+  display: flex;
+  justify-content: center;
+  background-color: #fff;
+  width: 100%;
+   position: fixed;
+    bottom: 0px;
+    left: 0px;
+    right: 0px;
+    z-index: 100;
+    padding: 12px 20px;
+
 }
 
 .getConsult {
@@ -1218,12 +1244,7 @@
   margin-top: 12px;
 
   @media (max-width: $breakpoint-tablet) {
-    position: fixed;
-    bottom: 12px;
-    left: 20px;
-    right: 20px;
-    width: calc(100% - 40px);
-    z-index: 100;
+   margin-top: 0;
   }
 }
 
@@ -1237,7 +1258,7 @@
   padding: 120px 0 0 0;
 
   @media (max-width: $breakpoint-tablet) {
-    padding: 60px 0 0 0;
+    padding: 64px 0 0 0;
   }
 
   // News section has bottom padding
@@ -1340,7 +1361,9 @@
   width: 100%;
   height: 100%;
   cursor: pointer;
-  transition: transform 0.3s ease, opacity 0.3s ease;
+  transition:
+    transform 0.3s ease,
+    opacity 0.3s ease;
   box-sizing: border-box;
 
   &:hover {
@@ -1491,7 +1514,6 @@
   @media (max-width: $breakpoint-tablet) {
     margin-top: 24px;
     overflow: visible;
-    
   }
 }
 
@@ -1518,7 +1540,9 @@
 .newsCard {
   overflow: hidden;
   cursor: pointer;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
   display: flex;
   width: 100%;
   height: 100%;
@@ -1560,7 +1584,7 @@
   gap: 48px;
 
   @media (max-width: $breakpoint-tablet) {
-    padding: 0 16px 10px;
+    padding: 0 16px 20px;
     gap: 12px;
   }
 }
@@ -1579,6 +1603,9 @@
   letter-spacing: -0.075px;
   color: $primary-50;
   margin: 0;
+  @media (max-width: $breakpoint-tablet) {
+    font-size: 13px;
+  }
 }
 
 .newsTitle {
@@ -1621,7 +1648,7 @@
 .newsSeparator {
   width: 2px;
   height: 2px;
-  background-color: $gray-70;
+  background-color: $gray-50;
   border-radius: 50%;
 }
 
@@ -1660,9 +1687,8 @@
   align-items: flex-end;
 
   @media (max-width: $breakpoint-tablet) {
-    bottom: 85px;
+    bottom: 95px;
     right: 10px;
     gap: 12px;
-
   }
 }

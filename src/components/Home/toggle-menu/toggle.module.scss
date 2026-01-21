@@ -48,12 +48,18 @@ $bg-color: #f8f8f8;
 // Panel
 // ==========================================
 .panel {
+
+
+
   position: absolute;
   top: 0;
   right: 0;
   width: 100%;
   height: 100%;
-  background: $bg-color;
+
+  background-color: rgba(255, 255, 255, 0.94);
+  backdrop-filter: blur(2px);
+  
   display: flex;
   flex-direction: column;
   transform: translateX(100%);
@@ -132,6 +138,9 @@ $bg-color: #f8f8f8;
   padding: 44px 40px 24px;
   flex-shrink: 0;
   border-right: 1px solid $border-color;
+  span{
+    font-family: "Pretendard", sans-serif;
+  }
 
 }
 
@@ -224,14 +233,14 @@ $bg-color: #f8f8f8;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 16px 0;
+  padding: 12px 0;
   cursor: pointer;
   transition: color 0.2s ease;
 
   
 
   @media (min-width: 767px) {
-    padding: 24px 0;
+    padding: 16px 0;
   }
 
   &:hover {
@@ -275,6 +284,7 @@ $bg-color: #f8f8f8;
   font-weight: 300;
   color: #999;
   line-height: 1;
+  opacity: 0;
 
   @media (min-width: 767px) {
     font-size: 30px;
@@ -287,7 +297,7 @@ $bg-color: #f8f8f8;
 .subMenu {
   list-style: none;
   margin: 0;
-  padding: 0 0 16px 8px;
+  padding: 0 0 16px 4px;
 
   @media (min-width: 767px) {
     padding: 0 0 20px 12px;
@@ -295,10 +305,10 @@ $bg-color: #f8f8f8;
 }
 
 .subMenuItem {
-  padding: 12px 0;
+  padding: 8px 0;
   font-family: "Pretendard", sans-serif;
   font-size: 16px;
-  font-weight: 400;
+  font-weight: 500;
   color: $text-dark;
   cursor: pointer;
   transition: color 0.2s ease;
@@ -379,13 +389,13 @@ $bg-color: #f8f8f8;
     padding: 0;
     width: auto;
     svg{
-      width: 32px;
-      height: 32px;
+      width: 36px;
+      height: 36px;
     }
   }
 
   .menu {
-    padding: 48px 40px;
+    padding: 48px 36px 40px 40px;
     margin-right: 0;
     border-right: none;
   }
@@ -404,6 +414,7 @@ $bg-color: #f8f8f8;
 
   .subMenu {
     padding-left: 15px;
+    padding-bottom: 30px;
   }
 
   .subMenuItem {

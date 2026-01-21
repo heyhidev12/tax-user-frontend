@@ -30,7 +30,7 @@ $bg-light: #f5f5f5;
     }
   }
 
-  .container {
+  .insight-container {
     max-width: 1440px;
     margin: 0 auto;
     padding: 0 40px;
@@ -62,6 +62,11 @@ $bg-light: #f5f5f5;
     left: 0;
     pointer-events: none;
     user-select: none;
+  
+    // 0115
+    opacity: 0.5;
+    letter-spacing: -7px;
+    // 0115
 
     @media (max-width: 1024px) {
       font-size: 140px;
@@ -78,51 +83,61 @@ $bg-light: #f5f5f5;
   &__title-wrapper {
     position: relative;
     z-index: 1;
-    padding-top: 40px;
+    padding-top: 50px;
     padding-left: 30px;
 
     @media (max-width: 767px) {
-      padding-top: 20px;
+      padding-top: 46px;
       padding-left: 0;
     }
   }
 
   &__title {
-    font-family: "Playfair Display", serif;
+    font-family: "Playfair";
     font-size: 124px;
     font-weight: 600;
     color: $text-dark;
     margin: 0 0 20px;
     display: flex;
     align-items: flex-start;
-    gap: 12px;
+    gap: 4px;
+
+    letter-spacing: -6.4px;
+    line-height: .82;
 
     @media (max-width: 767px) {
-      font-size: 44px;
-      gap: 6px;
-      margin-bottom: 12px;
+      font-size: 50px;
+      line-height: 1.1;
+      letter-spacing: -3.5px;
     }
   }
 
   &__subtitle {
     font-family: "Pretendard", sans-serif;
-    font-size: 25px;
-    font-weight: 500;
+    font-size: 22px;
+    font-weight: 600;
     color: $text-dark;
-    margin-top: 25px;
+    margin-top: 18px;
+    margin-left: 18px;
+    letter-spacing: -.5px;
+
+    
 
     @media (max-width: 767px) {
-      font-size: 12px;
-      margin-top: 6px;
+      font-size: 15px;
+      margin-top: 10px;
+      margin-left: 8px;
     }
   }
 
   &__dot {
-    width: 12px;
-    height: 12px;
+    width: 10px;
+    height: 10px;
     background: $teal;
     border-radius: 50%;
     margin-top: 15px;
+
+    
 
     @media (max-width: 767px) {
       width: 8px;
@@ -135,7 +150,8 @@ $bg-light: #f5f5f5;
 // Slider
 .insight-slider {
   margin-bottom: 80px;
-  margin-left: 22.5%;
+  // margin-left: 22.5%;
+  overflow: visible;
 
   @media (max-width: 1024px) {
     margin-left: 0;
@@ -147,15 +163,19 @@ $bg-light: #f5f5f5;
 }
 
 .insight-swiper {
-  overflow: visible;
+  width: calc(100vw - 305px);
+  margin-left: 305px;
 
   .swiper-slide {
     height: auto;
 
-    @media (max-width: 767px) {
-      // width: 260px !important;
-    }
   }
+
+    @media (max-width: 1280px) {
+      // width: 260px !important;
+      margin-left: 0;
+      width: 100vw;
+    }
 }
 
 // Card
@@ -170,6 +190,8 @@ $bg-light: #f5f5f5;
   flex-direction: column;
   border: 3px solid transparent;
   width: 100%;
+  filter: drop-shadow(0 4px 5px rgba(0, 0, 0, 0.08));
+  
   cursor: pointer;
     aspect-ratio: 1 / 1;
 
@@ -234,7 +256,7 @@ $bg-light: #f5f5f5;
 
   &__date {
     font-family: "Pretendard", sans-serif;
-    font-size: 15px;
+    font-size: 14px;
     color: $text-gray;
 
     @media (max-width: 767px) {
@@ -250,7 +272,7 @@ $bg-light: #f5f5f5;
   cursor: pointer;
   padding: 10px 2rem 10px 22.5%;
 
-  @media (max-width: 1024px) {
+  @media (max-width: 1280px) {
     padding-left:0;
     padding-right:0;
   }

@@ -90,9 +90,12 @@ const Awards: React.FC = () => {
 
   return (
     <section className={styles['awards-section']}>
-      <div className={styles['awards-section__background']}></div>
+      <video className={styles.video} autoPlay loop muted>
+          <source src="./videos/home/award.mp4" type="video/mp4" />
+        </video>
       <div className={styles['awards-section__union']}>
         <img src="./images/home/union.png" alt="" />
+        
       </div>
 
       <div className={styles['awards-section__content']}>
@@ -132,11 +135,9 @@ const Awards: React.FC = () => {
               {awards.map((award) => (
                 <SwiperSlide key={award.id}>
                   <div className={styles['award-item']}>
-                    <div className={styles['award-item__trophy']}>
                       <div className={styles['award-item__certificate']}>
                         <img src={award.image.url} alt={award.name} />
                       </div>
-                    </div>
                     <div className={styles['award-item__info']}>
                       <span className={styles['award-item__year']}>
                         {award.yearName} {award.source}

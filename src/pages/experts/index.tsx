@@ -271,7 +271,7 @@ const ExpertsPage: React.FC = () => {
                   className={styles.fieldSelectorInput}
                   onClick={() => setIsDropdownOpen(!isDropdownOpen)}
                 >
-                  <p>{selectedField}</p>
+                  <p className={`${selectedField!=="분야를 선택해주세요" && styles.selected}`} >{selectedField}</p>
                   <Icon
                     type="chevron-down-white"
                     size={20}

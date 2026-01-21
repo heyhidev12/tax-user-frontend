@@ -24,9 +24,9 @@
     }
   }
 
-  // @media (max-width: 767px) {
-  //   padding-top: 56px;
-  // }
+  @media (max-width: 767px) {
+    min-height: 90vh;
+  }
 }
 
 .pageContent {
@@ -48,12 +48,12 @@
   }
 
   @media (max-width: $breakpoint-tablet) {
-    padding: 80px 0px 40px;
+    padding: 56px 0px 40px;
   }
 }
 
 .heroSubtitle {
-  font-family: $font-pretendard;
+  font-family: $font-noto;
   font-weight: 600;
   font-size: 20px;
   line-height: 150%;
@@ -66,11 +66,13 @@
 }
 
 .heroTitle {
-  font-family: $font-pretendard;
+  font-family: "Arita Buri KR", serif;
   font-weight: 600;
   font-size: 68px;
   color: $gray-90;
   text-align: center;
+  letter-spacing: -3px;
+  margin-top: 24px;
   span {
     color: $primary-50;
   }
@@ -86,13 +88,13 @@
   font-size: 17px;
   line-height: 1.5;
   letter-spacing: -0.085px;
-  color: $gray-70;
+  color: $gray-90;
   margin-top: -15px;
   text-align: center;
   margin-top: 56px;
 
   @media (max-width: $breakpoint-tablet) {
-    margin-top: 40px;
+    margin-top: 20px;
   }
 
   p {
@@ -155,6 +157,10 @@
     color: $gray-50;
     margin: 0;
     flex: 1;
+    &.selected {
+      color: $gray-90;
+      font-weight: 500;
+    }
   }
 
   &:hover {
@@ -271,7 +277,7 @@
 
 .expertsListTitle {
   color: $gray-90;
-  font-family: Pretendard;
+  font-family: $font-noto;
   font-size: 42px;
   font-style: normal;
   font-weight: 600;

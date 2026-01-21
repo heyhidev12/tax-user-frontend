@@ -105,7 +105,7 @@ const Insight: React.FC = () => {
   return (
     <section className={styles["insight-section"]}>
       <div className={styles.back}></div>
-      <div className="container">
+      <div className={styles["insight-container"]}>
         <div className={styles["insight-header"]}>
           <div className={styles["insight-header__number"]}>03</div>
           <div className={styles["insight-header__title-wrapper"]}>
@@ -131,18 +131,22 @@ const Insight: React.FC = () => {
             grabCursor={true}
             breakpoints={{
               0: {
-                slidesPerView: 1.1,
+                slidesPerView: 1.2,
                 spaceBetween: 16,
               },
               576: {
-                slidesPerView: 1.8,
+                slidesPerView: 2.8,
                 spaceBetween: 18,
               },
 
               768: {
-                slidesPerView: 2.5,
+                slidesPerView: 3,
                 spaceBetween: 22,
               },
+              1280:{
+                slidesPerView: 4,
+                spaceBetween: 20,
+              }
             }}
             className={styles["insight-swiper"]}
           >

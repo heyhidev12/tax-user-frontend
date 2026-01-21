@@ -107,6 +107,7 @@ svg path {
 // Mobile responsive
 @media (max-width: 767px) {
   .step-indicator {
+    margin-top: 180px;
     &__item {
       min-width: 60px;
     }
@@ -117,12 +118,5 @@ svg path {
       margin-top: 15px;
     }
 
-    &__number {
-      font-size: 10px;
-    }
-
-    &__label {
-      font-size: 12px;
-    }
   }
 }

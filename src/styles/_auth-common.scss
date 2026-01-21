@@ -21,7 +21,7 @@
   padding: 100px 24px 280px;
 
   @media (max-width: $breakpoint-tablet) {
-    padding: 100px 20px 60px;
+    padding: 100px 20px 88px;
   }
 }
 
@@ -125,6 +125,7 @@ border: 1px solid  #E4E4E4;
   display: flex;
   flex-direction: column;
   gap: 40px;
+  padding: 8px 0;
 }
 
 // Input Group

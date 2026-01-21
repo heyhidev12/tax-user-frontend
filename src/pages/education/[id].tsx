@@ -507,6 +507,7 @@ const EducationDetailPage: React.FC<EducationDetailPageProps> = ({ education: in
                     <p>{education.otherInfo}</p>
                   </div>
                 )}
+                <div className={styles.divider} />
 
                 <div className={styles.dateSelector}>
                   <div className={styles.dateInput}>

@@ -91,7 +91,15 @@
   flex-direction: column;
   justify-content: center;
   width: 100%;
+  @media (max-width:767px) {
+      padding: 24px 16px 40px !important;
+  }
 }
+// .auth-content-section{
+//    @media (max-width:767px) {
+//   padding-bottom: 88px!important;
+//    }
+// }
 .signup-terms-container {
   width: 100%;
   max-width: 100%;

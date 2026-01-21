@@ -24,7 +24,7 @@ import styles from "./detail.module.scss";
 // Toast UI Viewer는 클라이언트 사이드에서만 로드
 const Viewer = dynamic(
   () => import("@toast-ui/react-editor").then((mod) => mod.Viewer),
-  { ssr: false }
+  { ssr: false },
 );
 
 interface SectionContent {
@@ -99,7 +99,10 @@ interface BusinessAreaDetailPageProps {
   error: string | null;
 }
 
-const BusinessAreaDetailPage: React.FC<BusinessAreaDetailPageProps> = ({ data: initialData, error: initialError }) => {
+const BusinessAreaDetailPage: React.FC<BusinessAreaDetailPageProps> = ({
+  data: initialData,
+  error: initialError,
+}) => {
   const router = useRouter();
   const { id } = router.query;
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -278,7 +281,7 @@ const BusinessAreaDetailPage: React.FC<BusinessAreaDetailPageProps> = ({ data: i
       if (!ref.current) return;
 
       const observer = new IntersectionObserver(handleIntersection, {
-          threshold: [0, 0.1, 0.3, 0.5, 0.7, 1],
+        threshold: [0, 0.1, 0.3, 0.5, 0.7, 1],
         rootMargin: "-10% 0px -70% 0px",
       });
 
@@ -375,26 +378,26 @@ const BusinessAreaDetailPage: React.FC<BusinessAreaDetailPageProps> = ({ data: i
         if (response.data && Array.isArray(response.data)) {
           // Find current major category and set its minor categories
           const currentMajor = response.data.find(
-            (item) => item.majorCategory.id === data.majorCategory.id
+            (item) => item.majorCategory.id === data.majorCategory.id,
           );
           if (currentMajor) {
             setMinorCategories(
               currentMajor.minorCategories.map((cat) => ({
                 id: cat.id,
                 name: cat.name,
-              }))
+              })),
             );
 
             // Find current minor category and set its items
             const currentMinorCategory = currentMajor.minorCategories.find(
-              (cat) => cat.id === data.minorCategory.id
+              (cat) => cat.id === data.minorCategory.id,
             );
             if (currentMinorCategory && currentMinorCategory.items) {
               setMinorCategoryItems(
                 currentMinorCategory.items.map((item) => ({
                   id: item.id,
                   name: item.name,
-                }))
+                })),
               );
             }
           }
@@ -407,7 +410,6 @@ const BusinessAreaDetailPage: React.FC<BusinessAreaDetailPageProps> = ({ data: i
     updateMinorCategories();
   }, [data?.majorCategory.id, data?.minorCategory.id]);
 
-
   const fetchRelatedData = async () => {
     try {
       // 관련 업무 세무사 가져오기 (workArea 파라미터 사용)
@@ -419,7 +421,7 @@ const BusinessAreaDetailPage: React.FC<BusinessAreaDetailPageProps> = ({ data: i
             Expert[] | { items: Expert[]; data: Expert[] }
           >(url);
           console.log("Members API response:", membersResponse);
-          
+
           if (membersResponse.data) {
             // 응답이 배열인 경우와 객체인 경우 모두 처리
             let expertsList: Expert[] = [];
@@ -435,9 +437,9 @@ const BusinessAreaDetailPage: React.FC<BusinessAreaDetailPageProps> = ({ data: i
             // workAreas를 tags로 변환
             expertsList = expertsList.map((expert) => ({
               ...expert,
-              tags: expert.workAreas 
+              tags: expert.workAreas
                 ? expert.workAreas.map((area) =>
-                    typeof area === "string" ? area : area.value
+                    typeof area === "string" ? area : area.value,
                   )
                 : expert.tags || [],
               tel: expert.tel || expert.phoneNumber,
@@ -454,7 +456,7 @@ const BusinessAreaDetailPage: React.FC<BusinessAreaDetailPageProps> = ({ data: i
       // 관련 소식 가져오기
       try {
         const newsResponse = await getClient<InsightResponse>(
-          `${API_ENDPOINTS.INSIGHTS}?page=1&limit=20`
+          `${API_ENDPOINTS.INSIGHTS}?page=1&limit=20`,
         );
         if (newsResponse.data?.items) {
           setRelatedNews(newsResponse.data.items);
@@ -471,7 +473,7 @@ const BusinessAreaDetailPage: React.FC<BusinessAreaDetailPageProps> = ({ data: i
   const getSectionContent = (sectionName: string): string => {
     if (!data?.sectionContents) return "";
     const section = data.sectionContents.find(
-      (sc) => sc.section === sectionName
+      (sc) => sc.section === sectionName,
     );
     return section?.content || "";
   };
@@ -486,7 +488,7 @@ const BusinessAreaDetailPage: React.FC<BusinessAreaDetailPageProps> = ({ data: i
   const fetchYouTubeVideoInfo = async (url: string) => {
     try {
       const oembedUrl = `https://www.youtube.com/oembed?url=${encodeURIComponent(
-        url
+        url,
       )}&format=json`;
       const response = await fetch(oembedUrl);
       if (response.ok) {
@@ -512,7 +514,7 @@ const BusinessAreaDetailPage: React.FC<BusinessAreaDetailPageProps> = ({ data: i
             if (info) {
               videoInfoMap[url] = info;
             }
-          })
+          }),
         );
         setYoutubeVideos(videoInfoMap);
       };
@@ -557,7 +559,7 @@ const BusinessAreaDetailPage: React.FC<BusinessAreaDetailPageProps> = ({ data: i
     const date = new Date(dateString);
     return `${date.getFullYear()}.${String(date.getMonth() + 1).padStart(
       2,
-      "0"
+      "0",
     )}.${String(date.getDate()).padStart(2, "0")}`;
   };
 
@@ -620,14 +622,14 @@ const BusinessAreaDetailPage: React.FC<BusinessAreaDetailPageProps> = ({ data: i
                     }>;
                   }>
                 >(
-                  `${API_ENDPOINTS.BUSINESS_AREAS_HIERARCHICAL}?limit=20&page=1`
+                  `${API_ENDPOINTS.BUSINESS_AREAS_HIERARCHICAL}?limit=20&page=1`,
                 );
 
                 if (response.data && Array.isArray(response.data)) {
                   // Find the selected minor category and its first item
                   for (const item of response.data) {
                     const minorCategory = item.minorCategories.find(
-                      (cat) => cat.id === value
+                      (cat) => cat.id === value,
                     );
                     if (
                       minorCategory &&
@@ -635,7 +637,7 @@ const BusinessAreaDetailPage: React.FC<BusinessAreaDetailPageProps> = ({ data: i
                       minorCategory.items.length > 0
                     ) {
                       router.push(
-                        `/business-areas/${minorCategory.items[0].id}`
+                        `/business-areas/${minorCategory.items[0].id}`,
                       );
                       return;
                     }
@@ -690,43 +692,44 @@ const BusinessAreaDetailPage: React.FC<BusinessAreaDetailPageProps> = ({ data: i
           {data.subDescription && (
             <p className={styles.heroDescription}>{data.subDescription}</p>
           )}
-      </div>
+        </div>
 
-      <div className={styles.heroSection}>
-        {data.image?.url && !imageError ? (
-          <img 
-            src={data.image.url} 
-            alt={data.name}
-            className={styles.heroImage}
-            onError={() => setImageError(true)}
-            onLoad={() => setImageError(false)}
-          />
-        ) : (
-          <div className={styles.imagePlaceholder}>
-            <span>{data.name}</span>
-          </div>
-        )}
-        <div className={styles.heroOverlay} />
-      </div>
+        <div className={styles.heroSection}>
+          {data.image?.url && !imageError ? (
+            <img
+              src={data.image.url}
+              alt={data.name}
+              className={styles.heroImage}
+              onError={() => setImageError(true)}
+              onLoad={() => setImageError(false)}
+            />
+          ) : (
+            <div className={styles.imagePlaceholder}>
+              <span>{data.name}</span>
+            </div>
+          )}
+          <div className={styles.heroOverlay} />
+        </div>
 
-      {/* Fixed Overview Banner - Shows when Overview section is not visible */}
-      {isOverviewPassed && data.overview && (
-        <div
+        {/* Fixed Overview Banner - Shows when Overview section is not visible */}
+        {isOverviewPassed && data.overview && (
+          <div
             className={`${styles.overviewFixedBanner} ${
               isOverviewBannerExpanded ? styles.expanded : ""
             }`}
             onClick={() =>
               setIsOverviewBannerExpanded(!isOverviewBannerExpanded)
             }
-        >
+          >
             <div className="container">
-          <div className={styles.overviewFixedBannerContent}>
-            {/* 모바일 헤더 (OVERVIEW + 토글) */}
-            <div className={styles.overviewFixedBannerHeader}>
+              <div className={styles.overviewFixedBannerContent}>
+                {/* 모바일 헤더 (OVERVIEW + 토글) */}
+                <div className={styles.overviewFixedBannerHeader}>
                   <div className={styles.overviewFixedBannerTitle}>
+                    <span></span>
                     Overview
                   </div>
-              <div className={styles.overviewFixedBannerToggle}>
+                  <div className={styles.overviewFixedBannerToggle}>
                     <svg
                       width="20"
                       height="20"
@@ -734,37 +737,37 @@ const BusinessAreaDetailPage: React.FC<BusinessAreaDetailPageProps> = ({ data: i
                       fill="none"
                       xmlns="http://www.w3.org/2000/svg"
                     >
-                  <path
+                      <path
                         d={
                           isOverviewBannerExpanded
                             ? "M5 12.5L10 7.5L15 12.5"
                             : "M5 7.5L10 12.5L15 7.5"
                         }
                         stroke="#2d2d2d"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
-              </div>
-            </div>
-            {/* 데스크탑 타이틀 */}
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
+                  </div>
+                </div>
+                {/* 데스크탑 타이틀 */}
                 <div className={styles.overviewFixedBannerTitleDesktop}>
                   <span></span>
                   Overview
                 </div>
-            <div className={styles.overviewFixedBannerDivider} />
+                <div className={styles.overviewFixedBannerDivider} />
                 <div
                   className={`${styles.overviewFixedBannerBody} ${
                     !isOverviewBannerExpanded ? styles.collapsed : ""
                   }`}
                 >
-              <div className={styles.overviewContentInner}>
-                <Viewer initialValue={data.overview} />
-              </div>
-            </div>
-            {/* 데스크탑 토글 */}
-            <div className={styles.overviewFixedBannerToggleDesktop}>
+                  <div className={styles.overviewContentInner}>
+                    <Viewer initialValue={data.overview} />
+                  </div>
+                </div>
+                {/* 데스크탑 토글 */}
+                <div className={styles.overviewFixedBannerToggleDesktop}>
                   <svg
                     width="20"
                     height="20"
@@ -772,29 +775,29 @@ const BusinessAreaDetailPage: React.FC<BusinessAreaDetailPageProps> = ({ data: i
                     fill="none"
                     xmlns="http://www.w3.org/2000/svg"
                   >
-                <path
+                    <path
                       d={
                         isOverviewBannerExpanded
                           ? "M5 12.5L10 7.5L15 12.5"
                           : "M5 7.5L10 12.5L15 7.5"
                       }
                       stroke="#2d2d2d"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
                 </div>
+              </div>
             </div>
           </div>
-        </div>
-      )}
+        )}
 
-      {/* Mobile Sticky Tab Navigation - Shows when scrolled past overview */}
-      {isOverviewPassed && (
-        <nav className={styles.mobileStickyNav}>
+        {/* Mobile Sticky Tab Navigation - Shows when scrolled past overview */}
+        {isOverviewPassed && (
+          <nav className={styles.mobileStickyNav}>
             {data.majorCategory.sections.includes("발생원인") && (
-            <button
+              <button
                 className={`${styles.mobileTabItem} ${
                   activeSection === "rootcause"
                     ? styles.mobileTabItemActive
@@ -805,7 +808,7 @@ const BusinessAreaDetailPage: React.FC<BusinessAreaDetailPageProps> = ({ data: i
                     .getElementById("rootcause")
                     ?.scrollIntoView({ behavior: "smooth" })
                 }
-            >
+              >
                 <span>발생원인</span>
               </button>
             )}
@@ -836,11 +839,11 @@ const BusinessAreaDetailPage: React.FC<BusinessAreaDetailPageProps> = ({ data: i
                     ?.scrollIntoView({ behavior: "smooth" })
                 }
               >
-              <span>체크포인트</span>
-            </button>
-          )}
+                <span>체크포인트</span>
+              </button>
+            )}
             {data.majorCategory.sections.includes("함께 실행방안") && (
-            <button
+              <button
                 className={`${styles.mobileTabItem} ${
                   activeSection === "execution"
                     ? styles.mobileTabItemActive
@@ -851,12 +854,12 @@ const BusinessAreaDetailPage: React.FC<BusinessAreaDetailPageProps> = ({ data: i
                     .getElementById("execution")
                     ?.scrollIntoView({ behavior: "smooth" })
                 }
-            >
-              <span>함께 실행방안</span>
-            </button>
-          )}
+              >
+                <span>함께 실행방안</span>
+              </button>
+            )}
             {data.majorCategory.sections.includes("케이스") && (
-            <button
+              <button
                 className={`${styles.mobileTabItem} ${
                   activeSection === "cases" ? styles.mobileTabItemActive : ""
                 }`}
@@ -865,25 +868,25 @@ const BusinessAreaDetailPage: React.FC<BusinessAreaDetailPageProps> = ({ data: i
                     .getElementById("cases")
                     ?.scrollIntoView({ behavior: "smooth" })
                 }
-            >
-              <span>케이스</span>
-            </button>
-          )}
-        </nav>
-      )}
+              >
+                <span>케이스</span>
+              </button>
+            )}
+          </nav>
+        )}
 
-      {/* Overview Section - Below Hero Image */}
-      {data.overview && (
-        <div ref={overviewRef} className={styles.overviewSectionWrapper}>
+        {/* Overview Section - Below Hero Image */}
+        {data.overview && (
+          <div ref={overviewRef} className={styles.overviewSectionWrapper}>
             <h2 className={styles.overviewTitle}>Overview</h2>
-              <div className={styles.overviewContent}>
+            <div className={styles.overviewContent}>
               <p>개요</p>
-                  <div className={styles.overviewContentInner}>
-                    <Viewer initialValue={data.overview} />
-                  </div>
+              <div className={styles.overviewContentInner}>
+                <Viewer initialValue={data.overview} />
+              </div>
+            </div>
           </div>
-        </div>
-      )}
+        )}
 
         <div className={styles.contentWrapper}>
           {/* Main Content */}
@@ -913,7 +916,7 @@ const BusinessAreaDetailPage: React.FC<BusinessAreaDetailPageProps> = ({ data: i
                   </ContentBox>
                 </div>
               </section>
-          )}
+            )}
             {data.majorCategory.sections.includes("리스크") && (
               <section id="risk" ref={riskRef} className={styles.section}>
                 <div className={styles.sectionHeader}>
@@ -928,90 +931,90 @@ const BusinessAreaDetailPage: React.FC<BusinessAreaDetailPageProps> = ({ data: i
                         <div className={styles.contentText}>
                           <Viewer initialValue={getSectionContent("리스크")} />
                         </div>
-          )}
-        </div>
+                      )}
+                    </div>
                   </ContentBox>
                 </div>
               </section>
             )}
-          {/* Check Point Section */}
+            {/* Check Point Section */}
             {data.majorCategory.sections.includes("체크포인트") && (
               <section
                 id="checkpoint"
                 ref={checkpointRef}
                 className={styles.section}
               >
-              <div className={styles.sectionHeader}>
-                <h2 className={styles.sectionTitle}>CHECK POINT</h2>
-              </div>
-              <div className={styles.sectionContent}>
-                <h3 className={styles.subSectionTitle}>체크포인트</h3>
-                <ContentBox>
+                <div className={styles.sectionHeader}>
+                  <h2 className={styles.sectionTitle}>Check Point</h2>
+                </div>
+                <div className={styles.sectionContent}>
+                  <h3 className={styles.subSectionTitle}>체크포인트</h3>
+                  <ContentBox>
                     <div className={styles.overlay} />
-                  <div className={styles.checkPointContent}>
+                    <div className={styles.checkPointContent}>
                       {getSectionContent("체크포인트") && (
-                      <div className={styles.contentText}>
+                        <div className={styles.contentText}>
                           <Viewer
                             initialValue={getSectionContent("체크포인트")}
                           />
-                      </div>
-                    )}
-                  </div>
-                </ContentBox>
-              </div>
-            </section>
-          )}
+                        </div>
+                      )}
+                    </div>
+                  </ContentBox>
+                </div>
+              </section>
+            )}
 
-          {/* Execution Strategy Section */}
+            {/* Execution Strategy Section */}
             {data.majorCategory.sections.includes("함께 실행방안") && (
               <section
                 id="execution"
                 ref={executionRef}
                 className={styles.section}
               >
-              <div className={styles.sectionHeader}>
-                <h2 className={styles.sectionTitle}>EXECUTION STRATEGY</h2>
-              </div>
-              <div className={styles.sectionContent}>
-                <h3 className={styles.subSectionTitle}>함께 실행방안</h3>
-                <ContentBox>
+                <div className={styles.sectionHeader}>
+                  <h2 className={styles.sectionTitle}>Execution Strategy</h2>
+                </div>
+                <div className={styles.sectionContent}>
+                  <h3 className={styles.subSectionTitle}>함께 실행방안</h3>
+                  <ContentBox>
                     <div className={styles.overlay} />
-                  <div className={styles.executionContent}>
+                    <div className={styles.executionContent}>
                       {getSectionContent("함께 실행방안") && (
-                      <div className={styles.contentText}>
+                        <div className={styles.contentText}>
                           <Viewer
                             initialValue={getSectionContent("함께 실행방안")}
                           />
-                      </div>
-                    )}
-                  </div>
-                </ContentBox>
-              </div>
-            </section>
-          )}
+                        </div>
+                      )}
+                    </div>
+                  </ContentBox>
+                </div>
+              </section>
+            )}
 
-          {/* Cases Section */}
+            {/* Cases Section */}
             {data.majorCategory.sections.includes("케이스") && (
-            <section id="cases" ref={casesRef} className={styles.section}>
-              <div className={styles.sectionHeader}>
-                <h2 className={styles.sectionTitle}>CASES</h2>
-              </div>
-              <div className={styles.sectionContent}>
-                <h3 className={styles.subSectionTitle}>케이스</h3>
-                <ContentBox>
+              <section id="cases" ref={casesRef} className={styles.section}>
+                <div className={styles.sectionHeader}>
+                  <h2 className={styles.sectionTitle}>Cases</h2>
+                </div>
+                <div className={styles.sectionContent}>
+                  <h3 className={styles.subSectionTitle}>케이스</h3>
+                  <ContentBox>
                     <div className={styles.overlay} />
-                  <div className={styles.casesContent}>
+                    <div className={styles.casesContent}>
                       {getSectionContent("케이스") && (
-                      <div className={styles.contentText}>
+                        <div className={styles.contentText}>
                           <Viewer initialValue={getSectionContent("케이스")} />
-                      </div>
-                    )}
-                  </div>
-                </ContentBox>
-              </div>
-            </section>
-          )}
-      </div>
+                        </div>
+                      )}
+                    </div>
+                  </ContentBox>
+                </div>
+              </section>
+            )}
+          </div>
 
           {/* Left Sidebar Navigation */}
           <div className={styles.sidebarNav}>
@@ -1095,8 +1098,8 @@ const BusinessAreaDetailPage: React.FC<BusinessAreaDetailPageProps> = ({ data: i
                 <span className={styles.navText}>케이스</span>
               </a>
             )}
-              </div>
-            </div>
+          </div>
+        </div>
 
         <div className={styles.floatingButtons}>
           <FloatingButton
@@ -1109,43 +1112,43 @@ const BusinessAreaDetailPage: React.FC<BusinessAreaDetailPageProps> = ({ data: i
       </div>
       <div className={styles.infoWrapper}>
         <div className="container">
-      {experts.length > 0 && (
-        <div className={styles.fullWidthSection}>
-          <div className={styles.fullWidthContainer}>
-          <section className={styles.section}>
-            <div className={styles.sectionHeader}>
-              <div className={styles.sectionHeaderContent}>
-                <div>
-                  <h2 className={styles.sectionTitle}>RELATED EXPERTS</h2>
+          {experts.length > 0 && (
+            <div className={styles.fullWidthSection}>
+              <div className={styles.fullWidthContainer}>
+                <section className={styles.section}>
+                  <div className={styles.sectionHeader}>
+                    <div className={styles.sectionHeaderContent}>
+                      <div>
+                        <h2 className={styles.sectionTitle}>Related Experts</h2>
                         <p className={styles.sectionSubtitle}>
                           <span /> 관련 업무 세무사
                         </p>
-                </div>
-                <div className={styles.navigationButtons}>
-                  <button
-                    className={styles.navButton}
-                    onClick={handleExpertPrev}
+                      </div>
+                      <div className={styles.navigationButtons}>
+                        <button
+                          className={styles.navButton}
+                          onClick={handleExpertPrev}
                           id="experts-prev-btn"
                           disabled={expertsButtonsDisabled.prev}
-                  >
+                        >
                           <Icon
                             type="arrow-left2-green"
                             className={styles.arrow}
                             size={20}
                           />
-                  </button>
-                  <button
-                    className={styles.navButton}
-                    onClick={handleExpertNext}
+                        </button>
+                        <button
+                          className={styles.navButton}
+                          onClick={handleExpertNext}
                           id="experts-next-btn"
                           disabled={expertsButtonsDisabled.next}
-                  >
+                        >
                           <Icon type="arrow-right2-green" size={20} />
-                  </button>
-                </div>
-              </div>
-            </div>
-            <div className={styles.expertsContent}>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                  <div className={styles.expertsContent}>
                     <Swiper
                       modules={[Navigation]}
                       grabCursor={true}
@@ -1156,7 +1159,7 @@ const BusinessAreaDetailPage: React.FC<BusinessAreaDetailPageProps> = ({ data: i
                       }}
                       breakpoints={{
                         0: {
-                          slidesPerView: 1.3,
+                          slidesPerView: 1.55,
                           spaceBetween: 16,
                         },
                         576: {
@@ -1184,126 +1187,126 @@ const BusinessAreaDetailPage: React.FC<BusinessAreaDetailPageProps> = ({ data: i
                       {experts.map((expert, index) => (
                         <SwiperSlide key={expert.id || index}>
                           <div
-                        className={styles.expertCard}
-                        onClick={() => router.push(`/experts/${expert.id}`)}
-                      >
-                        <div className={styles.expertImage}>
-                          <img
+                            className={styles.expertCard}
+                            onClick={() => router.push(`/experts/${expert.id}`)}
+                          >
+                            <div className={styles.expertImage}>
+                              <img
                                 src={
                                   expert.mainPhoto?.url ||
                                   expert.imageUrl ||
                                   "/images/common/default-avatar.png"
                                 }
-                            alt={expert.name}
-                            onError={(e) => {
+                                alt={expert.name}
+                                onError={(e) => {
                                   (e.target as HTMLImageElement).src =
                                     "/images/common/default-avatar.png";
-                            }}
-                          />
-                        </div>
+                                }}
+                              />
+                            </div>
 
-                        <div className={styles.expertInfo}>
-                          <div className={styles.expertNameRow}>
+                            <div className={styles.expertInfo}>
+                              <div className={styles.expertNameRow}>
                                 <p className={styles.expertName}>
                                   {expert.name}
                                 </p>
                                 <p className={styles.expertPositionLabel}>
                                   {expert.position || "세무사"}
                                 </p>
-                          </div>
+                              </div>
 
-                          <div className={styles.expertContact}>
-                            {(expert.tel || expert.phoneNumber) && (
-                              <div className={styles.expertContactItem}>
+                              <div className={styles.expertContact}>
+                                {(expert.tel || expert.phoneNumber) && (
+                                  <div className={styles.expertContactItem}>
                                     <span className={styles.expertContactLabel}>
                                       TEL
                                     </span>
                                     <span className={styles.expertContactValue}>
                                       {expert.tel || expert.phoneNumber}
                                     </span>
-                              </div>
-                            )}
+                                  </div>
+                                )}
 
-                            {expert.email && (
-                              <div className={styles.expertContactItem}>
+                                {expert.email && (
+                                  <div className={styles.expertContactItem}>
                                     <span className={styles.expertContactLabel}>
                                       EMAIL
                                     </span>
                                     <span className={styles.expertContactValue}>
                                       {expert.email}
                                     </span>
+                                  </div>
+                                )}
                               </div>
-                            )}
-                          </div>
 
-                          {expert.tags && expert.tags.length > 0 && (
-                            <div className={styles.expertTags}>
+                              {expert.tags && expert.tags.length > 0 && (
+                                <div className={styles.expertTags}>
                                   {" "}
-                              {expert.tags.map((tag, tagIndex) => {
+                                  {expert.tags.map((tag, tagIndex) => {
                                     let indicator = "";
-                                if (tagIndex === 0) {
+                                    if (tagIndex === 0) {
                                       indicator = " ■■■";
-                                } else if (tagIndex === 1) {
+                                    } else if (tagIndex === 1) {
                                       indicator = " ■■□";
-                                } else if (tagIndex === 2) {
+                                    } else if (tagIndex === 2) {
                                       indicator = " ■□□";
-                                }
-                                return (
+                                    }
+                                    return (
                                       <span
                                         key={tagIndex}
                                         className={styles.expertTag}
                                       >
                                         {" "}
                                         {tag} {indicator}{" "}
-                                  </span>
-                                );
+                                      </span>
+                                    );
                                   })}{" "}
+                                </div>
+                              )}
                             </div>
-                          )}
-                        </div>
-                      </div>
+                          </div>
                         </SwiperSlide>
-                    ))}
+                      ))}
                     </Swiper>
+                  </div>
+                </section>
+              </div>
             </div>
-          </section>
-          </div>
-        </div>
-        )}
+          )}
 
-        {data.youtubeUrls && data.youtubeUrls.length > 0 && (
-          <div className={styles.fullWidthSection}>
-            <div className={styles.fullWidthContainer}>
-          <section className={styles.section}>
-            <div className={styles.sectionHeader}>
-              <div className={styles.sectionHeaderContent}>
-                <div>
-                  <h2 className={styles.sectionTitle}>YOUTUBE</h2>
+          {data.youtubeUrls && data.youtubeUrls.length > 0 && (
+            <div className={styles.fullWidthSection}>
+              <div className={styles.fullWidthContainer}>
+                <section className={styles.section}>
+                  <div className={styles.sectionHeader}>
+                    <div className={styles.sectionHeaderContent}>
+                      <div>
+                        <h2 className={styles.sectionTitle}>Youtube</h2>
                         <p className={styles.sectionSubtitle}>
                           <span></span> 함께공식 유튜브
                         </p>
-                </div>
-                <div className={styles.navigationButtons}>
-                  <button
-                    className={styles.navButton}
-                    onClick={handleYoutubePrev}
+                      </div>
+                      <div className={styles.navigationButtons}>
+                        <button
+                          className={styles.navButton}
+                          onClick={handleYoutubePrev}
                           id="youtube-prev-btn"
                           disabled={youtubeButtonsDisabled.prev}
-                  >
+                        >
                           <Icon type="arrow-left2-green" size={20} />
-                  </button>
-                  <button
-                    className={styles.navButton}
-                    onClick={handleYoutubeNext}
+                        </button>
+                        <button
+                          className={styles.navButton}
+                          onClick={handleYoutubeNext}
                           id="youtube-next-btn"
                           disabled={youtubeButtonsDisabled.next}
-                  >
+                        >
                           <Icon type="arrow-right2-green" size={20} />
-                  </button>
-                </div>
-              </div>
-            </div>
-            <div className={styles.youtubeContent}>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                  <div className={styles.youtubeContent}>
                     <Swiper
                       modules={[Navigation]}
                       grabCursor={true}
@@ -1311,7 +1314,7 @@ const BusinessAreaDetailPage: React.FC<BusinessAreaDetailPageProps> = ({ data: i
                       navigation={{
                         prevEl: "#youtube-prev-btn",
                         nextEl: "#youtube-next-btn",
-                }}
+                      }}
                       breakpoints={{
                         0: {
                           slidesPerView: 1.3,
@@ -1340,77 +1343,78 @@ const BusinessAreaDetailPage: React.FC<BusinessAreaDetailPageProps> = ({ data: i
                       className={styles.youtubeSwiper}
                     >
                       {data.youtubeUrls.map((url, index) => {
-                      const videoId = extractYouTubeId(url);
-                      if (!videoId) return null;
-                      return (
+                        const videoId = extractYouTubeId(url);
+                        if (!videoId) return null;
+                        return (
                           <SwiperSlide key={index}>
-                        <div 
-                          className={styles.youtubeCard}
+                            <div
+                              className={styles.youtubeCard}
                               onClick={() => window.open(url, "_blank")}
-                        >
-                          <div className={styles.youtubeThumbnail}>
-                            <img
-                              src={`https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`}
-                              alt={`YouTube video ${index + 1}`}
-                              onError={(e) => {
-                                (e.target as HTMLImageElement).src = `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`;
-                              }}
-                            />
-                          </div>
-                          <div className={styles.youtubeInfo}>
-                            <p className={styles.youtubeChannel}>
+                            >
+                              <div className={styles.youtubeThumbnail}>
+                                <img
+                                  src={`https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`}
+                                  alt={`YouTube video ${index + 1}`}
+                                  onError={(e) => {
+                                    (e.target as HTMLImageElement).src =
+                                      `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`;
+                                  }}
+                                />
+                              </div>
+                              <div className={styles.youtubeInfo}>
+                                <p className={styles.youtubeChannel}>
                                   {youtubeVideos[url]?.author_name ||
                                     "세무법인함께 TV"}
-                            </p>
-                            <p className={styles.youtubeTitle}>
+                                </p>
+                                <p className={styles.youtubeTitle}>
                                   {youtubeVideos[url]?.title ||
                                     "세무 관련 정보를 제공하는 영상입니다"}
-                            </p>
-                          </div>
-                        </div>
+                                </p>
+                              </div>
+                            </div>
                           </SwiperSlide>
-                      );
-                    })}
+                        );
+                      })}
                     </Swiper>
+                  </div>
+                </section>
+              </div>
             </div>
-          </section>
-          </div>
-        </div>
-        )}
+          )}
 
-        {relatedNews.length > 0 && (
-          <div className={styles.fullWidthSection}>
-            <div className={styles.fullWidthContainer}>
-          <section className={styles.section}>
-            <div className={styles.sectionHeader}>
-              <div className={styles.sectionHeaderContent}>
-                <div>
-                  <h2 className={styles.sectionTitle}>RELATED NEWS</h2>
+          {relatedNews.length > 0 && (
+            <div className={styles.fullWidthSection}>
+              <div className={styles.fullWidthContainer}>
+                <section className={styles.section}>
+                  <div className={styles.sectionHeader}>
+                    <div className={styles.sectionHeaderContent}>
+                      <div>
+                        <h2 className={styles.sectionTitle}>Related News</h2>
                         <p className={styles.sectionSubtitle}>
                           <span></span> 관련 소식
                         </p>
-                </div>
-                <div className={styles.navigationButtons}>
-                  <button
-                    className={styles.navButton}
-                    onClick={handleNewsPrev}
+                      </div>
+                      <div className={styles.navigationButtons}>
+                        <button
+                          className={styles.navButton}
+                          onClick={handleNewsPrev}
                           id="news-prev-btn"
                           disabled={newsButtonsDisabled.prev}
-                  >
+                        >
                           <Icon type="arrow-left2-green" size={20} />
-                  </button>
-                  <button
-                    className={styles.navButton}
-                    onClick={handleNewsNext}
+                        </button>
+                        <button
+                          className={styles.navButton}
+                          onClick={handleNewsNext}
                           id="news-next-btn"
                           disabled={newsButtonsDisabled.next}
-                  >
+                        >
                           <Icon type="arrow-right2-green" size={20} />
-                  </button>
-                </div>
-              </div>
-            </div>
-            <div className={styles.newsContent}>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                  <div className={styles.newsContent}>
                     <Swiper
                       modules={[Navigation]}
                       grabCursor={true}
@@ -1449,97 +1453,123 @@ const BusinessAreaDetailPage: React.FC<BusinessAreaDetailPageProps> = ({ data: i
                       {relatedNews.map((news) => (
                         <SwiperSlide key={news.id}>
                           <div
-                        className={styles.newsCard}
-                        onClick={() => router.push(`/insights/${news.id}`)}
-                      >
-                        {news.thumbnail && (
-                          <div className={styles.newsThumbnail}>
+                            className={styles.newsCard}
+                            onClick={() => router.push(`/insights/${news.id}`)}
+                          >
+                            {news.thumbnail && (
+                              <div className={styles.newsThumbnail}>
                                 <img
                                   src={news.thumbnail.url}
                                   alt={news.title}
                                 />
-                          </div>
-                        )}
-                        <div className={styles.newsInfo}>
-                          <div className={styles.newsHeader}>
-                            {news.category && (
-                              <p className={styles.newsCategory}>
+                              </div>
+                            )}
+                            <div className={styles.newsInfo}>
+                              <div className={styles.newsHeader}>
+                                {news.category && (
+                                  <p className={styles.newsCategory}>
                                     {typeof news.category === "string"
-                                  ? news.category 
+                                      ? news.category
                                       : typeof news.category === "object" &&
                                           news.category?.name
-                                    ? news.category.name 
+                                        ? news.category.name
                                         : "카테고리"}
-                              </p>
-                            )}
+                                  </p>
+                                )}
                                 <h3 className={styles.newsTitle}>
                                   {news.title}
                                 </h3>
-                          </div>
-                          <div className={styles.newsMeta}>
+                              </div>
+                              <div className={styles.newsMeta}>
                                 {news.authorName && (
-                              <>
+                                  <>
                                     <span className={styles.newsAuthor}>
                                       {news.authorName}
                                     </span>
                                     <span className={styles.newsSeparator}>
-                                      •
                                     </span>
-                              </>
-                            )}
-                            {news.createdAt && (
+                                  </>
+                                )}
+                                {news.createdAt && (
                                   <span className={styles.newsDate}>
                                     {formatDate(news.createdAt)}
                                   </span>
-                            )}
+                                )}
+                              </div>
+                            </div>
                           </div>
-                        </div>
-                      </div>
                         </SwiperSlide>
-                    ))}
+                      ))}
                     </Swiper>
+                  </div>
+                </section>
+              </div>
             </div>
-          </section>
-          </div>
-        </div>
-        )}
+          )}
         </div>
       </div>
       {/* <ContactUs /> */}
       <section className={styles["contact-us"]}>
         <div className="container">
-          <video className={styles.video} autoPlay loop muted playsInline>
-            <source src="/videos/home/contact.mp4" type="video/mp4" />
-          </video>
+          {/* <img src="/images/pages/bg_img.png" alt="" /> */}
 
           <div className={styles["contact-us__content"]}>
-            <h2>Contact Us</h2>
-            <p className={styles.subtitle}>세무 전문가의 상담을 받아보세요</p>
-            <p className={styles.description}>
-              세무의 처음부터 끝까지, 믿을 수 있는 전문가가 직접 안내합니다
-            </p>
+            <h2>Contact</h2>
+            <p className={styles.subtitle}>경험과 전문성을 바탕으로, <br />
+맞춤형 세무 해답을 제시합니다</p>
             <button
               className={styles["contact-btn"]}
               onClick={() => router.push("/consultation/apply")}
             >
               상담 신청하기
+              <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+            >
+              <g clip-path="url(#clip0_1934_41253)">
+                <path
+                  d="M3.75 12L20.25 12"
+                  stroke="white"
+                  stroke-width="1.6"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+                <path
+                  d="M13.5 5.25L20.25 12L13.5 18.75"
+                  stroke="white"
+                  stroke-width="1.6"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </g>
+              <defs>
+                <clipPath id="clip0_1934_41253">
+                  <rect width="24" height="24" fill="white" />
+                </clipPath>
+              </defs>
+            </svg>
             </button>
-      </div>
+          </div>
           <div className={styles["contact-us__image"]}></div>
         </div>
       </section>
       <Footer />
-      </div>
+    </div>
     // </>
   );
 };
 
-export const getServerSideProps: GetServerSideProps<BusinessAreaDetailPageProps> = async (context) => {
+export const getServerSideProps: GetServerSideProps<
+  BusinessAreaDetailPageProps
+> = async (context) => {
   const { id } = context.params!;
 
   try {
     const response = await get<BusinessAreaDetail>(
-      `${API_ENDPOINTS.BUSINESS_AREAS}/${id}`
+      `${API_ENDPOINTS.BUSINESS_AREAS}/${id}`,
     );
 
     if (response.data) {

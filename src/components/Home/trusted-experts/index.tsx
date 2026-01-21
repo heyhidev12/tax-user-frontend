@@ -49,7 +49,7 @@ const TrustedExperts: React.FC = () => {
     const fetchMembers = async () => {
       try {
         const response = await get<MembersApiResponse>(
-          `${API_ENDPOINTS.MEMBERS}?page=1&limit=20`
+          `${API_ENDPOINTS.MEMBERS}?page=1&limit=20`,
         );
 
         if (
@@ -59,7 +59,7 @@ const TrustedExperts: React.FC = () => {
         ) {
           // Sort by displayOrder (ascending)
           const sortedMembers = [...response.data.items].sort(
-            (a, b) => (a.displayOrder ?? 0) - (b.displayOrder ?? 0)
+            (a, b) => (a.displayOrder ?? 0) - (b.displayOrder ?? 0),
           );
           setExperts(sortedMembers);
         }
@@ -91,7 +91,6 @@ const TrustedExperts: React.FC = () => {
 
   return (
     <section className={styles["trusted-experts"]}>
-      
       <div className={styles["trusted-experts__header"]}>
         <div className={styles["trusted-experts__square"]}></div>
 
@@ -131,7 +130,7 @@ const TrustedExperts: React.FC = () => {
           }}
           breakpoints={{
             0: {
-              slidesPerView: 1.2,
+              slidesPerView: 1.42,
               spaceBetween: 16,
             },
             576: {
@@ -179,7 +178,20 @@ const TrustedExperts: React.FC = () => {
                   />
                 </div>
                 <div className={styles["expert-card__content"]}>
-                  <span className={styles["expert-card__quote-mark"]}>"</span>
+                  <span className={styles["expert-card__quote-mark"]}>
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="24"
+                      height="22"
+                      viewBox="0 0 24 22"
+                      fill="none"
+                    >
+                      <path
+                        d="M10.0138 16.3862C10.0138 17.8428 9.5586 18.9352 8.6483 19.8455C7.73793 20.7559 6.64551 21.12 5.37103 21.12C3.73241 21.12 2.45793 20.4828 1.45655 19.2083C0.45517 17.9338 0 16.4772 0 14.6566C0 11.5614 0.72827 8.7393 2.36689 6.09931C4.00551 3.45931 6.09931 1.45655 8.6483 0L9.7407 1.45655C8.1931 2.45793 6.82758 3.82345 5.73517 5.46207C4.64276 7.19172 4.00551 8.8303 3.91448 10.469C3.55034 11.7435 3.82344 12.2897 4.73379 12.1076C5.00689 12.0166 5.28 11.9255 5.5531 11.9255H6.37241C7.37379 12.1076 8.1931 12.6538 8.9214 13.3821C9.6497 14.2014 10.0138 15.2028 10.0138 16.3862ZM23.669 16.3862C23.669 17.8428 23.2138 18.9352 22.3034 19.8455C21.3931 20.7559 20.3007 21.12 19.0262 21.12C17.3876 21.12 16.1131 20.4828 15.1117 19.2083C14.0193 17.9338 13.5641 16.4772 13.5641 14.6566C13.5641 11.6524 14.3834 8.8303 16.0221 6.09931C17.6607 3.45931 19.7545 1.45655 22.3034 0L23.3959 1.45655C21.8483 2.45793 20.4828 3.82345 19.3903 5.46207C18.2979 7.19172 17.6607 8.8303 17.4786 10.469C17.2055 11.6524 17.4786 12.1986 18.389 12.1076C18.571 12.0166 18.8441 11.9255 19.1172 11.9255H20.0276C21.029 12.1076 21.8483 12.6538 22.5766 13.3821C23.3048 14.2014 23.669 15.2028 23.669 16.3862Z"
+                        fill="white"
+                      />
+                    </svg>
+                  </span>
                   <p className={styles["expert-card__quote"]}>
                     {expert.oneLineIntro}
                   </p>

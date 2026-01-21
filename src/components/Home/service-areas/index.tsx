@@ -66,9 +66,9 @@ export default function ServiceAreas() {
       setWindowWidth(width);
       setIsMobile(width <= 768);
     };
-    
+
     // Set initial value
-    if (typeof window !== 'undefined') {
+    if (typeof window !== "undefined") {
       checkScreenSize();
       window.addEventListener("resize", checkScreenSize);
       return () => window.removeEventListener("resize", checkScreenSize);
@@ -81,7 +81,7 @@ export default function ServiceAreas() {
       try {
         setLoading(true);
         const response = await get<HierarchicalData[]>(
-          `${API_ENDPOINTS.BUSINESS_AREAS_HIERARCHICAL}?limit=20&page=1`
+          `${API_ENDPOINTS.BUSINESS_AREAS_HIERARCHICAL}?limit=20&page=1`,
         );
 
         if (response.data && Array.isArray(response.data)) {
@@ -105,13 +105,13 @@ export default function ServiceAreas() {
             hierarchicalItem.minorCategories.forEach((minorCategory) => {
               // Only filter items by isMainExposed === true
               if (minorCategory.isMainExposed === true) {
-                const tags = minorCategory.items.map(item => item.name);
-              
+                const tags = minorCategory.items.map((item) => item.name);
+
                 const imageUrl =
                   minorCategory.image?.url ||
                   minorCategory.items[0]?.image?.url ||
                   "";
-              
+
                 group.cards.push({
                   id: minorCategory.id,
                   title: minorCategory.name,
@@ -147,7 +147,7 @@ export default function ServiceAreas() {
 
   // Get cards for active tab
   const activeGroup = categoryGroups.find(
-    (group) => String(group.majorCategory.id) === activeTab
+    (group) => String(group.majorCategory.id) === activeTab,
   );
   const cards = activeGroup?.cards || [];
 
@@ -185,7 +185,7 @@ export default function ServiceAreas() {
       // SSR or initial render - use mobile as default
       return getMobileSlides();
     }
-    
+
     if (windowWidth < 768) {
       // Mobile: 4 cards per slide (2x2 grid)
       return getMobileSlides();
@@ -231,17 +231,17 @@ export default function ServiceAreas() {
     return (
       <div
         key={card.id}
-        className={`${styles['service-card']} ${isHovered ? styles['service-card--hovered'] : ""}`}
+        className={`${styles["service-card"]} ${isHovered ? styles["service-card--hovered"] : ""}`}
         onMouseEnter={() => setHoveredCard(card.id)}
         onMouseLeave={() => setHoveredCard(null)}
       >
-        <div className={styles['service-card__image']}>
+        <div className={styles["service-card__image"]}>
           <img src={card.image} alt={card.title} />
         </div>
-        <div className={styles['service-card__overlay']}>
-          <div className={styles['service-card__header']}>
-            <h3 className={styles['service-card__title']}>{card.title}</h3>
-            <button className={styles['service-card__arrow']}>
+        <div className={styles["service-card__overlay"]}>
+          <div className={styles["service-card__header"]}>
+            <h3 className={styles["service-card__title"]}>{card.title}</h3>
+            <button className={styles["service-card__arrow"]}>
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
                 <path
                   d="M7 17L17 7M17 7H7M17 7V17"
@@ -253,9 +253,11 @@ export default function ServiceAreas() {
               </svg>
             </button>
           </div>
-          <div className={`${styles['service-card__tags']} ${isHovered ? styles.visible : ""}`}>
+          <div
+            className={`${styles["service-card__tags"]} ${isHovered ? styles.visible : ""}`}
+          >
             {card.tags.map((tag, idx) => (
-              <span key={idx} className={styles['service-card__tag']}>
+              <span key={idx} className={styles["service-card__tag"]}>
                 {tag}
               </span>
             ))}
@@ -268,16 +270,20 @@ export default function ServiceAreas() {
   // Desktop: Render 6-card grid (3 columns, 2 rows)
   const renderSixCardGrid = (slideCards: ServiceCard[]) => {
     return (
-      <div className={`${styles['cards-grid']} ${styles['cards-grid--six']}`}>
-        <div className={`${styles['cards-column']} ${styles['cards-column--offset']}`}>
+      <div className={`${styles["cards-grid"]} ${styles["cards-grid--six"]}`}>
+        <div
+          className={`${styles["cards-column"]} ${styles["cards-column--offset"]}`}
+        >
           {slideCards[0] && renderCard(slideCards[0])}
           {slideCards[1] && renderCard(slideCards[1])}
         </div>
-        <div className={styles['cards-column']}>
+        <div className={styles["cards-column"]}>
           {slideCards[2] && renderCard(slideCards[2])}
           {slideCards[3] && renderCard(slideCards[3])}
         </div>
-        <div className={`${styles['cards-column']} ${styles['cards-column--offset']}`}>
+        <div
+          className={`${styles["cards-column"]} ${styles["cards-column--offset"]}`}
+        >
           {slideCards[4] && renderCard(slideCards[4])}
           {slideCards[5] && renderCard(slideCards[5])}
         </div>
@@ -288,12 +294,14 @@ export default function ServiceAreas() {
   // Desktop: Render 4-card grid (2 columns, 2 rows)
   const renderFourCardGrid = (slideCards: ServiceCard[]) => {
     return (
-      <div className={`${styles['cards-grid']} ${styles['cards-grid--four']}`}>
-        <div className={styles['cards-column']}>
+      <div className={`${styles["cards-grid"]} ${styles["cards-grid--four"]}`}>
+        <div className={styles["cards-column"]}>
           {slideCards[0] && renderCard(slideCards[0])}
           {slideCards[1] && renderCard(slideCards[1])}
         </div>
-        <div className={`${styles['cards-column']} ${styles['cards-column--offset']}`}>
+        <div
+          className={`${styles["cards-column"]} ${styles["cards-column--offset"]}`}
+        >
           {slideCards[2] && renderCard(slideCards[2])}
           {slideCards[3] && renderCard(slideCards[3])}
         </div>
@@ -304,7 +312,9 @@ export default function ServiceAreas() {
   // Mobile: Render 4-card grid (2 columns x 2 rows)
   const renderMobileGrid = (slideCards: ServiceCard[]) => {
     return (
-      <div className={`${styles['cards-grid']} ${styles['cards-grid--mobile']}`}>
+      <div
+        className={`${styles["cards-grid"]} ${styles["cards-grid--mobile"]}`}
+      >
         {slideCards.map((card) => renderCard(card))}
       </div>
     );
@@ -313,7 +323,9 @@ export default function ServiceAreas() {
   // Tablet: Render 6-card grid (3 columns x 2 rows)
   const renderTabletGrid = (slideCards: ServiceCard[]) => {
     return (
-      <div className={`${styles['cards-grid']} ${styles['cards-grid--tablet']}`}>
+      <div
+        className={`${styles["cards-grid"]} ${styles["cards-grid--tablet"]}`}
+      >
         {slideCards.map((card) => renderCard(card))}
       </div>
     );
@@ -321,11 +333,11 @@ export default function ServiceAreas() {
 
   if (loading) {
     return (
-      <div className={styles['service-section']}>
+      <div className={styles["service-section"]}>
         <div className="container">
-          <div className={styles['section-title-box']}>
-            <div className={styles['top-id']}>01</div>
-            <div className={styles['title-wrapper']}>
+          <div className={styles["section-title-box"]}>
+            <div className={styles["top-id"]}>01</div>
+            <div className={styles["title-wrapper"]}>
               <h2 className={styles.title}>
                 SERVICE <br /> AREAS
               </h2>
@@ -333,23 +345,25 @@ export default function ServiceAreas() {
               <span className={styles.point}></span>
             </div>
           </div>
-          <div style={{ padding: "100px 0", textAlign: "center" }}>Loading...</div>
+          <div style={{ padding: "100px 0", textAlign: "center" }}>
+            Loading...
+          </div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className={styles['service-section']}>
+    <div className={styles["service-section"]}>
       <div className="container">
-        <div className={styles['background-circle']}>
+        <div className={styles["background-circle"]}>
           <h1>Areas of</h1>
           <h1>Expertise</h1>
         </div>
 
-        <div className={styles['section-title-box']}>
-          <div className={styles['top-id']}>01</div>
-          <div className={styles['title-wrapper']}>
+        <div className={styles["section-title-box"]}>
+          <div className={styles["top-id"]}>01</div>
+          <div className={styles["title-wrapper"]}>
             <h2 className={styles.title}>
               SERVICE <br /> AREAS
             </h2>
@@ -360,19 +374,24 @@ export default function ServiceAreas() {
           {!isMobile && <ViewMore target="services" />}
         </div>
 
-        <div className={styles['service-content']}>
+        <div className={styles["service-content"]}>
           {/* Left side - Tabs */}
-          <div className={styles['service-left']}>
-            <div className={styles['service-tabs']}>
-              <span className={styles['service-tabs__point']} />
+          <div className={styles["service-left"]}>
+            <div className={styles["service-tabs"]}>
               {categoryGroups.map((group) => (
                 <button
                   key={group.majorCategory.id}
-                  className={`${styles['service-tabs__btn']} ${
-                    activeTab === String(group.majorCategory.id) ? styles.active : ""
+                  className={`${styles["service-tabs__btn"]} ${
+                    activeTab === String(group.majorCategory.id)
+                      ? styles.active
+                      : ""
                   }`}
-                  onClick={() => handleTabChange(String(group.majorCategory.id))}
+                  onClick={() =>
+                    handleTabChange(String(group.majorCategory.id))
+                  }
                 >
+                  <span className={styles["service-tabs__point"]} />
+
                   {group.majorCategory.name}
                 </button>
               ))}
@@ -380,7 +399,7 @@ export default function ServiceAreas() {
           </div>
 
           {/* Right side - Cards Swiper */}
-          <div className={styles['service-right']}>
+          <div className={styles["service-right"]}>
             {cards.length > 0 ? (
               <>
                 <Swiper
@@ -402,7 +421,7 @@ export default function ServiceAreas() {
                     swiperRef.current = swiper;
                   }}
                   onProgress={handleProgress}
-                  className={styles['service-swiper']}
+                  className={styles["service-swiper"]}
                 >
                   {slides.map((slideCards, slideIndex) => {
                     // Determine which render function to use based on screen size
@@ -411,7 +430,7 @@ export default function ServiceAreas() {
                         // SSR or initial render - use mobile as default
                         return renderMobileGrid(slideCards);
                       }
-                      
+
                       if (windowWidth < 768) {
                         // Mobile: 2x2 grid (4 cards)
                         return renderMobileGrid(slideCards);
@@ -436,10 +455,13 @@ export default function ServiceAreas() {
 
                 {/* Progress Bar - show only when there are more than 6 cards (multiple slides) */}
                 {cards.length > 6 && (
-                  <div className={styles['service-progress']} onClick={handleProgressBarClick}>
-                    <div className={styles['service-progress__track']}>
+                  <div
+                    className={styles["service-progress"]}
+                    onClick={handleProgressBarClick}
+                  >
+                    <div className={styles["service-progress__track"]}>
                       <div
-                        className={styles['service-progress__fill']}
+                        className={styles["service-progress__fill"]}
                         style={{ width: `${progress * 100}%` }}
                       />
                     </div>
@@ -456,12 +478,10 @@ export default function ServiceAreas() {
 
         {/* View More button - moved to bottom for mobile */}
         {isMobile && (
-          <div className={styles['service-view-more-mobile']}>
+          <div className={styles["service-view-more-mobile"]}>
             <ViewMore target="services" />
           </div>
         )}
-
-
       </div>
     </div>
   );

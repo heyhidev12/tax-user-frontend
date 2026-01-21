@@ -10,6 +10,8 @@ import ServiceAreas from "./service-areas";
 import TrustedExperts from "./trusted-experts";
 import VisionSections from "./vision-section";
 import styles from "./styles.module.scss";
+import FloatingButton from "../common/FloatingButton";
+import { useRouter } from "next/router";
 
 export interface BannerMedia {
   mediaType: "IMAGE" | "VIDEO";
@@ -24,7 +26,7 @@ interface HomeProps {
 }
 
 export default function Home({ heroBanner }: HomeProps) {
-
+const router = useRouter();
 
   const renderHeroBackground = () => {
 
@@ -65,7 +67,7 @@ export default function Home({ heroBanner }: HomeProps) {
         <div className={styles["main-container"]}>
           <p>Tax Accounting Together</p>
           <h1>
-            <span>고객이 걸어갈 길,</span> <br /> 세무법인 함께가 동행합니다
+            <span>고객이 걸어갈 길,</span> <br /> 세무법인 함께가 <br className={styles.mobileBr} /> 동행합니다
           </h1>
         </div>
       </main>
@@ -74,8 +76,8 @@ export default function Home({ heroBanner }: HomeProps) {
         <div className={styles["line-center"]}>
           <span className={styles.line}></span>
           <h3>
-            우리는 단순한 숫자 관리에 그치지 않고, <br /> 상황과 목표를 깊이
-            이해하여 가장 적합한 해결책을 제시합니다.
+            우리는 단순한 숫자 관리에 <br className={styles.mobileBr} /> 그치지 않고, <br /> 상황과 목표를 깊이
+            이해하여 <br className={styles.mobileBr} /> 가장 적합한 해결책을 제시합니다.
           </h3>
         </div>
 
@@ -98,7 +100,7 @@ export default function Home({ heroBanner }: HomeProps) {
               </h4>
 
               <p>
-                고객의 소리를 진심으로 듣고, 고민하며, 가장 현명한 길을
+                고객의 소리를 진심으로 듣고, 고민하며, <br className={styles.mobileBr} />  가장 현명한 길을
                 제시합니다.{" "}
               </p>
             </div>
@@ -141,6 +143,17 @@ export default function Home({ heroBanner }: HomeProps) {
       <Clients />
 
       <ContactUs />
+       <div className={styles.floatingButtons}>
+        <FloatingButton
+          variant="consult"
+          label="상담 신청하기"
+          onClick={() => router.push("/consultation/apply")}
+        />
+        <FloatingButton
+          variant="top"
+          onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+        />
+      </div>
 
       <Footer />
     </div>

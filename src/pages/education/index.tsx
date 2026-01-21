@@ -44,22 +44,22 @@ const EducationPage: React.FC<EducationPageProps> = ({
 
   // Query-based tab management (like History page)
   // Currently only 'education' tab exists, but keeping query-based structure for consistency
-  const tabFromQuery = router.query.tab as string;
-  const validTabs = ['education'];
+  // const tabFromQuery = router.query.tab as string;
+  // const validTabs = ['education'];
 
   // Ensure URL has correct tab parameter if missing or invalid
-  useEffect(() => {
-    if (!tabFromQuery || !validTabs.includes(tabFromQuery)) {
-      router.replace(
-        {
-          pathname: router.pathname,
-          query: { ...router.query, tab: 'education' },
-        },
-        undefined,
-        { shallow: true }
-      );
-    }
-  }, [tabFromQuery, router]);
+  // useEffect(() => {
+  //   if (!tabFromQuery || !validTabs.includes(tabFromQuery)) {
+  //     router.replace(
+  //       {
+  //         pathname: router.pathname,
+  //         query: { ...router.query, tab: 'education' },
+  //       },
+  //       undefined,
+  //       { shallow: true }
+  //     );
+  //   }
+  // }, [tabFromQuery, router]);
 
   const [educationList, setEducationList] = useState<EducationItem[]>(initialEducationList);
   const [newEducationList, setNewEducationList] = useState<EducationItem[]>(initialNewEducationList);

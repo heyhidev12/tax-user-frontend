@@ -216,6 +216,7 @@ const Login: React.FC = () => {
                 </label>
                 <div className="find-links">
                   <Link href="/find-username">아이디 찾기</Link>
+                  <span className='divider-links'></span>
                   <Link href="/find-password">비밀번호 찾기</Link>
                 </div>
               </div>

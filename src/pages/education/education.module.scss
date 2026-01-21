@@ -68,7 +68,7 @@
 
 .heroSection {
   position: relative;
-  padding: 140px 0 100px;
+  padding: 140px 0 64px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -85,22 +85,25 @@
 }
 
 .heroSubtitle {
-  font-family: $font-pretendard;
-  font-weight: 600;
+  font-family: $font-noto;
+  font-weight: 500;
   font-size: 20px;
   line-height: 150%;
   letter-spacing: -0.075px;
   color: $primary-70;
   text-align: center;
+  margin-bottom: 32px;
   @media (max-width: $breakpoint-tablet) {
     font-size: 15px;
+    margin-bottom: 16px;
   }
 }
 
 .heroTitle {
-  font-family: $font-pretendard;
+  font-family: "Arita Buri KR", serif;
   font-weight: 600;
   font-size: 68px;
+  line-height: 1.3;
   color: $gray-90;
   text-align: center;
   span {
@@ -108,7 +111,7 @@
   }
   @media (max-width: $breakpoint-tablet) {
     font-size: 28px;
-    margin-top: 32px;
+    margin-top: 0px;
   }
 }
 
@@ -121,17 +124,17 @@
   color: $gray-70;
   margin-top: -15px;
   text-align: center;
-  margin-top: 56px;
-  br{
+  margin-top: 36px;
+  br {
     display: none;
   }
 
   @media (max-width: $breakpoint-tablet) {
-    margin-top: 40px;
+    margin-top: 24px;
 
-    br{
-    display: block;
-  }
+    br {
+      display: block;
+    }
   }
 
   p {
@@ -153,7 +156,7 @@
 }
 
 .content {
-  padding: 100px 0;
+  padding-bottom: 100px;
   width: 100%;
 
   @media (max-width: $breakpoint-desktop) {
@@ -186,13 +189,12 @@
   gap: 24px;
 
   @media (max-width: $breakpoint-tablet) {
-    margin-bottom: 8px;
+    margin-bottom: 20px;
     flex-direction: column;
     align-items: flex-start;
-    gap: 16px;
+    gap: 4px;
   }
 }
-
 
 .sectionHeaderRight {
   display: flex;
@@ -213,7 +215,7 @@
   position: relative;
   padding-bottom: 20px;
   margin-bottom: 48px;
-  border-bottom: 1px solid $gray-90;
+  border-bottom: 2px solid $gray-90;
 
   @media (max-width: $breakpoint-tablet) {
     max-width: none;
@@ -232,13 +234,13 @@
   border: none;
   outline: none;
   border-radius: 8px;
-   border: 1px solid transparent;
-   font-size: 15px;
-   color: $gray-90;
-   &::placeholder{
+  border: 1px solid transparent;
+  font-size: 15px;
+  color: $gray-90;
+  &::placeholder {
     color: $gray-40;
-   }
-  &:focus{
+  }
+  &:focus {
     border: 1px solid $primary-50;
   }
   @media (max-width: $breakpoint-tablet) {
@@ -363,7 +365,7 @@
   border-bottom: 1px solid var(--grayscale-10, #f0f0f0);
   background: #fff;
   margin-bottom: 64px;
-  gap: 20px;
+  // gap: 20px;
 
   @media (max-width: $breakpoint-tablet) {
     margin-bottom: 24px;
@@ -375,13 +377,13 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  // padding: 18px 0;
+  padding: 4px 12px 12px;
   font-family: $font-pretendard;
   font-weight: $font-weight-semibold;
   font-size: 21px;
   line-height: 1.5;
   letter-spacing: -0.105px;
-  color: $gray-70;
+  color: $gray-50;
   cursor: pointer;
   transition: color 0.2s ease;
 
@@ -393,7 +395,7 @@
   }
 
   @media (max-width: $breakpoint-tablet) {
-    padding: 0;
+    padding: 10px;
     border: none;
     border-right: none;
     font-size: 15px;
@@ -448,7 +450,7 @@
     border: none;
     box-shadow: none;
     padding: 0;
-    
+
     &:hover {
       box-shadow: none;
       transform: none;
@@ -463,6 +465,15 @@
       flex-direction: column;
     }
   }
+  .cardContent {
+    gap: 8px;
+    @media (max-width: $breakpoint-tablet) {
+      padding: 16px 0px 20px;
+    }
+  }
+  .cardInfo{
+    gap:12px
+  }
 }
 
 .paginationWrapper {
@@ -471,7 +482,7 @@
   align-items: center;
   padding: 40px 0 0;
 
-  :global(.paginationButtonActive){
+  :global(.paginationButtonActive) {
     background: #00a89e;
   }
 }
@@ -548,13 +559,13 @@
   // aspect-ratio: 9/11;
 
   &:hover {
-    transform: translateY(-4px);
-    border-color: rgba(255, 255, 255, 0.2);
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+    // transform: translateY(-4px);
+    // border-color: rgba(255, 255, 255, 0.2);
+    // box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
   }
 
   @media (max-width: $breakpoint-tablet) {
-    // aspect-ratio: 3/4;
+    padding: 0;
   }
 }
 
@@ -570,9 +581,11 @@
     border-radius: 8px;
   }
 
-  // @media (max-width: $breakpoint-tablet) {
-  //   aspect-ratio: 240 / 160;
-  // }
+  @media (max-width: $breakpoint-tablet) {
+    img {
+      border-radius: 8px 8px 0 0;
+    }
+  }
 }
 
 .cardContent {
@@ -581,11 +594,9 @@
   flex-direction: column;
   gap: 12px;
 
-  // @media (max-width: $breakpoint-tablet) {
-  //   gap: 12px;
-  //   position: relative;
-  //   flex: 1;
-  // }
+  @media (max-width: $breakpoint-tablet) {
+    padding: 16px 16px 20px;
+  }
 }
 
 .cardLabels {
@@ -732,7 +743,6 @@
   flex-direction: column;
   gap: 24px;
 }
-
 
 // Floating Buttons
 .floatingButtons {

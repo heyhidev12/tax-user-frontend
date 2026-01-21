@@ -1,4 +1,4 @@
-@import '../../styles/variables';
+@import "../../styles/variables";
 
 .page {
   min-height: 100vh;
@@ -7,9 +7,9 @@
   display: flex;
   flex-direction: column;
 
-  @media (max-width: 767px) {
-    // padding-top: 56px; // 모바일 고정 헤더 높이
-  }
+  // @media (max-width: 767px) {
+  //   overflow: visible;
+  // }
 
   .headerImage {
     position: relative;
@@ -31,10 +31,16 @@
 .pageHeaderWrapper {
   padding-bottom: 24px;
 
+  :global(.page-header__title) {
+    margin-top: 144px;
 
-  @media (max-width: $breakpoint-tablet) {
-    padding-top: 0px;
-    padding-bottom: 12px;
+    @media (max-width: $breakpoint-desktop) {
+      margin-top: 56px;
+    }
+  }
+
+  @media (max-width: $breakpoint-desktop) {
+    padding-bottom: 20px;
   }
 }
 
@@ -43,7 +49,6 @@
   display: flex;
   gap: 64px;
   z-index: 2;
-
 
   @media (max-width: $breakpoint-desktop) {
     gap: 48px;
@@ -57,7 +62,7 @@
 
 .sidebarNav {
   position: sticky;
-  top: 212px;
+  top: 238px;
   align-self: flex-start;
   display: flex;
   flex-direction: column;
@@ -69,11 +74,9 @@
   border-right: 3px solid $gray-20;
   text-align: right;
 
-
   @media (max-width: $breakpoint-desktop) {
     width: 180px;
     gap: 24px;
-    top: 100px;
     max-height: calc(100vh - 120px);
   }
 
@@ -82,14 +85,20 @@
     top: 0;
     flex-direction: row;
     overflow-x: auto;
-    padding: 20px 0;
-    margin-bottom: 40px;
+    padding: 0;
+    margin-bottom: 130px;
     width: auto;
     gap: 16px;
     max-height: none;
     -webkit-overflow-scrolling: touch;
     border-right: none;
-    
+    border-bottom: 1px solid $gray-10;
+    width: 100vw;
+    margin-left: -20px;
+    margin-right: -20px;
+    padding-left: 20px;
+    padding-right: 20px;
+
     &::-webkit-scrollbar {
       display: none;
     }
@@ -115,23 +124,22 @@
   &:hover {
     color: $gray-90;
   }
-  &.active  {
-  border-right: 3px solid $primary-50;
-}
+  &.active {
+    border-right: 3px solid $primary-50;
+  }
 
   @media (max-width: $breakpoint-tablet) {
     white-space: nowrap;
     font-size: 15px;
     gap: 8px;
+    padding:4px 0;
 
-    &.active{
+    &.active {
       border-right: none;
-      // border-bottom: 3px solid $primary-50;
+      border-bottom: 2px solid $primary-50;
     }
   }
 }
-
-
 
 .navItem.active .navText {
   font-weight: $font-weight-semibold;
@@ -140,7 +148,9 @@
 
 .navText {
   flex: 1;
-  transition: font-weight 0.3s ease, color 0.3s ease;
+  transition:
+    font-weight 0.3s ease,
+    color 0.3s ease;
 }
 
 // 모바일 스티키 탭 네비게이션
@@ -155,8 +165,8 @@
   gap: 16px;
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
-  border-bottom: 1px solid var(--grayscale-10, #F0F0F0);
-  background: #FFF;
+  border-bottom: 1px solid var(--grayscale-10, #f0f0f0);
+  background: #fff;
 
   &::-webkit-scrollbar {
     display: none;
@@ -191,7 +201,9 @@
   border-bottom: 1px solid transparent;
   cursor: pointer;
   white-space: nowrap;
-  transition: color 0.2s ease, border-color 0.2s ease;
+  transition:
+    color 0.2s ease,
+    border-color 0.2s ease;
 
   &:hover {
     color: $gray-90;
@@ -207,7 +219,7 @@
   width: 4px;
   height: 4px;
   border-radius: 50%;
-  background-color: #D11F00;
+  background-color: #d11f00;
 }
 
 .mainContent {
@@ -230,7 +242,6 @@
 // Hero Section - Full Width
 .heroSection {
   position: relative;
-  
 
   height: 476px;
   margin-top: 100px;
@@ -239,7 +250,6 @@
   display: flex;
   align-items: center;
   justify-content: center;
-
 
   @media (max-width: $breakpoint-desktop) {
     height: 400px;
@@ -273,7 +283,7 @@
   align-items: center;
   justify-content: center;
   z-index: 0;
-  
+
   span {
     font-family: $font-montserrat;
     font-weight: $font-weight-light;
@@ -281,13 +291,12 @@
     color: #d8d8d8;
     text-align: center;
     padding: 0 24px;
-    
+
     @media (max-width: $breakpoint-tablet) {
       font-size: 24px;
     }
   }
 }
-
 
 .heroContent {
   position: relative;
@@ -298,7 +307,6 @@
   text-align: center;
   width: 100%;
   max-width: 1440px;
-
 }
 
 .heroDescription {
@@ -313,7 +321,7 @@
   margin-top: 0; // 20px 올림 (20px - 20px)
 
   @media (max-width: $breakpoint-tablet) {
-    font-size: 13px;
+    font-size: 15px;
     font-weight: $font-weight-regular;
     margin-top: -8px;
   }
@@ -325,9 +333,9 @@
   top: 92px;
   left: 0;
   width: 100vw;
-  min-height: 100px;
+  min-height: 120px;
   max-height: 100px;
-  background-color: rgba(242, 242, 242, 0.90);
+  background-color: rgba(242, 242, 242, 0.9);
   z-index: 1000;
   display: flex;
   align-items: flex-start;
@@ -339,19 +347,17 @@
   backdrop-filter: blur(10px);
   border-bottom: 1px solid $gray-20;
 
-  
-
   &.expanded {
     max-height: none;
-    min-height: 100px;
+    min-height: 120px;
     height: auto;
     overflow-y: visible;
   }
 
-   @media (max-width: $breakpoint-tablet) {
+  @media (max-width: $breakpoint-tablet) {
     top: 104px;
+    width: auto !important;
   }
-
 }
 
 .overviewFixedBannerContent {
@@ -361,7 +367,7 @@
   align-items: flex-start;
   gap: 64px;
   padding: 20px 0;
-  min-height: 100px;
+  min-height: 120px;
 
   .overviewFixedBanner.expanded & {
     padding: 20px 0;
@@ -394,10 +400,10 @@
 
 .overviewFixedBannerTitle {
   color: $gray-90;
-  font-family: $font-montserrat;
-  font-size: 24px;
+  font-family: "Display Playfair", serif;
+  font-size: 20px;
   font-style: normal;
-  font-weight: 300;
+  font-weight: 500;
   line-height: 110%;
   letter-spacing: -3px;
   margin: 0;
@@ -405,11 +411,27 @@
   text-align: left;
   flex-shrink: 0;
   white-space: nowrap;
+  position: relative;
+  padding-left: 12px;
+  span {
+    position: absolute;
+    display: inline-block;
+    width: 22px;
+    height: 22px;
+    left: 0;
+    top: -5px;
+    border-radius: 50%;
+    background: linear-gradient(
+      180deg,
+      #6bcdc7 0%,
+      rgba(107, 205, 199, 0) 100%
+    );
+  }
 }
 
 .overviewFixedBannerTitleDesktop {
   color: $gray-90;
-  font-family: $font-montserrat;
+  font-family: "Display Playfair", serif;
   font-size: 28px;
   font-style: normal;
   font-weight: 300;
@@ -424,7 +446,7 @@
   padding-left: 20px;
   padding-top: 12px;
 
-  span{
+  span {
     position: absolute;
     display: inline-block;
     width: 40px;
@@ -432,7 +454,11 @@
     left: 0;
     top: 0px;
     border-radius: 50%;
-    background: linear-gradient(180deg, #6BCDC7 0%, rgba(107, 205, 199, 0.00) 100%);
+    background: linear-gradient(
+      180deg,
+      #6bcdc7 0%,
+      rgba(107, 205, 199, 0) 100%
+    );
   }
 
   @media (max-width: $breakpoint-desktop) {
@@ -446,7 +472,7 @@
 
 .overviewFixedBannerDivider {
   width: 1px;
-  background-color: $gray-50;
+  background-color: $gray-30;
   align-self: stretch;
   flex-shrink: 0;
 
@@ -460,10 +486,28 @@
   min-width: 0;
   overflow: hidden;
 
+  p {
+    font-family: $font-pretendard;
+    font-size: 15px;
+    line-height: 1.8;
+    letter-spacing: -0.085px;
+    color: $gray-90;
+  }
+
   &.collapsed {
-    max-height: 72px; // 약 3줄 정도의 높이
-    mask-image: linear-gradient(to bottom, black 0%, black 70%, transparent 100%);
-    -webkit-mask-image: linear-gradient(to bottom, black 0%, black 70%, transparent 100%);
+    max-height: 90px; // 약 3줄 정도의 높이
+    mask-image: linear-gradient(
+      to bottom,
+      black 0%,
+      black 70%,
+      transparent 100%
+    );
+    -webkit-mask-image: linear-gradient(
+      to bottom,
+      black 0%,
+      black 70%,
+      transparent 100%
+    );
 
     @media (max-width: $breakpoint-tablet) {
       display: -webkit-box;
@@ -516,16 +560,14 @@
   color: black;
   padding: 88px 0 180px 0;
 
-
   @media (max-width: $breakpoint-tablet) {
     padding: 80px 0 60px 0;
   }
 }
 
-
 .overviewTitle {
   color: #1d1d1d;
-  font-family: $font-montserrat;
+  font-family: $font-playfair;
   font-style: normal;
   font-weight: 600;
   font-size: 46px;
@@ -544,34 +586,56 @@
   position: relative;
   background-color: #fff;
   border-radius: 12px;
-  padding-left: 52px;
+  // padding-left: 52px;
   overflow: hidden;
   max-width: 1440px;
   margin: 0 auto;
   box-sizing: border-box;
 
-  &>p{
+  & > p {
     font-size: 20px;
     color: #1d1d1d;
     margin-bottom: 48px;
-  }
-  .toastui-editor-contents{
-    font-size: 17px;
-  }
-  @media (max-width: $breakpoint-tablet) {
-    padding-left: 0;
-    &>p{
-      font-size: 15px;
-      margin-bottom: 32px;
+    position: relative;
+    padding-left: 48px;
+    font-family: "Display Playfair", serif;
+
+    &::before {
+      content: "";
+      display: inline-block;
+      width: 24px;
+      height: 1px;
+      background: $gray-30;
+      position: absolute;
+      left: 0;
+      top: 50%;
+      transform: translateY(-50%);
     }
   }
+  .overviewContentInner {
+    font-size: 17px;
+    padding-left: 48px;
+  }
 
+  @media (max-width: $breakpoint-tablet) {
+    & > p {
+      font-size: 20px;
+      margin-bottom: 32px;
+      padding-left: 0;
+      &::before {
+        display: none;
+      }
+    }
+    .overviewContentInner {
+      font-size: 15px;
+      padding-left: 0;
+    }
+  }
 }
-
 
 // Section Styles
 .section {
-  margin-top: 100px; 
+  margin-top: 100px;
   @media (max-width: $breakpoint-desktop) {
     margin-left: -20px;
     margin-right: -20px;
@@ -579,7 +643,10 @@
   }
 
   @media (max-width: $breakpoint-tablet) {
-    margin: 27px 0; // 80px의 1/3
+    margin: 64px 0 0; // 80px의 1/3
+    margin-left: 0;
+    margin-right: 0;
+    width: 100%;
   }
 
   // 첫 번째 섹션 (CHECK POINT)을 목차보다 위에서 시작
@@ -591,7 +658,6 @@
 
 .sectionHeader {
   margin-bottom: 0; // 영어 제목과 한글 제목 사이 간격 없음
-
 }
 
 .sectionHeaderContent {
@@ -616,6 +682,7 @@
   letter-spacing: -2px;
   color: $gray-90 !important;
   margin: 0;
+  font-weight: 600;
 
   @media (max-width: $breakpoint-desktop) {
     font-size: 40px;
@@ -627,21 +694,22 @@
 }
 
 .sectionSubtitle {
-  font-family: $font-pretendard;
+  font-family: "Display Playfair", serif;
   font-size: 20px;
   line-height: 1.5;
   letter-spacing: -0.16px;
   color: $gray-90;
-  margin-top: 28px;
+  margin-top: 16px;
   display: flex;
   align-items: center;
   gap: 24px;
+  font-weight: 500;
 
-  span{
+  span {
     display: inline-block;
     font-size: 16px;
     background: $gray-30;
-    width:24px;
+    width: 24px;
     height: 1px;
   }
 
@@ -653,11 +721,10 @@
     font-size: 18px;
     margin-top: 16px;
 
-    span{
+    span {
       display: none;
     }
   }
-  
 }
 
 .sectionContent {
@@ -669,26 +736,38 @@
     gap: 24px;
     margin-top: 8px;
   }
-  .overlay{
+  .overlay {
     position: absolute;
     top: 0;
     left: -100%;
     width: 100%;
     height: 100%;
     background: $gray-5;
-
   }
 }
 
 .subSectionTitle {
-  font-family: $font-pretendard;
-  font-weight: $font-weight-semibold;
+  font-family: "Display Playfair", serif;
+  font-weight: 500;
   font-size: 20px;
   line-height: 1.5;
   letter-spacing: -0.16px;
   color: $gray-90;
   margin-top: 12px;
+  position: relative;
   padding-left: 48px;
+
+  &::before {
+    content: "";
+    display: inline-block;
+    width: 24px;
+    height: 1px;
+    background: $gray-30;
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+  }
 
   @media (max-width: $breakpoint-desktop) {
     font-size: 24px;
@@ -696,7 +775,7 @@
 
   @media (max-width: $breakpoint-tablet) {
     font-size: 18px;
-    margin-bottom: 16px;
+    margin-bottom: 8px;
     padding-left: 0;
   }
 }
@@ -742,7 +821,12 @@
       color: $gray-90;
     }
 
-    h1, h2, h3, h4, h5, h6 {
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
       color: $gray-90;
       font-family: $font-pretendard;
       font-weight: $font-weight-semibold;
@@ -769,8 +853,9 @@
 
     table {
       border-color: rgba(255, 255, 255, 0.2);
-      
-      th, td {
+
+      th,
+      td {
         border-color: rgba(255, 255, 255, 0.2);
         color: $gray-70;
       }
@@ -790,8 +875,10 @@
   .sectionHeader {
     opacity: 0;
     transform: translateY(30px);
-    transition: opacity 0.8s ease-out, transform 0.8s ease-out;
-    
+    transition:
+      opacity 0.8s ease-out,
+      transform 0.8s ease-out;
+
     &.visible {
       opacity: 1;
       transform: translateY(0);
@@ -801,8 +888,10 @@
   .sectionContent {
     opacity: 0;
     transform: translateY(30px);
-    transition: opacity 0.8s ease-out 0.2s, transform 0.8s ease-out 0.2s;
-    
+    transition:
+      opacity 0.8s ease-out 0.2s,
+      transform 0.8s ease-out 0.2s;
+
     &.visible {
       opacity: 1;
       transform: translateY(0);
@@ -869,7 +958,11 @@
   position: relative;
   width: 100%;
   min-height: 364px;
-  background: linear-gradient(135deg, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0.5) 100%);
+  background: linear-gradient(
+    135deg,
+    rgba(0, 0, 0, 0.7) 0%,
+    rgba(0, 0, 0, 0.5) 100%
+  );
   border-radius: 12px;
   padding: 80px;
   display: flex;
@@ -894,13 +987,13 @@
 
   // 배경 이미지
   &::before {
-    content: '';
+    content: "";
     position: absolute;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
-    background-image: url('/images/business-areas/contact/contact-bg.jpg');
+    background-image: url("/images/business-areas/contact/contact-bg.jpg");
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -1041,13 +1134,12 @@
 
   &:hover:not(:disabled) {
     background-color: #ffffff;
-    
+
     :global(.icon) {
       :global(path) {
-        stroke: #151515;
+        // stroke: #151515;
       }
     }
-    
   }
 
   &:disabled {
@@ -1061,7 +1153,7 @@
   }
 }
 
-.infoWrapper{
+.infoWrapper {
   background: $gray-5;
   margin-top: 160px;
   @media (max-width: $breakpoint-tablet) {
@@ -1084,16 +1176,16 @@
 .expertsSwiper {
   width: 100%;
   overflow: visible;
-  
+
   :global(.swiper-wrapper) {
     display: flex;
   }
-  
+
   :global(.swiper-slide) {
     height: auto;
     display: flex;
   }
-  
+
   // Hide default Swiper navigation buttons (we use custom buttons)
   :global(.swiper-button-next),
   :global(.swiper-button-prev) {
@@ -1109,7 +1201,9 @@
   width: 100%;
   height: 100%;
   cursor: pointer;
-  transition: transform 0.3s ease, opacity 0.3s ease;
+  transition:
+    transform 0.3s ease,
+    opacity 0.3s ease;
   box-sizing: border-box;
 
   &:hover {
@@ -1133,22 +1227,25 @@
     height: 100%;
     object-fit: cover;
   }
+  @media (max-width: $breakpoint-tablet) {
+    aspect-ratio: 4 / 5;
+  }
 }
 
 .expertInfo {
   display: flex;
   flex-direction: column;
-  gap: 32px;
+  gap: 20px;
   width: 100%;
 
   @media (max-width: $breakpoint-tablet) {
-    gap: 16px;
+    gap: 8px;
   }
 }
 
 .expertNameRow {
   display: flex;
-  align-items: flex-end;
+  align-items: center;
   gap: 4px;
 }
 
@@ -1162,7 +1259,7 @@
   margin: 0;
 
   @media (max-width: $breakpoint-tablet) {
-    font-size: 17px;
+    font-size: 21px;
   }
 }
 
@@ -1176,7 +1273,7 @@
   margin: 0;
 
   @media (max-width: $breakpoint-tablet) {
-    font-size: 13px;
+    font-size: 14px;
   }
 }
 
@@ -1215,6 +1312,7 @@
 
   @media (max-width: $breakpoint-tablet) {
     width: auto;
+    font-size: 13px;
   }
 }
 
@@ -1228,9 +1326,11 @@
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
+  margin-top: 4px;
 
   @media (max-width: $breakpoint-tablet) {
-    gap: 4px;
+    gap: 6px;
+    margin-top: 16px;
   }
 }
 
@@ -1240,13 +1340,13 @@
   font-size: 15px;
   line-height: 1.5;
   letter-spacing: -0.075px;
-  color: $primary-50;
-  background: rgba(0, 132, 124, 0.10);
+  color: $primary-60;
+  background: rgba(0, 132, 124, 0.1);
   padding: 2px 6px;
   border-radius: 4px;
 
   @media (max-width: $breakpoint-tablet) {
-    font-size: 11px;
+    font-size: 13px;
     padding: 4px 6px;
   }
 }
@@ -1275,23 +1375,22 @@
 .youtubeSwiper {
   width: 100%;
   overflow: visible;
-  
+
   :global(.swiper-wrapper) {
     display: flex;
   }
-  
+
   :global(.swiper-slide) {
     height: auto;
     display: flex;
   }
-  
+
   // Hide default Swiper navigation buttons (we use custom buttons)
   :global(.swiper-button-next),
   :global(.swiper-button-prev) {
     display: none;
   }
 }
-
 
 .youtubeCard {
   display: flex;
@@ -1300,7 +1399,9 @@
   width: 100%;
   height: 100%;
   cursor: pointer;
-  transition: transform 0.3s ease, opacity 0.3s ease;
+  transition:
+    transform 0.3s ease,
+    opacity 0.3s ease;
   box-sizing: border-box;
 
   &:hover {
@@ -1339,6 +1440,9 @@
   letter-spacing: 0;
   color: $gray-50;
   margin: 0;
+  @media (max-width: $breakpoint-tablet) {
+    font-size: 13px;
+  }
 }
 
 .youtubeTitle {
@@ -1354,6 +1458,11 @@
   -webkit-box-orient: vertical;
   overflow: hidden;
   height: 56px;
+
+  @media (max-width: $breakpoint-tablet) {
+    font-size: 15px;
+    height: 44px;
+  }
 }
 
 .youtubeItem {
@@ -1379,26 +1488,26 @@
   margin-top: 48px;
   overflow: hidden;
 
- @media (max-width: $breakpoint-tablet) {
+  @media (max-width: $breakpoint-tablet) {
     margin-top: 24px;
     overflow: visible;
-    
+    margin-bottom: 40px;
   }
 }
 
 .newsSwiper {
   width: 100%;
   overflow: visible;
-  
+
   :global(.swiper-wrapper) {
     display: flex;
   }
-  
+
   :global(.swiper-slide) {
     height: auto;
     display: flex;
   }
-  
+
   // Hide default Swiper navigation buttons (we use custom buttons)
   :global(.swiper-button-next),
   :global(.swiper-button-prev) {
@@ -1406,19 +1515,20 @@
   }
 }
 
-
 .newsCard {
   overflow: hidden;
   cursor: pointer;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
   display: flex;
   width: 100%;
   height: 100%;
   flex-direction: column;
   gap: 20px;
-  background: #FFF;
+  background: #fff;
   box-shadow: 0 2px 10px 0 rgba(0, 0, 0, 0.08);
-  min-height: 400px;
+  min-height: 392px;
   box-sizing: border-box;
 
   &:hover {
@@ -1428,7 +1538,7 @@
 
   @media (max-width: $breakpoint-desktop) {
     gap: 16px;
-    min-height: auto;
+    min-height: 267px;
   }
 }
 
@@ -1449,7 +1559,7 @@
   padding: 0 24px 32px 24px;
   display: flex;
   flex-direction: column;
-  gap: 48px;
+  gap: 24px;
 
   @media (max-width: $breakpoint-tablet) {
     padding: 0 16px 10px;
@@ -1471,6 +1581,9 @@
   letter-spacing: -0.075px;
   color: $primary-50;
   margin: 0;
+  @media (max-width: $breakpoint-tablet) {
+    font-size: 13px;
+  }
 }
 
 .newsTitle {
@@ -1485,10 +1598,10 @@
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
-  height: 58px;
+  max-height: 58px;
   @media (max-width: $breakpoint-tablet) {
     font-size: 17px;
-    height: 50px;
+    max-height: 50px;
   }
 }
 
@@ -1513,7 +1626,7 @@
 .newsSeparator {
   width: 2px;
   height: 2px;
-  background-color: $gray-70;
+  background-color: $gray-50;
   border-radius: 50%;
 }
 
@@ -1565,7 +1678,6 @@
 
 .fullWidthContainer {
   overflow: visible;
-
 }
 
 // Floating Buttons
@@ -1586,60 +1698,158 @@
   }
 }
 
+// .contact-us {
+//   display: flex;
+//   justify-content: space-between;
+//   align-items: center;
+//   padding: 56px 0 64px;
+//   position: relative;
+//   min-height: 350px;
+//   width: 100%;
+//   overflow: hidden;
+//   background-image: url('/images/pages/bg_img.png');
+//   @media (max-width: 767px) {
+//     padding: 50px 4px;
+//     min-height: 320px;
+//   }
+
+//   .video {
+//     position: absolute;
+//     width: 100%;
+//     height: 100%;
+//     object-fit: cover;
+//     top: 0;
+//     left: 0;
+//     inset: 0;
+//     z-index: 0;
+//   }
+
+//   &__content {
+//     position: relative;
+//     color: #fff;
+//     z-index: 1;
+
+//     @media (max-width: 767px) {
+//       width: 100%;
+//       text-align: center;
+//     }
+
+//     h2 {
+//       font-size: 80px;
+//       font-weight: 600;
+//       margin-bottom: 48px;
+//       font-family: 'Playfair Display', Playfair, serif;
+
+//       @media (max-width: 767px) {
+//         font-size: 28px;
+//         margin-bottom: 20px;
+//       }
+//     }
+
+//     .subtitle {
+//       font-size: 28px;
+//       margin-bottom: 32px;
+
+//       @media (max-width: 767px) {
+//         font-size: 16px;
+//         margin-bottom: 12px;
+//       }
+//     }
+
+//     .description {
+//       font-size: 15px;
+//       line-height: 1.5;
+//       margin-bottom: 64px;
+
+//       @media (max-width: 767px) {
+//         font-size: 13px;
+//         margin-bottom: 24px;
+//         line-height: 1.6;
+//       }
+//     }
+
+//     .contact-btn {
+//       padding: 0 20px;
+//       border: 1px solid #fff;
+//       background: transparent;
+//       color: #fff;
+//       height: 56px;
+//       cursor: pointer;
+//       font-size: 19px;
+//       transition: all 0.3s ease;
+
+//       @media (max-width: 767px) {
+//         height: 44px;
+//         font-size: 14px;
+//         padding: 0 16px;
+//       }
+
+//       &:hover {
+//         background: #fff;
+//         color: #002c2c;
+//       }
+//     }
+//   }
+
+//   &__image {
+//     @media (max-width: 767px) {
+//       display: none;
+//     }
+//   }
+// }
 .contact-us {
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 56px 0 64px;
   position: relative;
-  min-height: 400px;
-  width: 100%;
-  overflow: hidden;
+  min-height: 350px;
+  background-image: url("/images/pages/bg_img.png");
+  background-size: cover;
+  background-position: center;
+
   @media (max-width: 767px) {
-    padding: 50px 4px;
     min-height: 320px;
   }
 
-  .video {
-    position: absolute;
+  &__container {
     width: 100%;
-    height: 100%;
-    object-fit: cover;
-    top: 0;
-    left: 0;
-    inset: 0;
-    z-index: 0;
+    max-width: 1440px;
+    margin: 0 auto;
   }
 
   &__content {
     position: relative;
     color: #fff;
     z-index: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 
     @media (max-width: 767px) {
       width: 100%;
-      text-align: center;
     }
 
     h2 {
-      font-size: 80px;
+      font-size: 19px;
       font-weight: 600;
       margin-bottom: 48px;
-      font-family: 'Playfair Display', Playfair, serif;
+      font-family: 'Playfair', serif;
 
       @media (max-width: 767px) {
-        font-size: 28px;
-        margin-bottom: 20px;
+        margin-bottom: 32px;
       }
     }
 
     .subtitle {
+      margin-bottom: 48px;
       font-size: 28px;
-      margin-bottom: 32px;
+      font-family: 'Playfair', serif;
+      letter-spacing: -1.2px;
 
       @media (max-width: 767px) {
-        font-size: 16px;
-        margin-bottom: 12px;
+        font-size: 20px;
       }
     }
 
@@ -1650,7 +1860,6 @@
 
       @media (max-width: 767px) {
         font-size: 13px;
-        margin-bottom: 24px;
         line-height: 1.6;
       }
     }
@@ -1664,11 +1873,17 @@
       cursor: pointer;
       font-size: 19px;
       transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
 
       @media (max-width: 767px) {
-        height: 44px;
-        font-size: 14px;
+        height: 48px;
         padding: 0 16px;
+        font-size: 17px;
+        svg {
+          width: 20px;
+          height: 20px;
+        }
       }
 
       &:hover {
@@ -1684,5 +1899,3 @@
     }
   }
 }
-
-

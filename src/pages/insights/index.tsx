@@ -1263,7 +1263,7 @@ const formatDateTime = (dateString?: string) => {
             {isNewsletterCategory && (
               <div className={styles.newsletterSection}>
                 <div className={styles.newsletterHero}>
-                  <p className={styles.newsletterLabel}>NEWSLETTER</p>
+                  <p className={styles.newsletterLabel}>Newsletter</p>
                   <h2 className={styles.newsletterTitle}>뉴스레터</h2>
                   <div className={styles.newsletterHeroContent}>
                     <div className={styles.newsletterLeft}>
