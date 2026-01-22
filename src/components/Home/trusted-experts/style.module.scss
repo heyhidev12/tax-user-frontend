@@ -39,18 +39,7 @@ $white: #fff;
     }
   }
 
-  &__square {
-    width: 834px;
-    position: absolute;
-    height: 387px;
-    bottom: 0;
-    right: 0;
-    background-color: $bg-light;
-
-    @media (max-width: 767px) {
-      display: none;
-    }
-  }
+ 
 
   &__title-area {
     position: relative;
@@ -193,7 +182,8 @@ $white: #fff;
 
   &__slider {
     position: relative;
-    padding-left: 16%;
+    padding-left: 12.5%;
+    z-index: 1;
 
     .view-block {
       display: none;
@@ -463,7 +453,7 @@ $white: #fff;
   &__progress {
     max-width: 1440px;
     margin: 60px auto 0;
-    // padding: 0 80px;
+    position: relative;
     cursor: pointer;
 
     @media (max-width: 1440px) {
@@ -480,6 +470,20 @@ $white: #fff;
     }
   }
 
+  &__square {
+    width: 834px;
+    position: absolute;
+    height: 387px;
+    bottom: -120px;
+    right: 0;
+    z-index: 0;
+    background-color: $bg-light;
+
+    @media (max-width: 767px) {
+      display: none;
+    }
+  }
+
   &__progress-track {
     width: 100%;
     height: 3px;
@@ -487,6 +491,7 @@ $white: #fff;
     border-radius: 2px;
     overflow: hidden;
     position: relative;
+    z-index: 1;
 
     @media (max-width: 767px) {
       height: 2px;

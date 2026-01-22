@@ -1,8 +1,12 @@
+"use client";
+
 import React, { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/router";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation } from "swiper/modules";
 import type { Swiper as SwiperType } from "swiper";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/dist/ScrollTrigger";
 import styles from "./style.module.scss";
 
 import "swiper/css";
@@ -10,6 +14,10 @@ import "swiper/css/navigation";
 import ViewMore from "../../common/ViewMore";
 import { get } from "@/lib/api";
 import { API_ENDPOINTS } from "@/config/api";
+
+if (typeof window !== "undefined") {
+  gsap.registerPlugin(ScrollTrigger);
+}
 
 interface SubPhoto {
   id: number;
@@ -44,6 +52,7 @@ const TrustedExperts: React.FC = () => {
   const swiperRef = useRef<SwiperType | null>(null);
   const navigationPrevRef = useRef<HTMLButtonElement>(null);
   const navigationNextRef = useRef<HTMLButtonElement>(null);
+  const sectionRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
     const fetchMembers = async () => {
@@ -71,6 +80,99 @@ const TrustedExperts: React.FC = () => {
     fetchMembers();
   }, []);
 
+  // GSAP Animation - RIGHT → CENTER with scrub
+  useEffect(() => {
+    const isMobile = typeof window !== "undefined" && window.innerWidth < 768;
+    if (!sectionRef.current || experts.length === 0) {
+      return;
+    }
+
+    const ctx = gsap.context(() => {
+      const headerElement = sectionRef.current?.querySelector(`.${styles["trusted-experts__header"]}`);
+      const sliderElement = sectionRef.current?.querySelector(`.${styles["trusted-experts__slider"]}`);
+
+      if (isMobile) {
+        // Mobile: Simple fade up (no horizontal movement)
+        if (headerElement) {
+          gsap.set(headerElement, {
+            opacity: 0,
+            y: 40,
+          });
+
+          gsap.to(headerElement, {
+            opacity: 1,
+            y: 0,
+            duration: 0.8,
+            ease: "power2.out",
+            scrollTrigger: {
+              trigger: sectionRef.current,
+              start: "top 80%",
+            },
+          });
+        }
+
+        if (sliderElement) {
+          gsap.set(sliderElement, {
+            opacity: 0,
+            y: 40,
+          });
+
+          gsap.to(sliderElement, {
+            opacity: 1,
+            y: 0,
+            duration: 0.8,
+            ease: "power2.out",
+            scrollTrigger: {
+              trigger: sliderElement,
+              start: "top 80%",
+            },
+          });
+        }
+      } else {
+        // Desktop: RIGHT → CENTER with scrub
+        if (headerElement) {
+          gsap.set(headerElement, {
+            opacity: 0,
+            y: 50,
+          });
+
+          gsap.to(headerElement, {
+            opacity: 1,
+            y: 0,
+            duration: 0.8,
+            ease: "power2.out",
+            scrollTrigger: {
+              trigger: sectionRef.current,
+              start: "top 85%",
+            },
+          });
+        }
+
+        if (sliderElement) {
+          gsap.set(sliderElement, {
+            opacity: 0,
+            x: 300,
+          });
+
+          gsap.to(sliderElement, {
+            opacity: 1,
+            x: 0,
+            duration: 1,
+            ease: "power2.out",
+            scrollTrigger: {
+              trigger: sectionRef.current,
+              start: "top 75%",
+              end: "+=700",
+              scrub: 1.2,
+            },
+          });
+        }
+      }
+    }, sectionRef);
+
+    return () => ctx.revert();
+  }, [experts.length]);
+
   const handleProgress = (_swiper: SwiperType, progressValue: number) => {
     setProgress(progressValue);
   };
@@ -90,9 +192,8 @@ const TrustedExperts: React.FC = () => {
   };
 
   return (
-    <section className={styles["trusted-experts"]}>
+    <section ref={sectionRef} className={styles["trusted-experts"]}>
       <div className={styles["trusted-experts__header"]}>
-        <div className={styles["trusted-experts__square"]}></div>
 
         <div className={styles["trusted-experts__title-area"]}>
           <span className={styles["trusted-experts__number"]}>02</span>
@@ -231,6 +332,8 @@ const TrustedExperts: React.FC = () => {
             style={{ width: `${progress * 100}%` }}
           />
         </div>
+        <div className={styles["trusted-experts__square"]}></div>
+
       </div>
     </section>
   );

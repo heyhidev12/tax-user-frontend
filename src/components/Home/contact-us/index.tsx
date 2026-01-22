@@ -1,17 +1,52 @@
-import React from "react";
+"use client";
+
+import React, { useEffect, useRef } from "react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/dist/ScrollTrigger";
 import styles from "./style.module.scss";
 import { useRouter } from "next/router";
 import { ArrowForward } from "@mui/icons-material";
 
+if (typeof window !== "undefined") {
+  gsap.registerPlugin(ScrollTrigger);
+}
+
 const ContactUs: React.FC = () => {
   const router = useRouter();
+  const sectionRef = useRef<HTMLElement>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!sectionRef.current || !contentRef.current) return;
+
+    const ctx = gsap.context(() => {
+      gsap.set(contentRef.current, {
+        opacity: 0,
+        y: 30,
+      });
+
+      gsap.to(contentRef.current, {
+        opacity: 1,
+        y: 0,
+        duration: 0.8,
+        ease: "power2.out",
+        scrollTrigger: {
+          trigger: sectionRef.current,
+          start: "top 80%",
+        },
+      });
+    }, sectionRef);
+
+    return () => ctx.revert();
+  }, []);
+
   return (
-    <section className={styles["contact-us"]}>
+    <section ref={sectionRef} className={styles["contact-us"]}>
       <div className="container">
         <video className={styles.video} autoPlay loop muted>
           <source src="./videos/home/contact.mp4" type="video/mp4" />
         </video>
-        <div className={styles["contact-us__content"]}>
+        <div ref={contentRef} className={styles["contact-us__content"]}>
           <h2>Contact Us</h2>
           <p className={styles.subtitle}>세무 전문가의 상담을 받아보세요</p>
           <p className={styles.description}>

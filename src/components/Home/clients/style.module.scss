@@ -16,35 +16,42 @@ $text-gray: #666;
 
   &__background {
     position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    pointer-events: none;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
     @media (max-width: 767px) {
       display: none;
     }
   }
 
   &__bg-text {
+    position: absolute;
+    left: 40px;
+    top: 40px;
+  
     font-family: "Playfair";
     font-size: 240px;
     font-weight: 400;
-    color: rgba(0, 0, 0, 0.04);
     line-height: 1;
-    display: block;
-    margin-left: 40px;
-    margin-top: 20px;
-
+  
+    color: rgba(0, 0, 0, 0.04); // biroz kuchliroq
+  
+    white-space: nowrap;
+  
+    will-change: transform, opacity;
+    pointer-events: none;
+  
     @media (max-width: 1024px) {
       font-size: 140px;
     }
-
+  
     @media (max-width: 767px) {
       font-size: 60px;
-      margin-left: 20px;
-      margin-top: 10px;
+      left: 20px;
+      top: 10px;
     }
   }
+  
 
   &__header {
     position: relative;

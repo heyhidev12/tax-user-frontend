@@ -1,7 +1,11 @@
-import React, { useState, useEffect } from 'react';
+"use client";
+
+import React, { useState, useEffect, useRef } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Pagination, Autoplay } from 'swiper/modules';
 import type { Swiper as SwiperType } from 'swiper';
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/dist/ScrollTrigger';
 import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
@@ -9,6 +13,10 @@ import styles from './style.module.scss';
 import { ArrowBack, ArrowForward } from '@mui/icons-material';
 import { get } from '@/lib/api';
 import { API_ENDPOINTS } from '@/config/api';
+
+if (typeof window !== "undefined") {
+  gsap.registerPlugin(ScrollTrigger);
+}
 
 interface AwardImage {
   id: number;
@@ -38,6 +46,7 @@ const Awards: React.FC = () => {
   const [swiperInstance, setSwiperInstance] = useState<SwiperType | null>(null);
   const [awards, setAwards] = useState<Award[]>([]);
   const [isExposed, setIsExposed] = useState<boolean>(false);
+  const sectionRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
     const fetchAwards = async () => {
@@ -71,6 +80,62 @@ const Awards: React.FC = () => {
     fetchAwards();
   }, []);
 
+  // GSAP Animation - RIGHT slide with scale, scrub enabled
+  useEffect(() => {
+    const isMobile = typeof window !== "undefined" && window.innerWidth < 768;
+    if (!sectionRef.current || awards.length === 0) {
+      return;
+    }
+
+    const ctx = gsap.context(() => {
+      const sliderElement = sectionRef.current?.querySelector(`.${styles['awards-slider']}`);
+
+      if (!sliderElement) return;
+
+      if (isMobile) {
+        // Mobile: Simple fade up (no horizontal movement)
+        gsap.set(sliderElement, {
+          opacity: 0,
+          y: 40,
+        });
+
+        gsap.to(sliderElement, {
+          opacity: 1,
+          y: 0,
+          duration: 0.8,
+          ease: "power2.out",
+          scrollTrigger: {
+            trigger: sectionRef.current,
+            start: "top 80%",
+          },
+        });
+      } else {
+        // Desktop: Slow slide from RIGHT with scale
+        gsap.set(sliderElement, {
+          opacity: 0,
+          x: 80,
+          scale: 0.95,
+        });
+
+        gsap.to(sliderElement, {
+          opacity: 1,
+          x: 0,
+          scale: 1,
+          duration: 1.2,
+          ease: "power2.out",
+          scrollTrigger: {
+            trigger: sectionRef.current,
+            start: "top 75%",
+            end: "top 35%",
+            scrub: true,
+          },
+        });
+      }
+    }, sectionRef);
+
+    return () => ctx.revert();
+  }, [awards.length]);
+
   // Do not render if not exposed or no items
   if (isExposed === false || awards.length === 0) {
     return null;
@@ -89,7 +154,7 @@ const Awards: React.FC = () => {
   };
 
   return (
-    <section className={styles['awards-section']}>
+    <section ref={sectionRef} className={styles['awards-section']}>
       <video className={styles.video} autoPlay loop muted>
           <source src="./videos/home/award.mp4" type="video/mp4" />
         </video>

@@ -1,13 +1,21 @@
+"use client";
+
 import { useState, useRef, useEffect } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import type { Swiper as SwiperType } from "swiper";
 import "swiper/css";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/dist/ScrollTrigger";
 import styles from "./service.module.scss";
 import { get } from "@/lib/api";
 import { API_ENDPOINTS } from "@/config/api";
 
 import type { ServiceCard } from "./data";
 import ViewMore from "../../common/ViewMore";
+
+if (typeof window !== "undefined") {
+  gsap.registerPlugin(ScrollTrigger);
+}
 
 interface BusinessItem {
   id: number;
@@ -59,6 +67,9 @@ export default function ServiceAreas() {
   const swiperRef = useRef<SwiperType | null>(null);
   const [categoryGroups, setCategoryGroups] = useState<CategoryGroup[]>([]);
   const [loading, setLoading] = useState(true);
+  const sectionRef = useRef<HTMLDivElement>(null);
+  const titleRef = useRef<HTMLDivElement>(null);
+  const cardsContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const checkScreenSize = () => {
@@ -150,6 +161,139 @@ export default function ServiceAreas() {
     (group) => String(group.majorCategory.id) === activeTab,
   );
   const cards = activeGroup?.cards || [];
+
+  // GSAP Animation for Desktop - PIN + FLOW
+  useEffect(() => {
+    if (isMobile || !sectionRef.current || !titleRef.current || !cardsContainerRef.current || cards.length === 0) {
+      return;
+    }
+
+    const ctx = gsap.context(() => {
+      // Use requestAnimationFrame for immediate check, then retry if needed
+      const setupAnimation = () => {
+        // Get all card elements
+        const cardElements = cardsContainerRef.current?.querySelectorAll(`.${styles["service-card"]}`) || [];
+        
+        if (cardElements.length === 0) {
+          // Retry once if cards not ready
+          requestAnimationFrame(() => {
+            const retryElements = cardsContainerRef.current?.querySelectorAll(`.${styles["service-card"]}`) || [];
+            if (retryElements.length > 0) {
+              gsap.set(retryElements, {
+                opacity: 0,
+                y: 40,
+              });
+              createTimeline(retryElements);
+            }
+          });
+          return;
+        }
+
+        // Set initial state - title from RIGHT
+        gsap.set(titleRef.current, {
+          opacity: 0,
+          x: 150,
+        });
+
+        // Set initial state - cards from bottom
+        gsap.set(cardElements, {
+          opacity: 0,
+          y: 40,
+        });
+
+        createTimeline(cardElements);
+      };
+
+      const createTimeline = (cardElements: NodeListOf<Element>) => {
+        // Create timeline with ScrollTrigger - PIN + SCRUB
+        const tl = gsap.timeline({
+          scrollTrigger: {
+            trigger: sectionRef.current,
+            start: "top top",
+            end: "+=120%",
+            scrub: true,
+            pin: true,
+          },
+        });
+
+        // Step 1: Left title enters from RIGHT
+        tl.to(titleRef.current, {
+          opacity: 1,
+          x: 0,
+          duration: 0.8,
+          ease: "power2.out",
+        });
+
+        // Step 2: Cards animate after title (slow stagger)
+        tl.to(cardElements, {
+          opacity: 1,
+          y: 0,
+          duration: 1,
+          stagger: 0.15,
+          ease: "power2.out",
+        }, "-=0.3");
+      };
+
+      setupAnimation();
+    }, sectionRef);
+
+    return () => ctx.revert();
+  }, [isMobile, cards.length, activeTab]);
+
+  // Simple fade up animation for mobile (no horizontal movement, no pin)
+  useEffect(() => {
+    if (!isMobile || !sectionRef.current || !titleRef.current || !cardsContainerRef.current || cards.length === 0) {
+      return;
+    }
+
+    const ctx = gsap.context(() => {
+      const setupAnimation = () => {
+        gsap.set([titleRef.current], {
+          opacity: 0,
+          y: 30,
+        });
+
+        const cardElements = cardsContainerRef.current?.querySelectorAll(`.${styles["service-card"]}`) || [];
+        
+        if (cardElements.length === 0) {
+          requestAnimationFrame(setupAnimation);
+          return;
+        }
+
+        gsap.set(cardElements, {
+          opacity: 0,
+          y: 30,
+        });
+
+        gsap.to([titleRef.current], {
+          opacity: 1,
+          y: 0,
+          duration: 0.8,
+          ease: "power2.out",
+          scrollTrigger: {
+            trigger: sectionRef.current,
+            start: "top 80%",
+          },
+        });
+
+        gsap.to(cardElements, {
+          opacity: 1,
+          y: 0,
+          duration: 0.8,
+          stagger: 0.12,
+          ease: "power2.out",
+          scrollTrigger: {
+            trigger: cardsContainerRef.current,
+            start: "top 80%",
+          },
+        });
+      };
+
+      setupAnimation();
+    }, sectionRef);
+
+    return () => ctx.revert();
+  }, [isMobile, cards.length, activeTab]);
 
   // Desktop: First slide has 6 cards, remaining slides have 4 cards each
   const getDesktopSlides = () => {
@@ -354,14 +498,14 @@ export default function ServiceAreas() {
   }
 
   return (
-    <div className={styles["service-section"]}>
+    <div ref={sectionRef} className={styles["service-section"]}>
       <div className="container">
         <div className={styles["background-circle"]}>
           <h1>Areas of</h1>
           <h1>Expertise</h1>
         </div>
 
-        <div className={styles["section-title-box"]}>
+        <div ref={titleRef} className={styles["section-title-box"]}>
           <div className={styles["top-id"]}>01</div>
           <div className={styles["title-wrapper"]}>
             <h2 className={styles.title}>
@@ -399,7 +543,7 @@ export default function ServiceAreas() {
           </div>
 
           {/* Right side - Cards Swiper */}
-          <div className={styles["service-right"]}>
+          <div ref={cardsContainerRef} className={styles["service-right"]}>
             {cards.length > 0 ? (
               <>
                 <Swiper

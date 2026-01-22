@@ -1,8 +1,16 @@
+"use client";
+
 import React, { useState, useEffect, useRef } from 'react';
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/dist/ScrollTrigger';
 import styles from './style.module.scss';
 import ViewMore from '../../common/ViewMore';
 import { get } from '@/lib/api';
 import { API_ENDPOINTS } from '@/config/api';
+
+if (typeof window !== "undefined") {
+  gsap.registerPlugin(ScrollTrigger);
+}
 
 interface ClientLogo {
   id: number;
@@ -32,6 +40,8 @@ const Clients: React.FC = () => {
   const row2Ref = useRef<HTMLDivElement>(null);
   const [row1Offset, setRow1Offset] = useState(0);
   const [row2Offset, setRow2Offset] = useState(0);
+  const sectionRef = useRef<HTMLElement>(null);
+  const togetherTextRef = useRef<HTMLSpanElement>(null);
 
   useEffect(() => {
     const fetchKeyCustomers = async () => {
@@ -54,6 +64,102 @@ const Clients: React.FC = () => {
 
     fetchKeyCustomers();
   }, []);
+
+  // GSAP Animation - Late start (85%), y animation with stagger
+  useEffect(() => {
+    const isMobile = typeof window !== "undefined" && window.innerWidth < 768;
+    if (!sectionRef.current || clients.length === 0) return;
+  
+    const ctx = gsap.context(() => {
+  
+      const logos = sectionRef.current!.querySelectorAll(
+        `.${styles["client-logo"]}`
+      );
+  
+      if (!logos.length) return;
+  
+      gsap.fromTo(
+        logos,
+        {
+          opacity: 0,
+          y: 60,
+        },
+        {
+          opacity: 1,
+          y: 0,
+          stagger: 0.08,
+          ease: "power2.out",
+          scrollTrigger: {
+            trigger: sectionRef.current,
+            start: isMobile ? "top 90%" : "top 85%", // KECH BOSHLANADI
+            end: "top 55%",
+            scrub: !isMobile, // desktop scroll sync
+          },
+        }
+      );
+  
+    }, sectionRef);
+  
+    return () => ctx.revert();
+  }, [clients.length]);
+  
+
+  // GSAP Animation for "Together" text - Horizontal scroll synchronized
+  useEffect(() => {
+    const isMobile = typeof window !== "undefined" && window.innerWidth < 768;
+  
+    if (!sectionRef.current || !togetherTextRef.current) return;
+  
+    const ctx = gsap.context(() => {
+      const el = togetherTextRef.current!;
+  
+      // MOBILE: simple fade only
+      if (isMobile) {
+        gsap.fromTo(
+          el,
+          { opacity: 0, y: 20 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.8,
+            ease: "power2.out",
+            scrollTrigger: {
+              trigger: sectionRef.current,
+              start: "top 85%",
+            },
+          }
+        );
+        return;
+      }
+  
+      // DESKTOP: LEFT → FINAL POSITION (SCROLL DRAG STYLE)
+      gsap.fromTo(
+        el,
+        {
+          x: -800,
+          opacity: 0,
+        },
+        {
+          x: 0,
+          opacity: 1,
+          ease: "none",
+          scrollTrigger: {
+            trigger: sectionRef.current,
+            start: "top 85%",
+            end: "+=1000",
+            scrub: 1.5,
+          },
+        }
+      );
+      
+    }, sectionRef);
+  
+    return () => ctx.revert();
+  }, []);
+  
+  
+  
+  
 
   // Split clients into two rows (evenly distributed)
   const clientsRow1 = clients.slice(0, Math.ceil(clients.length / 2));
@@ -110,9 +216,9 @@ const Clients: React.FC = () => {
   };
 
   return (
-    <section className={styles['clients-section']}>
+    <section ref={sectionRef} className={styles['clients-section']}>
       <div className={styles['clients-section__background']}>
-        <span className={styles['clients-section__bg-text']}>Together</span>
+        <span ref={togetherTextRef} className={styles['clients-section__bg-text']}>Together</span>
       </div>
 
       <div className={`${styles['clients-section__header']} container`}>

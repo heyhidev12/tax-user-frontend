@@ -1,13 +1,25 @@
-import { useState, useEffect } from "react";
+"use client";
+
+import { useState, useEffect, useRef } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Pagination } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/pagination";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/dist/ScrollTrigger";
 import styles from "./vision.module.scss";
+
+if (typeof window !== "undefined") {
+  gsap.registerPlugin(ScrollTrigger);
+}
 
 export default function VisionSections() {
   const [active, setActive] = useState<null | number>(null);
   const [isMobile, setIsMobile] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const titleRef = useRef<HTMLHeadingElement>(null);
+  const descRef = useRef<HTMLParagraphElement>(null);
+  const mobileContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const checkMobile = () => {
@@ -17,6 +29,73 @@ export default function VisionSections() {
     window.addEventListener("resize", checkMobile);
     return () => window.removeEventListener("resize", checkMobile);
   }, []);
+
+  // GSAP Animation for Desktop - RIGHT → CENTER, no pin
+  useEffect(() => {
+    if (isMobile || !containerRef.current || !titleRef.current || !descRef.current) {
+      return;
+    }
+
+    const ctx = gsap.context(() => {
+      // Text slides from RIGHT → CENTER
+      gsap.set([titleRef.current, descRef.current], {
+        opacity: 0,
+        x: 100,
+      });
+
+      // Create timeline with ScrollTrigger (no pin)
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: containerRef.current,
+          start: "top 75%",
+          end: "top 35%",
+          scrub: true,
+        },
+      });
+
+      // Animate text from right to center
+      tl.to([titleRef.current, descRef.current], {
+        opacity: 1,
+        x: 0,
+        duration: 1,
+        ease: "power2.out",
+      });
+    }, containerRef);
+
+    return () => ctx.revert();
+  }, [isMobile]);
+
+  // Simple fade animation for mobile
+  useEffect(() => {
+    if (!isMobile || !mobileContainerRef.current) {
+      return;
+    }
+
+    const ctx = gsap.context(() => {
+      const mobileTitle = mobileContainerRef.current?.querySelector(`.${styles["vision-slide__main-title"]}`);
+      const mobileDesc = mobileContainerRef.current?.querySelector(`.${styles["vision-slide__desc"]}`);
+
+      if (mobileTitle && mobileDesc) {
+        gsap.set([mobileTitle, mobileDesc], {
+          opacity: 0,
+          y: 20,
+        });
+
+        gsap.to([mobileTitle, mobileDesc], {
+          opacity: 1,
+          y: 0,
+          duration: 0.8,
+          ease: "power2.out",
+          scrollTrigger: {
+            trigger: mobileContainerRef.current,
+            start: "top 80%",
+          },
+        });
+      }
+    }, mobileContainerRef);
+
+    return () => ctx.revert();
+  }, [isMobile]);
 
   const videos = [
     "/videos/home/expertise.mp4",
@@ -79,6 +158,7 @@ export default function VisionSections() {
   if (isMobile) {
     return (
       <div
+        ref={mobileContainerRef}
         className={`${styles["vision-container"]} ${styles["vision-container--mobile"]}`}
       >
         <Swiper
@@ -139,7 +219,7 @@ export default function VisionSections() {
 
   // Desktop View
   return (
-    <div className={styles["vision-container"]}>
+    <div ref={containerRef} className={styles["vision-container"]}>
       {active === null ? (
         <img
           src="./images/home/vision.png"
@@ -158,8 +238,8 @@ export default function VisionSections() {
       )}
 
       <div className={styles.overlay}>
-        <h2 className={styles["section-title"]}>Our Vision</h2>
-        <p className={styles["section-desc"]}>
+        <h2 ref={titleRef} className={styles["section-title"]}>Our Vision</h2>
+        <p ref={descRef} className={styles["section-desc"]}>
           복잡한 세상과의 연결을 한결같고, 믿음직 할 수 있는 오래된 가치를
           소개합니다.
         </p>
