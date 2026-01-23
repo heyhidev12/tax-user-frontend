@@ -17,7 +17,7 @@ interface UserProfile {
   phoneNumber?: string;
   email?: string;
   memberType?: string;
-  oauthProvider?: string;
+  provider?: string;
   newsletterSubscribed?: boolean;
   isApproved?: boolean;
 }
@@ -238,7 +238,7 @@ const MyPage: React.FC = () => {
             phoneNumber: "",
             email: "",
             memberType: "세무사 (승인 대기 중)",
-            oauthProvider: undefined,
+            provider: undefined,
             newsletterSubscribed: false,
           });
           setError(null);
@@ -256,7 +256,7 @@ const MyPage: React.FC = () => {
           phoneNumber: "",
           email: "",
           memberType: "세무사 (승인 대기 중)",
-          oauthProvider: undefined,
+          provider: undefined,
           newsletterSubscribed: false,
         });
       }
@@ -269,7 +269,7 @@ const MyPage: React.FC = () => {
         phoneNumber: "",
         email: "",
         memberType: "세무사 (승인 대기 중)",
-        oauthProvider: undefined,
+        provider: undefined,
         newsletterSubscribed: false,
       });
       setError(null);
@@ -394,7 +394,7 @@ const MyPage: React.FC = () => {
       alert("탈퇴가 완료되었습니다.");
 
       // Redirect to login
-      router.push("/login");
+      router.push("/");
     } catch (err) {
       setWithdrawPasswordError("탈퇴 처리 중 오류가 발생했습니다.");
     } finally {
@@ -1110,7 +1110,7 @@ const MyPage: React.FC = () => {
     phoneNumber: "",
     email: "",
     memberType: "세무사 (승인 대기 중)",
-    oauthProvider: undefined,
+    provider: undefined,
     newsletterSubscribed: false,
     isApproved: false,
   };
@@ -1317,14 +1317,14 @@ const MyPage: React.FC = () => {
                       <div className={styles.mobileFormRow}>
                         <p className={styles.mobileFormLabel}>간편 로그인</p>
                         <p className={styles.mobileFormValue}>
-                          {displayProfile.oauthProvider
-                            ? displayProfile.oauthProvider === "google"
+                          {displayProfile.provider
+                            ? displayProfile.provider === "google"
                               ? "구글(Google)"
-                              : displayProfile.oauthProvider === "kakao"
+                              : displayProfile.provider === "kakao"
                                 ? "카카오(Kakao)"
-                                : displayProfile.oauthProvider === "naver"
+                                : displayProfile.provider === "naver"
                                   ? "네이버(Naver)"
-                                  : displayProfile.oauthProvider
+                                  : displayProfile.provider
                             : "-"}
                         </p>
                       </div>
@@ -2397,14 +2397,14 @@ const MyPage: React.FC = () => {
                           <div className={styles.formRow}>
                             <p className={styles.formLabel}>간편 로그인</p>
                             <p className={styles.formValue}>
-                              {displayProfile.oauthProvider
-                                ? displayProfile.oauthProvider === "google"
+                              {displayProfile.provider
+                                ? displayProfile.provider === "google"
                                   ? "구글(Google)"
-                                  : displayProfile.oauthProvider === "kakao"
+                                  : displayProfile.provider === "kakao"
                                     ? "카카오(Kakao)"
-                                    : displayProfile.oauthProvider === "naver"
+                                    : displayProfile.provider === "naver"
                                       ? "네이버(Naver)"
-                                      : displayProfile.oauthProvider
+                                      : displayProfile.provider
                                 : "-"}
                             </p>
                           </div>

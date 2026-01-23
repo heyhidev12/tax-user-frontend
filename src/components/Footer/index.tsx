@@ -34,7 +34,7 @@ const Footer: React.FC = () => {
             <a onClick={() => router.push("/education")}>교육/세미나</a>
             <a onClick={() => router.push("/history?tab=intro")}>함께소개</a>
             <a onClick={() => router.push("/insights")}>인사이트</a>
-            <a onClick={() => router.push("/report")}>신고 대리</a>
+            <a onClick={() => router.push("/consultation/apply")}>상담 신청</a>
           </nav>
         </div>
       </div>

@@ -220,16 +220,10 @@ export default function ToggleMenu({
                   [styles.active]: activeId === item.id,
                 })}
                 onClick={() => {
-                  // "신고 대리" 항목은 클릭 시 바로 이동
+                  // "상담 신청" 항목은 단순 라우팅만 수행
                   if (item.id === "agency" && item.subItems.length === 0) {
-                    if (onConsultationClick) {
-                      onConsultationClick();
-                    } else if (onMainItemClick) {
-                      onMainItemClick(item.id);
-                    } else {
-                      onClose();
-                      router.push("/consultation/apply");
-                    }
+                    onClose();
+                    router.push("/consultation/apply");
                   } else {
                     handleMainItemClick(item);
                   }
@@ -246,16 +240,10 @@ export default function ToggleMenu({
                     className={styles.arrowIcon}
                     onClick={(e) => {
                       e.stopPropagation();
-                      // "신고 대리" 등 단일 링크 처리
+                      // "상담 신청" 단일 링크: 순수 라우팅
                       if (item.id === "agency") {
-                        if (onConsultationClick) {
-                        onConsultationClick();
-                        } else if (onMainItemClick) {
-                          onMainItemClick(item.id);
-                        } else {
                         onClose();
                         router.push("/consultation/apply");
-                        }
                       }
                     }}
                   >

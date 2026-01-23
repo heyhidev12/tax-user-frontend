@@ -505,7 +505,7 @@
   cursor: pointer;
   transition: all 0.2s ease;
   position: absolute;
-  right: 0;
+  right: 12px;
 
   &:hover:not(:disabled) {
     background-color: rgba(229, 67, 67, 0.1);

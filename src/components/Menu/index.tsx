@@ -123,8 +123,8 @@ const Menu: React.FC<MenuProps> = ({ isOpen, onClose }) => {
     }
     return item;
   }).concat([
-    // 신고 대리 항목 - 항상 표시되도록 추가
-    { id: 'agency', title: '신고 대리', subItems: [] },
+    // 상담 신청 항목 - 항상 표시되도록 추가
+    { id: 'agency', title: '상담 신청', subItems: [] },
   ]);
 
   // 현재 경로에 따라 메뉴 항목 자동 선택
@@ -469,12 +469,11 @@ const Menu: React.FC<MenuProps> = ({ isOpen, onClose }) => {
       handleClose();
       setSelectedSubItem(null);
       
-      // 페이지 라우팅 매핑
+      // 페이지 라우팅 매핑 (agency는 여기서 제외, ToggleMenu에서 직접 처리)
       const routeMap: { [key: string]: string } = {
         'experts': '/experts',
         'education': '/education',
         'insight': '/insights',
-        'agency': '/consultation/apply',
       };
       
       const route = routeMap[id];
@@ -545,10 +544,6 @@ const Menu: React.FC<MenuProps> = ({ isOpen, onClose }) => {
       onLoginClick={handleLoginClick}
       onSignupClick={handleSignupClick}
       onMyPageClick={handleMyPageClick}
-      onConsultationClick={() => {
-        handleClose();
-        setTimeout(() => router.push('/consultation/apply'), 500);
-      }}
     />
   );
 };
