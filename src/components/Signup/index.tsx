@@ -87,13 +87,16 @@ const Signup: React.FC = () => {
     if (error === 'WITHDRAWN') {
       toast.error('회원 탈퇴된 계정입니다. 다시 회원가입해 주세요.');
     }
-    if(error === 'NOT_REGISTERED') {
-      toast.error('회원 가입되지 않은 계정입니다. 다시 회원가입해 주세요.');
+  
+    if (error === 'NOT_REGISTERED') {
+      toast.info('회원 가입되지 않은 계정입니다. 회원가입을 진행해 주세요.');
     }
   
-    router.replace('/login', undefined, { shallow: true });
+    // URL ni tozalash (signup sahifada qoladi)
+    router.replace('/signup', undefined, { shallow: true });
   
   }, [router.isReady]);
+  
 
   
   const [newsletter, setNewsletter] = useState(false);

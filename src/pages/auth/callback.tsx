@@ -12,29 +12,34 @@ const AuthCallback = () => {
 
   useEffect(() => {
     if (!router.isReady) return;
-
+  
     const token = router.query.token as string;
     const error = router.query.error as string;
-
-    // Successful SNS login
+  
+    // SUCCESS
     if (token) {
       localStorage.setItem('accessToken', token);
       router.replace('/');
       return;
     }
-
-    // User does not exist → redirect to signup
-    if (error?.includes('not registered')) {
+  
+    // NOT REGISTERED USER
+    if (error === 'NOT_REGISTERED') {
       router.replace('/signup');
       return;
     }
-
-    // Fallback
-    setTimeout(() => {
-      router.replace('/login');
-    }, 500);
-  }, [router.isReady, router.query.token, router.query.error, router]);
-
+  
+    // WITHDRAWN USER
+    if (error === 'WITHDRAWN') {
+      router.replace('/signup?error=WITHDRAWN');
+      return;
+    }
+  
+    // FALLBACK
+    router.replace('/login');
+  
+  }, [router.isReady]);
+  
   return (
     <div
       style={{
