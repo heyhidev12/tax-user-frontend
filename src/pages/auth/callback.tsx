@@ -31,7 +31,14 @@ const AuthCallback = () => {
 
     // Fallback
     setTimeout(() => {
-      router.replace('/login');
+      if (error) {
+        router.replace({
+          pathname: '/login',
+          query: { error }
+        });
+      } else {
+        router.replace('/login');
+      }
     }, 500);
   }, [router.isReady, router.query.token, router.query.error, router]);
 

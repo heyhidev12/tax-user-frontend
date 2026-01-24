@@ -40,6 +40,8 @@ const Login: React.FC = () => {
 
   // Handle SNS login errors passed via query parameter
   useEffect(() => {
+    if (!router.isReady) return;
+    
     const { error } = router.query;
 
     if (!error) return;
@@ -53,7 +55,7 @@ const Login: React.FC = () => {
 
     // Clean up URL so the error param does not persist
     router.replace('/login', undefined, { shallow: true });
-  }, [router.query]);
+  }, [router.isReady, router.query]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
