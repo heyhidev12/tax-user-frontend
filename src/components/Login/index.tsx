@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
 import Header from '@/components/common/Header';
 import Menu from '@/components/Menu';
 import { post } from '@/lib/api';
 import { API_BASE_URL, API_ENDPOINTS } from '@/config/api';
+import { toast } from 'react-toastify';
 import Footer from '../Footer';
 
 interface LoginResponse {
@@ -36,6 +37,23 @@ const Login: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+
+  // Handle SNS login errors passed via query parameter
+  useEffect(() => {
+    const { error } = router.query;
+
+    if (!error) return;
+
+    if (error === 'WITHDRAWN') {
+      toast.error('This account has been withdrawn');
+    } else {
+      // Fallback for any other SNS error codes
+      toast.error('SNS 로그인 중 오류가 발생했습니다. 다시 시도해주세요.');
+    }
+
+    // Clean up URL so the error param does not persist
+    router.replace('/login', undefined, { shallow: true });
+  }, [router.query]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -100,7 +118,7 @@ const Login: React.FC = () => {
       naver: API_ENDPOINTS.AUTH.NAVER,
     };
 
-    // 소셜 로그인 페이지로 리다이렉트
+    // SNS 로그인은 항상 백엔드로 직접 리다이렉트만 수행
     window.location.href = `${API_BASE_URL}${socialEndpoints[provider]}`;
   };
 
