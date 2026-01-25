@@ -528,7 +528,13 @@ const BusinessAreaDetailPage: React.FC<BusinessAreaDetailPageProps> = ({
   };
 
   const handleConsultClick = () => {
-    router.push("/consultation/apply");
+    // Pass the minor category ID as query param for auto-selection
+    const categoryId = data?.minorCategory?.id;
+    if (categoryId) {
+      router.push(`/consultation/apply?categoryId=${categoryId}`);
+    } else {
+      router.push("/consultation/apply");
+    }
   };
 
   const handleExpertPrev = () => {
@@ -1509,7 +1515,7 @@ const BusinessAreaDetailPage: React.FC<BusinessAreaDetailPageProps> = ({
           )}
         </div>
       </div>
-      <ContactUs />
+      <ContactUs categoryId={data?.minorCategory?.id} />
     
       <Footer />
     </div>

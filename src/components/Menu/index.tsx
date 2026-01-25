@@ -55,7 +55,7 @@ type InsightHierarchicalData = InsightHierarchicalItem[];
 
 const Menu: React.FC<MenuProps> = ({ isOpen, onClose }) => {
   const router = useRouter();
-  const [selectedItem, setSelectedItem] = useState<string>('services');
+  const [selectedItem, setSelectedItem] = useState<string | null>(null);
   const [selectedSubItem, setSelectedSubItem] = useState<number | null>(null);
   const [hoveredItem, setHoveredItem] = useState<string | null>(null);
   const [hasBeenOpened, setHasBeenOpened] = useState(false);
@@ -461,9 +461,13 @@ const Menu: React.FC<MenuProps> = ({ isOpen, onClose }) => {
     const hasSubItems = menuItem && menuItem.subItems && menuItem.subItems.length > 0;
     
     if (hasSubItems) {
-      // 서브메뉴가 있는 경우 선택 상태만 변경
-      setSelectedItem(id);
-      setSelectedSubItem(null); // 메인 메뉴 변경 시 서브 메뉴 선택 초기화
+      // Toggle behavior: if already selected, close it; otherwise, open it
+      if (selectedItem === id) {
+        setSelectedItem(null); // Close the currently open item
+      } else {
+        setSelectedItem(id); // Open the clicked item (automatically closes previous)
+        setSelectedSubItem(null); // Reset sub-item selection when opening new main item
+      }
     } else {
       // 서브메뉴가 없는 경우 즉시 페이지 이동
       handleClose();

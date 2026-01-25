@@ -101,6 +101,7 @@ const HistoryPage: React.FC = () => {
     tabFromQuery && validTabs.includes(tabFromQuery) ? tabFromQuery : "intro";
   const [activeTab, setActiveTab] = useState(initialTab);
 
+
   // URL 쿼리 파라미터가 변경되면 탭 업데이트
   useEffect(() => {
     if (tabFromQuery && validTabs.includes(tabFromQuery)) {
@@ -444,11 +445,11 @@ const HistoryPage: React.FC = () => {
     }
   }, [activeTab]);
 
-// Naver Map 초기화
-useEffect(() => {
-  // branchesLoading이 true이면 아직 DOM에 지도 요소가 없으므로 대기
-  if (activeTab !== "branches") return;
-  if (!(window as any).naver?.maps) return;
+  // Naver Map 초기화
+  useEffect(() => {
+    // branchesLoading이 true이면 아직 DOM에 지도 요소가 없으므로 대기
+    if (activeTab !== "branches") return;
+    if (!(window as any).naver?.maps) return;
 
 
     // 인증 실패 처리 함수 설정 (공식 문서 권장)
@@ -528,15 +529,33 @@ useEffect(() => {
               align-items: center;
               gap: 8px;
               background: white;
-              border-radius: 24px;
-              padding: 10px 16px;
-              box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-              white-space: nowrap;
-              position: relative;
+              border-radius: 100px;
+              border: 1px solid  #00A89E;
+              background: #FFF;
+              padding: 6px;
             ">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M12 2C8.13 2 5 5.13 5 9C5 14.25 12 22 12 22C12 22 19 14.25 19 9C19 5.13 15.87 2 12 2ZM12 11.5C10.62 11.5 9.5 10.38 9.5 9C9.5 7.62 10.62 6.5 12 6.5C13.38 6.5 14.5 7.62 14.5 9C14.5 10.38 13.38 11.5 12 11.5Z" fill="#E53935"/>
-              </svg>
+            <div style="
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              width: 32px;
+              height: 32px;
+              padding: 6px;
+              background: #00A89E;
+              border-radius: 100px;
+            ">
+             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
+              <g clip-path="url(#clip0_2369_10233)">
+                <path d="M9.46107 1.25C6.309 1.25 3.75366 3.73577 3.75 6.79998C3.75 9.86785 9.46107 18.6797 9.46107 18.6797C9.46107 18.6797 15.1721 9.86785 15.1721 6.79998C15.1721 5.32828 14.5681 3.91516 13.4991 2.87545C12.4301 1.83575 10.9767 1.25 9.46107 1.25Z" fill="white" stroke="white" stroke-width="1.55571" stroke-miterlimit="10"/>
+                <path d="M9.44955 9.5163C10.9761 9.5163 12.2136 8.27881 12.2136 6.75229C12.2136 5.22577 10.9761 3.98828 9.44955 3.98828C7.92303 3.98828 6.68555 5.22577 6.68555 6.75229C6.68555 8.27881 7.92303 9.5163 9.44955 9.5163Z" fill="#00A89E"/>
+              </g>
+              <defs>
+                <clipPath id="clip0_2369_10233">
+                  <rect width="20" height="20" fill="white"/>
+                </clipPath>
+              </defs>
+            </svg>
+              </div>
               <span style="
                 font-family: 'Pretendard', sans-serif;
                 font-size: 15px;
@@ -638,7 +657,7 @@ useEffect(() => {
       // 지도 인스턴스는 유지 (탭 전환 시에도 지도가 유지되도록)
     };
   }, [activeTab, branchesData, branchesLoading]);
-  
+
 
   const formatMonth = (item: HistoryItem): string => {
     // month 값을 사용하여 월만 표시
@@ -785,8 +804,8 @@ useEffect(() => {
                 </div>
               </div>
               <div className={styles.mobileText} >
-              <p>대표 인사말</p>
-              <h1>세무법인 함께 대표 <br /> 최영우 세무사입니다.</h1>
+                <p>대표 인사말</p>
+                <h1>세무법인 함께 대표 <br /> 최영우 세무사입니다.</h1>
               </div>
               <div className={styles.pencilImage}>
                 <img src="/images/about/about4.png" alt="Pencil" />
@@ -1001,9 +1020,8 @@ useEffect(() => {
                       >
                         {/* Divider above each year section */}
                         <div
-                          className={`${styles.awardsYearTitle} ${
-                            index === 0 ? styles.awardsYearTitleFirst : ""
-                          }`}
+                          className={`${styles.awardsYearTitle} ${index === 0 ? styles.awardsYearTitleFirst : ""
+                            }`}
                         >
                           <h3>{yearData.year}</h3>
                         </div>
@@ -1257,14 +1275,13 @@ useEffect(() => {
                       <React.Fragment key={branch.id}>
                         <div
                           className={styles.branchItem}
-                          onClick={() => {
-                            setSelectedBranch(branch);
-                            setIsBranchModalOpen(true);
-                          }}
-                          style={{ cursor: "pointer" }}
+
                         >
                           <div className={styles.branchHeader}>
-                            <h3 className={styles.branchName}>
+                            <h3 className={styles.branchName} onClick={() => {
+                              setSelectedBranch(branch);
+                              setIsBranchModalOpen(true);
+                            }}>
                               {branch.name}
 
                               <ArrowForwardIos />
@@ -1306,10 +1323,10 @@ useEffect(() => {
                                   </a>
                                   {(branch.instagramUrl ||
                                     branch.websiteUrl) && (
-                                    <span
-                                      className={styles.branchSocialDivider}
-                                    />
-                                  )}
+                                      <span
+                                        className={styles.branchSocialDivider}
+                                      />
+                                    )}
                                 </>
                               )}
                               {branch.instagramUrl && (
@@ -1350,7 +1367,7 @@ useEffect(() => {
                           <div className={styles.branchAddress}>
                             {branch.address}
                           </div>
-                          <div className={styles.branchContactInfo}>
+                          {(branch.phoneNumber || branch.fax || branch.email) && <div className={styles.branchContactInfo}>
                             {branch.phoneNumber && (
                               <div className={styles.branchContactRow}>
                                 <span className={styles.branchContactLabel}>
@@ -1381,7 +1398,7 @@ useEffect(() => {
                                 </span>
                               </div>
                             )}
-                          </div>
+                          </div>}
                         </div>
                         {index < branchesData.length - 1 && (
                           <div className={styles.branchDivider} />

@@ -253,6 +253,13 @@ $bg-color: #f8f8f8;
     .menuTitle {
       color: $primary-teal;
     }
+
+    .toggleIcon{
+      color: $text-gray;
+    }
+    .arrowIcon{
+      color: $primary-teal;
+    }
   }
 }
 
@@ -282,9 +289,9 @@ $bg-color: #f8f8f8;
 .arrowIcon {
   font-size: 24px;
   font-weight: 300;
-  color: #999;
+  color: $text-gray;
   line-height: 1;
-  opacity: 0;
+  // opacity: 0;
 
   @media (min-width: 767px) {
     font-size: 30px;

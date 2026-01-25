@@ -322,37 +322,35 @@ const ExpertDetailPage: React.FC<ExpertDetailPageProps> = ({
 
   const handleShare = async () => {
     if (typeof window === "undefined") return;
-
+  
     const url = window.location.href;
     const title = `${data?.name || "세무사"} - 세무법인 함께`;
     const text = `${data?.name || "세무사"} 세무사 프로필`;
-
-    try {
-      // Web Share API가 지원되는 경우
-      if (navigator.share) {
+  
+    // 1. Mobile Share API
+    if (navigator.share) {
+      try {
         await navigator.share({
           title,
           text,
           url,
         });
-      } else {
-        // Web Share API가 지원되지 않는 경우 클립보드에 복사
-        await navigator.clipboard.writeText(url);
-        alert("링크가 클립보드에 복사되었습니다.");
-      }
-    } catch (error) {
-      // 사용자가 공유를 취소한 경우 등 에러는 무시
-      if (error instanceof Error && error.name !== "AbortError") {
-        // 클립보드 복사로 폴백
-        try {
-          await navigator.clipboard.writeText(url);
-          alert("링크가 클립보드에 복사되었습니다.");
-        } catch (clipboardError) {
-          console.error("공유 실패:", clipboardError);
-        }
+        return;
+      } catch (err) {
+        console.warn("Share canceled or failed:", err);
       }
     }
+  
+    // 2. Clipboard fallback
+    try {
+      await navigator.clipboard.writeText(url);
+      alert("링크가 클립보드에 복사되었습니다.");
+    } catch (err) {
+      alert("공유를 지원하지 않는 브라우저입니다.");
+      console.error("Clipboard error:", err);
+    }
   };
+  
 
   if (error || !data) {
     return (

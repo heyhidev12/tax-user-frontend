@@ -331,6 +331,70 @@ const ConsultationApplyPage: React.FC = () => {
     termsAgreement: false,
   });
 
+  // categoryId가 query에 있으면 상담 분야를 자동 선택
+  useEffect(() => {
+    // router가 준비될 때까지 대기
+    if (!router.isReady) return;
+
+    const categoryId = router.query.categoryId as string;
+
+    // categoryId가 없거나 이미 설정되어 있으면 스킵
+    if (!categoryId) {
+      return;
+    }
+
+    // expertId가 있으면 스킵 (expertId 로직이 우선)
+    if (router.query.expertId) {
+      return;
+    }
+
+    // 이미 같은 categoryId로 설정되어 있으면 스킵
+    if (formData.consultationField === categoryId) {
+      return;
+    }
+
+    // consultationFields가 로드될 때까지 대기
+    if (consultationFields.length === 0) {
+      return;
+    }
+
+    // categoryId에 해당하는 필드 찾기
+    const matchingField = consultationFields.find(field => field.value === categoryId);
+    
+    if (matchingField) {
+      console.log('[Consultation Apply] Auto-selecting consultation field:', matchingField.label);
+      setFormData(prev => ({
+        ...prev,
+        consultationField: categoryId
+      }));
+
+      // 해당 분야의 전문가 목록도 가져오기
+      const fetchExpertsForField = async () => {
+        try {
+          const expertsResponse = await get<MembersResponse>(
+            `${API_ENDPOINTS.MEMBERS}?page=1&limit=100&workArea=${categoryId}`
+          );
+
+          if (expertsResponse.data?.items) {
+            const expertOptions: SelectOption[] = expertsResponse.data.items
+              .filter(item => item.isExposed)
+              .map(item => ({
+                value: item.id.toString(),
+                label: item.name
+              }));
+            setTaxAccountants(expertOptions);
+          }
+        } catch (error) {
+          console.error('[Consultation Apply] Failed to fetch experts for category:', error);
+        }
+      };
+
+      fetchExpertsForField();
+    } else {
+      console.warn('[Consultation Apply] Category ID not found in consultation fields:', categoryId);
+    }
+  }, [router.isReady, router.query.categoryId, router.query.expertId, consultationFields, formData.consultationField]);
+
   const fieldDropdownRef = useRef<HTMLDivElement>(null);
   const accountantDropdownRef = useRef<HTMLDivElement>(null);
   const fieldInputRef = useRef<HTMLInputElement>(null);

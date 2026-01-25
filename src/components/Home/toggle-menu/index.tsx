@@ -11,7 +11,7 @@ interface ToggleMenuProps {
   isLoggedIn?: boolean;
   // 확장: 헤더(Menu) 컴포넌트에서 전달하는 메뉴/상태/핸들러
   menuItems?: MenuItemConfig[];
-  selectedItemId?: string;
+  selectedItemId?: string | null;
   selectedSubItemIndex?: number | null;
   onMainItemClick?: (id: string) => void;
   onSubItemClick?: (subItem: string, index: number) => void;
@@ -36,7 +36,7 @@ export default function ToggleMenu({
   onConsultationClick,
 }: ToggleMenuProps) {
   // 독립 사용(홈 전용 등)을 위한 로컬 상태
-  const [localActiveId, setLocalActiveId] = useState<string | null>("about");
+  const [localActiveId, setLocalActiveId] = useState<string | null>(null);
   const [localSelectedSubIndex, setLocalSelectedSubIndex] = useState<number | null>(null);
   const router = useRouter();
 
@@ -218,12 +218,13 @@ export default function ToggleMenu({
               <div
                 className={classNames(styles.menuItem, {
                   [styles.active]: activeId === item.id,
-                })}
+                }, item.id === "agency" && styles.arrowIcon)}
                 onClick={() => {
                   // "상담 신청" 항목은 단순 라우팅만 수행
                   if (item.id === "agency" && item.subItems.length === 0) {
                     onClose();
                     router.push("/consultation/apply");
+                    console.log("consultation/apply");
                   } else {
                     handleMainItemClick(item);
                   }
@@ -231,7 +232,7 @@ export default function ToggleMenu({
               >
                 <span className={styles.menuTitle}>{item.title}</span>
                 {item.subItems.length > 0 ? (
-                  <span className={styles.toggleIcon}>
+                  <span className={styles.toggleIcon} >
                     {activeId === item.id ? "−" : "+"}
                   </span>
                 ) : (
@@ -244,6 +245,7 @@ export default function ToggleMenu({
                       if (item.id === "agency") {
                         onClose();
                         router.push("/consultation/apply");
+                        console.log("consultation/apply");
                       }
                     }}
                   >

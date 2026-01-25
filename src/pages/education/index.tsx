@@ -186,7 +186,7 @@ const EducationPage: React.FC<EducationPageProps> = ({
         const params = new URLSearchParams({
           page: currentPage.toString(),
           limit: '8',
-          sort: 'latest',
+          sort: 'deadline', // Sort by recruitment end date
         });
 
         // Add type filter only if not 'ALL'
@@ -224,11 +224,26 @@ const EducationPage: React.FC<EducationPageProps> = ({
     // Swiper data remains unchanged
   };
 
-  // Filter swiper items based on search query AND visibility
+  // Filter swiper items based on:
+  // 1. Visibility (user auth + member type)
+  // 2. Created within last 30 days
+  // 3. Search query
   const filteredNewEducationList = swiperItems.filter((item) => {
     // First check visibility
     if (!isItemVisible(item)) {
       return false;
+    }
+
+    // Check if created within last 30 days
+    if (item.createdAt) {
+      const createdDate = new Date(item.createdAt);
+      const thirtyDaysAgo = new Date();
+      thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+      
+      // If created more than 30 days ago, exclude from "New Education"
+      if (createdDate < thirtyDaysAgo) {
+        return false;
+      }
     }
 
     // Then check search query
@@ -274,8 +289,15 @@ const EducationPage: React.FC<EducationPageProps> = ({
     return dateString.replace(/\./g, '.');
   };
 
-  // Filter list items based on visibility
-  const visibleEducationList = listItems.filter(isItemVisible);
+  // Filter list items based on visibility and sort by recruitmentEndDate (ascending)
+  const visibleEducationList = listItems
+    .filter(isItemVisible)
+    .sort((a, b) => {
+      // Sort by recruitment end date (earliest first)
+      const dateA = new Date(a.recruitmentEndDate).getTime();
+      const dateB = new Date(b.recruitmentEndDate).getTime();
+      return dateA - dateB;
+    });
 
   // 모집 마감일까지 남은 일수 계산
   const getDaysUntilDeadline = (endDate: string) => {
@@ -495,7 +517,7 @@ const EducationPage: React.FC<EducationPageProps> = ({
                         className={`${styles.sidebarTab} ${selectedType === 'LECTURE' ? styles.sidebarTabActive : ''}`}
                         onClick={() => handleTabChange('LECTURE')}
                       >
-                        <span>강연</span>
+                        <span>강의</span>
                       </div>
                       <div
                         className={`${styles.sidebarTab} ${selectedType === 'SEMINAR' ? styles.sidebarTabActive : ''}`}
@@ -613,11 +635,11 @@ export const getServerSideProps: GetServerSideProps<EducationPageProps> = async 
       `${API_ENDPOINTS.TRAINING_SEMINARS}?${swiperParams.toString()}`
     ).catch(() => ({ data: { items: [], total: 0, page: 1, limit: 8 } }));
 
-    // Fetch initial list data (first page, all types)
+    // Fetch initial list data (first page, all types, sorted by deadline)
     const listParams = new URLSearchParams({
       page: '1',
       limit: '8',
-      sort: 'latest',
+      sort: 'deadline',
     });
 
     const listResponse = await get<EducationListResponse>(

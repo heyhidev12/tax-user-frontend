@@ -84,12 +84,12 @@ const Footer: React.FC<FooterProps> = ({
             <div className={styles['footer__logo-wrapper']}>
               <img
                 src={logoSrc}
-                alt="MODOO CONSULTING"
+                alt="Tax Together"
                 className={`${styles.footer__logo} ${styles['footer__logo--web']}`}
               />
               <img
                 src="/images/common/logos/logo-footer-mobile.png"
-                alt="MODOO CONSULTING"
+                alt="Tax Together"
                 className={`${styles.footer__logo} ${styles['footer__logo--mobile']}`}
               />
             </div>

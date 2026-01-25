@@ -54,16 +54,21 @@ export default function Document() {
           href="https://fonts.cdnfonts.com/css/oregon-ldo"
           rel="stylesheet"
         ></link>
+        <script
+          type="text/javascript"
+          src={`https://oapi.map.naver.com/openapi/v3/maps.js?ncpKeyId=${process.env.NEXT_PUBLIC_NAVER_MAP_CLIENT_ID || ''}&callback=initNaverMap`}
+          defer
+        />
       </Head>
       <body>
         <Main />
         <NextScript />
       </body>
-      <script
+      {/* <script
         src={`https://oapi.map.naver.com/openapi/v3/maps.js?ncpClientId=${process.env.NEXT_PUBLIC_NAVER_MAP_CLIENT_ID}&callback=initNaverMap`}
         async
         defer
-      />
+      /> */}
     </Html>
   );
 }

@@ -1194,7 +1194,7 @@ const formatDateTime = (dateString?: string) => {
                     ) : insights.length === 0 ? (
                       <div className={styles.empty}>
                         <img
-                          src="/images/insights/empty-icon.svg"
+                          src="/images/common/empty-icon.svg"
                           alt="빈 상태"
                           className={styles.emptyIcon}
                         />
@@ -1231,7 +1231,7 @@ const formatDateTime = (dateString?: string) => {
                                     ? `${plainContent.substring(0, 150)}...`
                                     : plainContent
                                 }
-                                author="작성자명"
+                                author={item.authorName || "작성자명"}
                                 date={
                                   item.createdAt
                                     ? formatDate(item.createdAt)

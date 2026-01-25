@@ -1,7 +1,5 @@
 import '@/styles/global.scss';
 import Script from "next/script";
-import 'react-toastify/dist/ReactToastify.css';
-import { ToastContainer } from 'react-toastify';
 // Component styles (Next.js requires global CSS imports in _app)
 import '@/components/Menu/styles.scss';
 import '@/components/Login/styles.scss';
@@ -44,16 +42,6 @@ export default function App({ Component, pageProps }: AppProps) {
       </Script>
 
       <Component {...pageProps} />
-      <ToastContainer
-        position="top-right"
-        autoClose={3000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        pauseOnHover
-        draggable
-        theme="colored"
-      />
     </>
   );
 }

@@ -12,7 +12,6 @@ import { get, post } from "@/lib/api";
 import { API_ENDPOINTS } from "@/config/api";
 import Footer from "../Footer";
 import { MemberType as EducationMemberType } from "@/types/education";
-import { toast } from "react-toastify";
 
 type StepType = 1 | 2 | 3;
 type MemberType = "general" | "taxAccountant" | "other";
@@ -85,11 +84,11 @@ const Signup: React.FC = () => {
     if (!error) return;
   
     if (error === 'WITHDRAWN') {
-      toast.error('회원 탈퇴된 계정입니다. 다시 회원가입해 주세요.');
+      alert('회원 탈퇴된 계정입니다. 다시 회원가입해 주세요.');
     }
   
     if (error === 'NOT_REGISTERED') {
-      toast.info('회원 가입되지 않은 계정입니다. 회원가입을 진행해 주세요.');
+      alert('회원 가입되지 않은 계정입니다. 회원가입을 진행해 주세요.');
     }
   
     setTimeout(() => {
@@ -540,7 +539,7 @@ const Signup: React.FC = () => {
         email: fullEmail,
         phoneNumber: cleanPhone,
         memberType: memberTypeMap[memberType],
-        newsletters: newsletter,
+        newsletterSubscribed: newsletter,
         termsAgreed: terms.terms && terms.privacy,
       });
 

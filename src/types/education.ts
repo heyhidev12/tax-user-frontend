@@ -36,6 +36,7 @@ export interface EducationItem {
   isExposed: boolean;
   exposedLabel: string;
   isRecommended: boolean;
+  createdAt?: string; // Upload date from admin
   // 세무사(보험) 회원용 승인 여부 플래그
   isApproved?: boolean;
 }

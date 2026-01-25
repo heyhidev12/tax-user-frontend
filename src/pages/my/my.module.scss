@@ -219,7 +219,7 @@
   gap: 12px;
   padding-right: 32px;
   @media (max-width: $breakpoint-desktop) {
-    padding-left: 0;
+    padding: 0 20px 20px;
   }
 }
 
@@ -889,6 +889,16 @@
   // }
 }
 
+// Dimmed state for closed recruitment
+.cardDimmed {
+  opacity: 0.6;
+  pointer-events: none;
+
+  .cardImage img {
+    filter: grayscale(50%);
+  }
+}
+
 .cardImage {
   width: 100%;
   aspect-ratio: 400 / 300;
@@ -921,6 +931,24 @@
   border-radius: 4px;
   @include pretendard-15-semibold;
   color: #E54843;
+}
+
+// Red label for active recruitment
+.labelRed {
+  background: $gray-10;
+  padding: 4px 8px;
+  border-radius: 4px;
+  @include pretendard-15-semibold;
+  color: #E54843;
+}
+
+// Gray label for closed recruitment
+.labelGray {
+  background: $gray-10;
+  padding: 4px 8px;
+  border-radius: 4px;
+  @include pretendard-15-semibold;
+  color: #8E8E8E;
 }
 
 .labelType {
@@ -2498,7 +2526,7 @@ text-align: center;
 .mobileNewsletterRow {
   display: flex;
   align-items: center;
-  justify-content: flex-start;
+  justify-content: space-between;
   padding: 12px 16px;
   border-radius: 4px;
   background: var(--grayscale-5, #f8f8f8);
@@ -2506,26 +2534,32 @@ text-align: center;
   gap: 8px;
 }
 
+.mobileNewsletterRowContent{
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
 .mobileNewsletterBadge {
   border-radius: 4px;
-  background: var(--grayscale-10, #f0f0f0);
+  background: $gray-10;
   border-radius: 4px;
-  padding: 6px 8px;
+  padding: 2px 5px;
   display: flex;
   align-items: center;
   justify-content: center;
 
   p {
     @include pretendard-13-semibold;
-    color: $gray-90;
+    color: $gray-70;
     margin: 0;
   }
 
   &.mobileNewsletterBadgeSubscribed {
-    background-color: rgba(0, 132, 124, 0.1);
+    background: $primary-50;
 
     p {
-      color: $primary-50;
+      color: $gray-0;
     }
   }
 }
@@ -2533,15 +2567,12 @@ text-align: center;
 .mobileNewsletterUnsubscribeButton {
   @include pretendard-13-regular;
   color: #e54343;
-  background: transparent;
-  border: 1px solid #e54343;
-  border-radius: 4px;
-  padding: 6px 12px;
   cursor: pointer;
   transition: all 0.2s ease;
+  border-bottom: 1px solid transparent;
 
   &:hover:not(:disabled) {
-    background-color: rgba(229, 67, 67, 0.1);
+    border-bottom: 1px solid #e54343;
   }
 
   &:disabled {
@@ -3212,6 +3243,17 @@ text-align: center;
   flex-direction: column;
   cursor: pointer;
   padding-bottom: 16px;
+  transition: opacity 0.3s ease;
+}
+
+// Dimmed state for mobile cards
+.mobileCardDimmed {
+  opacity: 0.6;
+  pointer-events: none;
+
+  .mobileCardImage img {
+    filter: grayscale(50%);
+  }
 }
 
 .mobileCardImage {

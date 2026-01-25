@@ -840,9 +840,11 @@
     position: relative;
 
   @media (max-width: $breakpoint-desktop) {
-    flex-direction: column;
     gap: 16px;
     align-items: stretch;
+  }
+  @media (max-width: $breakpoint-tablet) {
+    flex-direction: column;
   }
 }
 
@@ -949,6 +951,15 @@
   line-height: 1.5;
   color: #8e8e8e;
   width: 100%;
+}
+
+.navPlaceholder {
+  flex: 1;
+  min-width: 0;
+
+  @media (max-width: $breakpoint-desktop) {
+    display: none;
+  }
 }
 
 .backButton {

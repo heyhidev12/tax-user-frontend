@@ -340,7 +340,7 @@ const EducationDetailPage: React.FC<EducationDetailPageProps> = ({ education: in
     if (buttonState === "approved") {
       return (
         <button className={styles.pendingButton} disabled>
-          승인 완료
+          신청 완료
         </button>
       );
     }
@@ -351,12 +351,12 @@ const EducationDetailPage: React.FC<EducationDetailPageProps> = ({ education: in
           <button className={styles.pendingButton} disabled>
             승인 대기중
           </button>
-          <button
+          {/* <button
             className={styles.cancelLink}
             onClick={handleCancelApplication}
           >
             신청 취소
-          </button>
+          </button> */}
         </>
       );
     }
@@ -365,7 +365,14 @@ const EducationDetailPage: React.FC<EducationDetailPageProps> = ({ education: in
     return (
       <button
         className={styles.applyButton}
-        onClick={() => setIsApplicationModalOpen(true)}
+        onClick={() => {
+          // Check if user is logged in
+          if (!userProfile) {
+            alert("교육/세미나는 로그인 후 신청할 수 있습니다.");
+            return;
+          }
+          setIsApplicationModalOpen(true);
+        }}
       >
         신청하기
       </button>

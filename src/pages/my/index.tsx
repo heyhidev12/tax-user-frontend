@@ -45,6 +45,7 @@ interface TrainingSeminarApplication {
   location: string;
   deadlineLabel: string;
   deadlineDays: number;
+  recruitmentEndDate?: string; // Server-provided recruitment end date
   status: "CONFIRMED" | "CANCELLED" | "PENDING";
   statusLabel: string;
   participationDate: string;
@@ -229,50 +230,29 @@ const MyPage: React.FC = () => {
       const response = await get<UserProfile>(API_ENDPOINTS.AUTH.ME);
 
       if (response.error) {
-        // 인증 오류인 경우 기본 사용자 정보 사용
+        // 인증 오류인 경우 로그인 페이지로 리다이렉트
         if (response.status === 401 || response.status === 403) {
-          setUserProfile({
-            id: 0,
-            loginId: "guest",
-            name: "홍길동",
-            phoneNumber: "",
-            email: "",
-            memberType: "세무사 (승인 대기 중)",
-            provider: undefined,
-            newsletterSubscribed: false,
-          });
-          setError(null);
+          // Clear any stored tokens
+          localStorage.removeItem("accessToken");
+          // Redirect to login
+          router.push("/login");
+          return;
         } else {
           setError(response.error);
         }
       } else if (response.data) {
         setUserProfile(response.data);
       } else {
-        // 데이터가 없어도 기본 사용자 정보 사용
-        setUserProfile({
-          id: 0,
-          loginId: "guest",
-          name: "홍길동",
-          phoneNumber: "",
-          email: "",
-          memberType: "세무사 (승인 대기 중)",
-          provider: undefined,
-          newsletterSubscribed: false,
-        });
+        // 데이터가 없으면 로그아웃 처리
+        localStorage.removeItem("accessToken");
+        router.push("/login");
+        return;
       }
     } catch (err) {
-      // 오류 발생 시에도 기본 사용자 정보 사용
-      setUserProfile({
-        id: 0,
-        loginId: "guest",
-        name: "홍길동",
-        phoneNumber: "",
-        email: "",
-        memberType: "세무사 (승인 대기 중)",
-        provider: undefined,
-        newsletterSubscribed: false,
-      });
-      setError(null);
+      // 오류 발생 시 로그아웃 처리
+      localStorage.removeItem("accessToken");
+      router.push("/login");
+      return;
     } finally {
       setLoading(false);
     }
@@ -402,7 +382,16 @@ const MyPage: React.FC = () => {
     }
   };
 
+  // Initial auth check
   useEffect(() => {
+    const token = localStorage.getItem("accessToken");
+    if (!token) {
+      // No token, redirect to login immediately
+      router.push("/login");
+      return;
+    }
+    
+    // Token exists, fetch user profile
     fetchUserProfile();
     fetchNewsletterStatus(); // Fetch newsletter status on page load
   }, []);
@@ -484,6 +473,42 @@ const MyPage: React.FC = () => {
     }
 
     return params.toString();
+  };
+
+  // 모집 마감일까지 남은 일수 계산 (교육 페이지와 동일한 로직)
+  const getDaysUntilDeadline = (endDate: string) => {
+    const today = new Date();
+    const deadline = new Date(endDate);
+    const diffTime = deadline.getTime() - today.getTime();
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    return diffDays > 0 ? diffDays : 0;
+  };
+
+  // 마감일 라벨 생성 함수
+  const getDeadlineLabel = (item: TrainingSeminarApplication) => {
+    if (!item.recruitmentEndDate) {
+      // Fallback to old label if recruitmentEndDate is not available
+      return item.deadlineLabel;
+    }
+
+    const daysLeft = getDaysUntilDeadline(item.recruitmentEndDate);
+    
+    if (daysLeft > 1) {
+      return `신청마감 D-${daysLeft}`;
+    } else if (daysLeft === 1) {
+      return '신청마감 D-day';
+    } else {
+      return '신청마감';
+    }
+  };
+
+  // 마감일 경과 여부 확인 (dimmed 스타일 적용용)
+  const isDeadlinePassed = (item: TrainingSeminarApplication) => {
+    if (!item.recruitmentEndDate) {
+      return false;
+    }
+    const daysLeft = getDaysUntilDeadline(item.recruitmentEndDate);
+    return daysLeft === 0;
   };
 
   // 세미나/교육 신청 내역 조회
@@ -1102,14 +1127,19 @@ const MyPage: React.FC = () => {
     );
   }
 
-  // userProfile이 없으면 기본값 사용
+  // userProfile이 없으면 로그인 페이지로 리다이렉트 (loading 중이 아닐 때만)
+  if (!loading && !userProfile) {
+    router.push("/login");
+    return null;
+  }
+
   const displayProfile = userProfile || {
     id: 0,
-    loginId: "guest",
-    name: "홍길동",
+    loginId: "",
+    name: "",
     phoneNumber: "",
     email: "",
-    memberType: "세무사 (승인 대기 중)",
+    memberType: "",
     provider: undefined,
     newsletterSubscribed: false,
     isApproved: false,
@@ -1329,6 +1359,7 @@ const MyPage: React.FC = () => {
                         </p>
                       </div>
                       <div className={styles.mobileNewsletterRow}>
+                        <div className={styles.mobileNewsletterRowContent}>
                         <p className={styles.mobileFormLabel}>뉴스레터 구독</p>
                         <div
                           className={`${styles.mobileNewsletterBadge} ${
@@ -1338,6 +1369,7 @@ const MyPage: React.FC = () => {
                           }`}
                         >
                           <p>{newsletterSubscribed ? "구독중" : "구독안함"}</p>
+                        </div>
                         </div>
                         {newsletterSubscribed && (
                           <button
@@ -1944,7 +1976,7 @@ const MyPage: React.FC = () => {
                       {trainingApplications.map((item) => (
                         <div
                           key={item.id}
-                          className={styles.mobileEducationCard}
+                          className={`${styles.mobileEducationCard} ${isDeadlinePassed(item) ? styles.mobileCardDimmed : ''}`}
                           onClick={() =>
                             router.push(`/education/${item.seminarId}`)
                           }
@@ -1960,8 +1992,8 @@ const MyPage: React.FC = () => {
                           </div>
                           <div className={styles.mobileCardContent}>
                             <div className={styles.mobileCardLabels}>
-                              <span className={styles.mobileCardLabelStatus}>
-                                {item.statusLabel}
+                              <span className={`${styles.mobileCardLabelStatus} ${isDeadlinePassed(item) ? styles.labelGray : styles.labelRed}`}>
+                                {getDeadlineLabel(item)}
                               </span>
                               <span className={styles.mobileCardLabelType}>
                                 {item.typeLabel}
@@ -3121,7 +3153,7 @@ const MyPage: React.FC = () => {
                               {trainingApplications.map((item) => (
                                 <div
                                   key={item.id}
-                                  className={styles.educationCard}
+                                  className={`${styles.educationCard} ${isDeadlinePassed(item) ? styles.cardDimmed : ''}`}
                                   onClick={() =>
                                     router.push(`/education/${item.seminarId}`)
                                   }
@@ -3137,8 +3169,8 @@ const MyPage: React.FC = () => {
                                   </div>
                                   <div className={styles.cardContent}>
                                     <div className={styles.cardLabels}>
-                                      <span className={styles.labelStatus}>
-                                        {item.statusLabel}
+                                      <span className={`${styles.labelStatus} ${isDeadlinePassed(item) ? styles.labelGray : styles.labelRed}`}>
+                                        {getDeadlineLabel(item)}
                                       </span>
                                       <span className={styles.labelType}>
                                         {item.typeLabel}

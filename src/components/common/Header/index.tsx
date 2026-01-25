@@ -94,7 +94,7 @@ const Header: React.FC<HeaderProps> = ({
           onClick={handleLogoClick}
           style={{ cursor: 'pointer' }}
         >
-          <img src={logoSrc} alt="MODOO CONSULTING" className={styles['header__logo-image']} />
+          <img src={logoSrc} alt="Tax Together" className={styles['header__logo-image']} />
         </div>
         <button
           className={styles['header__menu']}

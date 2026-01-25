@@ -129,6 +129,31 @@ const InsightDetailPage: React.FC<InsightDetailPageProps> = ({
     loginId?: string;
   } | null>(null);
 
+  // Refetch insight data when ID changes (for prev/next navigation)
+  useEffect(() => {
+    if (!id) return;
+
+    const fetchInsightData = async () => {
+      try {
+        const response = await getClient<InsightDetail>(
+          `${API_ENDPOINTS.INSIGHTS}/${id}`
+        );
+        if (response.data) {
+          setInsight(response.data);
+          setError(null);
+        }
+      } catch (err) {
+        console.error('Failed to fetch insight:', err);
+        setError('Failed to load insight');
+      }
+    };
+
+    // Only fetch if the ID is different from current insight
+    if (insight?.id !== Number(id)) {
+      fetchInsightData();
+    }
+  }, [id]);
+
   // Client-side: fetch comments, view increment, navigation
   useEffect(() => {
     if (!id || !insight) return;
@@ -164,14 +189,21 @@ const InsightDetailPage: React.FC<InsightDetailPageProps> = ({
       });
     }
 
-    // 이전/다음 글 가져오기
+    // 이전/다음 글 가져오기 (같은 카테고리 내에서만)
     setPrevInsight(null);
     setNextInsight(null);
 
     (async () => {
       try {
+        // 현재 글의 카테고리 타입으로 필터링
+        const categoryType = insight.category?.type;
+        if (!categoryType) {
+          console.log('No category type found for insight');
+          return;
+        }
+
         const navResponse = await getClient<{ items: InsightDetail[] }>(
-          `${API_ENDPOINTS.INSIGHTS}?page=1&limit=100`,
+          `${API_ENDPOINTS.INSIGHTS}?page=1&limit=1000&category=${categoryType}`,
         );
 
         if (navResponse.data && navResponse.data.items) {
@@ -182,7 +214,7 @@ const InsightDetailPage: React.FC<InsightDetailPageProps> = ({
 
           // 현재 글을 찾았을 때만 처리
           if (currentIndex >= 0) {
-            // 이전 글 설정
+            // 이전 글 설정 (같은 카테고리 내에서)
             if (currentIndex > 0) {
               setPrevInsight({
                 id: items[currentIndex - 1].id,
@@ -190,7 +222,7 @@ const InsightDetailPage: React.FC<InsightDetailPageProps> = ({
               });
             }
 
-            // 다음 글 설정
+            // 다음 글 설정 (같은 카테고리 내에서)
             if (currentIndex < items.length - 1) {
               setNextInsight({
                 id: items[currentIndex + 1].id,
@@ -273,37 +305,36 @@ const InsightDetailPage: React.FC<InsightDetailPageProps> = ({
 
   const handleShare = async () => {
     if (typeof window === "undefined") return;
-
+  
     const url = window.location.href;
     const title = insight?.title || "인사이트";
     const text = `${title} - 세무 상담`;
-
-    try {
-      // Web Share API가 지원되는 경우
-      if (navigator.share) {
+  
+    // Mobile share API
+    if (navigator.share) {
+      try {
         await navigator.share({
           title,
           text,
           url,
         });
-      } else {
-        // Web Share API가 지원되지 않는 경우 클립보드에 복사
-        await navigator.clipboard.writeText(url);
-        alert("링크가 클립보드에 복사되었습니다.");
-      }
-    } catch (error) {
-      // 사용자가 공유를 취소한 경우 등 에러는 무시
-      if (error instanceof Error && error.name !== "AbortError") {
-        // 클립보드 복사로 폴백
-        try {
-          await navigator.clipboard.writeText(url);
-          alert("링크가 클립보드에 복사되었습니다.");
-        } catch (clipboardError) {
-          console.error("공유 실패:", clipboardError);
-        }
+        return;
+      } catch (err) {
+        // cancel bo‘lsa ham fallback qilamiz
+        console.warn("Share canceled or failed", err);
       }
     }
+  
+    // Clipboard fallback
+    try {
+      await navigator.clipboard.writeText(url);
+      alert("링크가 클립보드에 복사되었습니다.");
+    } catch (err) {
+      alert("공유를 지원하지 않는 브라우저입니다.");
+      console.error("Clipboard error:", err);
+    }
   };
+  
 
   const handleDownload = async (attachmentId: number, fileName: string) => {
     try {
@@ -887,23 +918,21 @@ const InsightDetailPage: React.FC<InsightDetailPageProps> = ({
             <div className={styles.navigationSection}>
               <div className={styles.dividerLine} />
               <div className={styles.navigation}>
-                <div className={styles.navItem} onClick={handlePrevClick}>
-                  {prevInsight ? (
-                    <>
-                      <Icon
-                        type="arrow-left-gray"
-                        size={24}
-                        className={styles.navIcon}
-                      />
-                      <span className={styles.navLabel}>이전 글</span>
-                      <span className={styles.navTitle}>
-                        {prevInsight.title}
-                      </span>
-                    </>
-                  ) : (
-                    <div className={styles.navEmpty}>이전 글이 없습니다</div>
-                  )}
-                </div>
+                {prevInsight ? (
+                  <div className={styles.navItem} onClick={handlePrevClick}>
+                    <Icon
+                      type="arrow-left-gray"
+                      size={24}
+                      className={styles.navIcon}
+                    />
+                    <span className={styles.navLabel}>이전 글</span>
+                    <span className={styles.navTitle}>
+                      {prevInsight.title}
+                    </span>
+                  </div>
+                ) : (
+                  <div className={styles.navPlaceholder} />
+                )}
                 <Button
                   type="line-white"
                   size="large"
@@ -913,26 +942,24 @@ const InsightDetailPage: React.FC<InsightDetailPageProps> = ({
                 >
                   목록보기
                 </Button>
-                <div
-                  className={`${styles.navItem} ${styles.navItemNext}`}
-                  onClick={handleNextClick}
-                >
-                  {nextInsight ? (
-                    <>
-                      <span className={styles.navLabel}>다음 글</span>
-                      <span className={styles.navTitle}>
-                        {nextInsight.title}
-                      </span>
-                      <Icon
-                        type="arrow-right-gray"
-                        size={24}
-                        className={styles.navIcon}
-                      />
-                    </>
-                  ) : (
-                    <div className={styles.navEmpty}>다음 글이 없습니다</div>
-                  )}
-                </div>
+                {nextInsight ? (
+                  <div
+                    className={`${styles.navItem} ${styles.navItemNext}`}
+                    onClick={handleNextClick}
+                  >
+                    <span className={styles.navLabel}>다음 글</span>
+                    <span className={styles.navTitle}>
+                      {nextInsight.title}
+                    </span>
+                    <Icon
+                      type="arrow-right-gray"
+                      size={24}
+                      className={styles.navIcon}
+                    />
+                  </div>
+                ) : (
+                  <div className={styles.navPlaceholder} />
+                )}
               </div>
             </div>
           </div>

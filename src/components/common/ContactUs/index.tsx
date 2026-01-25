@@ -2,8 +2,20 @@ import React from "react";
 import styles from "./style.module.scss";
 import { useRouter } from "next/router";
 
-const ContactUs: React.FC = () => {
+interface ContactUsProps {
+  categoryId?: number;
+}
+
+const ContactUs: React.FC<ContactUsProps> = ({ categoryId }) => {
   const router = useRouter();
+  const handleConsultationClick = () => {
+    if (categoryId) {
+      router.push(`/consultation/apply?categoryId=${categoryId}`);
+    } else {
+      router.push("/consultation/apply");
+    }
+  };
+
   return (
     <section className={styles["contact-us"]}>
         <div className="container">
@@ -15,7 +27,7 @@ const ContactUs: React.FC = () => {
 맞춤형 세무 해답을 제시합니다</p>
             <button
               className={styles["contact-btn"]}
-              onClick={() => router.push("/consultation/apply")}
+              onClick={handleConsultationClick}
             >
               상담 신청하기
               <svg
