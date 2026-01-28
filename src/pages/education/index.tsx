@@ -360,7 +360,10 @@ const EducationPage: React.FC<EducationPageProps> = ({
       <div className={styles.page}>
         <Header variant="white" onMenuClick={() => setIsMenuOpen(true)} isFixed={true} />
         <Menu isOpen={isMenuOpen} onClose={() => setIsMenuOpen(false)} />
-        <div className={styles.headerImage} />
+        <div className={styles.headerImage}>
+        <h1 className={styles.headerTitle}>EDUCATION</h1>
+        <p className={styles.headerSubtitle}>교육/세미나</p>
+      </div>
         <div className="container">
           <div className={styles.pageHeaderWrapper}>
             <PageHeader
@@ -377,7 +380,7 @@ const EducationPage: React.FC<EducationPageProps> = ({
             <div className={styles.heroDescriptionText}>
               <p>
                 <span>세무법인 함께의</span>
-                <span className={styles.boldText}>전문가 교육</span>은 <br />
+                <span className={styles.boldText}> 전문가 교육</span>은 <br />
                 <span className={styles.boldText}>기업의 성공적인 내일</span>을 만듭니다.
               </p>
             </div>
@@ -515,7 +518,7 @@ const EducationPage: React.FC<EducationPageProps> = ({
                                     <p className={styles.cardLocation}>{item.location}</p>
                                     <div className={styles.cardDateWrapper}>
                                       <svg width="16" height="16" viewBox="0 0 16 16" fill="none" className={styles.cardDateIcon}>
-                                        <path d="M3 2V4M13 2V4M2 6H14M3 2H13C13.5523 2 14 2.44772 14 3V13C14 13.5523 13.5523 14 13 14H3C2.44772 14 2 13.5523 2 13V3C2 2.44772 2.44772 2 3 2Z" stroke="#d8d8d8" strokeWidth="1" strokeLinecap="round" />
+                                        <path d="M3 2V4M13 2V4M2 6H14M3 2H13C13.5523 2 14 2.44772 14 3V13C14 13.5523 13.5523 14 13 14H3C2.44772 14 2 13.5523 2 13V3C2 2.44772 2.44772 2 3 2Z" stroke="#aaaaaa" strokeWidth="1" strokeLinecap="round" />
                                       </svg>
                                       <p className={styles.cardDate}>
                                         {item.educationDates[0]} {item.educationTimeSlots[0]}
@@ -593,7 +596,7 @@ const EducationPage: React.FC<EducationPageProps> = ({
                                   onClick={() => router.push(`/education/${item.id}`)}
                                 >
                                   <div className={styles.cardImage}>
-                                    <img src={item.image?.url || '/images/education/default-thumbnail.png'} alt={item.name} />
+                                    <img className={styles.cardImageImg} src={item.image?.url || '/images/education/default-thumbnail.png'} alt={item.name} />
                                   </div>
                                   <div className={styles.cardContent}>
                                     <div className={styles.cardLabels}>

@@ -36,6 +36,7 @@ export default function Document() {
           href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@300;400;500&family=Noto+Serif+KR:wght@400;700&display=swap"
           rel="stylesheet"
         />
+        <link href="https://fonts.googleapis.com/css2?family=Oregano:ital@0;1&display=swap" rel="stylesheet"></link>
         <link
           href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css"
           rel="stylesheet"
@@ -64,11 +65,6 @@ export default function Document() {
         <Main />
         <NextScript />
       </body>
-      {/* <script
-        src={`https://oapi.map.naver.com/openapi/v3/maps.js?ncpClientId=${process.env.NEXT_PUBLIC_NAVER_MAP_CLIENT_ID}&callback=initNaverMap`}
-        async
-        defer
-      /> */}
     </Html>
   );
 }

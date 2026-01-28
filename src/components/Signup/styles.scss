@@ -10,9 +10,34 @@
   background: url("../../../public/images/pages/signup.png") center/cover;
   display: flex;
   align-items: center;
+  flex-direction: column;
   justify-content: center;
-   @media (max-width: 767px) {
+  gap:24px;
+   
+  .signup-header-title{
+    font-family: $font-pretendard;
+    font-weight: $font-weight-medium;
+    font-size: 19px;
+    color: $white;
+    letter-spacing: 0.57px;
+  }
+  .signup-header-subtitle{
+    font-family: "Arita Buri KR", serif;  
+    font-weight: $font-weight-medium;
+    font-size: 42px;
+    color: $white;
+    letter-spacing: -1.26px;
+  }
+  @media (max-width: 767px) {
     height: 250px;
+    padding-top: 52px;
+    gap:16px;
+    .signup-header-title{
+      font-size: 13px;
+    }
+    .signup-header-subtitle{
+      font-size: 28px;
+    }
   }
 }
 

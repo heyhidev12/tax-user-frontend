@@ -122,6 +122,12 @@ const ExpertDetailPage: React.FC<ExpertDetailPageProps> = ({
   const [imageError, setImageError] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
 
+  // Keep local state in sync when navigating to another expert on the same page
+  useEffect(() => {
+    setData(initialData);
+    setError(initialError);
+  }, [initialData, initialError]);
+
   // 모바일 감지
   useEffect(() => {
     const checkMobile = () => {
@@ -251,8 +257,8 @@ const ExpertDetailPage: React.FC<ExpertDetailPageProps> = ({
             ...expert,
             tags: expert.workAreas
               ? expert.workAreas.map((area) =>
-                  typeof area === "string" ? area : area.value,
-                )
+                typeof area === "string" ? area : area.value,
+              )
               : expert.tags || [],
             tel: expert.tel || expert.phoneNumber,
             position: expert.position || expert.affiliation || "세무사",
@@ -322,11 +328,11 @@ const ExpertDetailPage: React.FC<ExpertDetailPageProps> = ({
 
   const handleShare = async () => {
     if (typeof window === "undefined") return;
-  
+
     const url = window.location.href;
     const title = `${data?.name || "세무사"} - 세무법인 함께`;
     const text = `${data?.name || "세무사"} 세무사 프로필`;
-  
+
     // 1. Mobile Share API
     if (navigator.share) {
       try {
@@ -340,7 +346,7 @@ const ExpertDetailPage: React.FC<ExpertDetailPageProps> = ({
         console.warn("Share canceled or failed:", err);
       }
     }
-  
+
     // 2. Clipboard fallback
     try {
       await navigator.clipboard.writeText(url);
@@ -350,7 +356,7 @@ const ExpertDetailPage: React.FC<ExpertDetailPageProps> = ({
       console.error("Clipboard error:", err);
     }
   };
-  
+
 
   if (error || !data) {
     return (
@@ -404,7 +410,7 @@ const ExpertDetailPage: React.FC<ExpertDetailPageProps> = ({
               <div className={styles.heroContainer}>
                 <div className={styles.heroImageWrapper}>
                   <div className={styles.logoWatermark}>
-                    <img src="/images/home/Vector.svg" alt="" />
+                    <img src="/images/common/expertVector.png" alt="" />
                   </div>
                   {data.mainPhoto?.url && !imageError ? (
                     <img
@@ -816,8 +822,8 @@ const ExpertDetailPage: React.FC<ExpertDetailPageProps> = ({
                         allowTouchMove={true}
                         preventClicks={false}
                         preventClicksPropagation={false}
-  noSwiping
-  noSwipingClass="no-swiping"
+                        noSwiping
+                        noSwipingClass="no-swiping"
                         navigation={{
                           prevEl: "#experts-prev-btn",
                           nextEl: "#experts-next-btn",
@@ -955,7 +961,7 @@ const ExpertDetailPage: React.FC<ExpertDetailPageProps> = ({
           )}
 
           {/* Related News Section */}
-          {  relatedNews.length > 0 && (
+          {relatedNews.length > 0 && (
             <div className={styles.fullWidthSection}>
               <div className="container">
                 <div className={styles.fullWidthContainer}>
@@ -1055,7 +1061,7 @@ const ExpertDetailPage: React.FC<ExpertDetailPageProps> = ({
                                       {typeof news.category === "string"
                                         ? news.category
                                         : typeof news.category === "object" &&
-                                            news.category?.name
+                                          news.category?.name
                                           ? news.category.name
                                           : "카테고리"}
                                     </p>

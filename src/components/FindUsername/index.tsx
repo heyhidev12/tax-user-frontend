@@ -368,7 +368,7 @@ const FindUsername: React.FC = () => {
                 onChange={handleTabChange}
                 style="box"
                 size="medium"
-                showActiveDot={true}
+                showActiveDot={false}
                 fullWidth
               />
             </div>

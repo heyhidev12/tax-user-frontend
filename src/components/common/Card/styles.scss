@@ -455,7 +455,7 @@ $color-card-bg: #1e1e1e;
     .card__profile-info {
       display: flex;
       flex-direction: column;
-      gap: 20px;
+      gap: 12px;
     }
 
     .card__profile-header {
@@ -476,7 +476,7 @@ $color-card-bg: #1e1e1e;
     .card__profile-position {
       font-size: 19px;
       font-weight: 400;
-      line-height: 1.5;
+      line-height: 1.7;
       color: $gray-70;
       letter-spacing: -0.095px;
     }
@@ -484,7 +484,7 @@ $color-card-bg: #1e1e1e;
     .card__profile-contact {
       display: flex;
       flex-direction: column;
-      gap: 4px;
+      gap: 6px;
     }
 
     .card__profile-row {
@@ -564,16 +564,17 @@ $color-card-bg: #1e1e1e;
         font-size: 13px;
         gap: 4px;
         letter-spacing: -0.065px;
+        flex-wrap: wrap;
       }
 
       .card__profile-label {
-        min-width: 32px;
+        min-width: 40px;
         font-weight: 600;
       }
 
       .card__profile-tag {
         font-size: 13px;
-        padding: 6px;
+        padding:3px  6px;
         letter-spacing: -0.065px;
       }
     }

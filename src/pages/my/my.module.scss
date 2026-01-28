@@ -12,13 +12,12 @@
   padding: 156px 0 64px;
 
   p {
-    font-family: $font-pretendard;
+    font-family: $font-noto;
     font-weight: $font-weight-semibold;
-    font-size: 19px;
+    font-size: 20px;
+    font-weight: 500;
     line-height: 1.5;
-    letter-spacing: -0.105px;
-    margin: 0;
-    color: $primary-50;
+    color: #00847c;
 
     @media (max-width: $breakpoint-tablet) {
       font-size: 15px;

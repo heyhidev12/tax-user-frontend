@@ -80,7 +80,7 @@ $bg-light: #f8f8f8;
 
     .top-id {
       color: #c9e9e7;
-      font-family: 'Arita KR', serif;
+      font-family: 'Arita Buri KR', serif;
       font-size: 180px;
       font-weight: 700;
       margin-left: -30px;
@@ -246,6 +246,18 @@ $bg-light: #f8f8f8;
       }
     }
 
+    &__text {
+      position: relative;
+      z-index: 1;
+      // font-size: 25px;
+      // font-weight: 600;
+      // color: $text-light;
+      // cursor: pointer;
+      // text-align: left;
+      // padding: 6px 0;
+      // transition: color 0.3s ease;
+    }
+
     &__btn {
       background: none;
       border: none;
@@ -258,10 +270,7 @@ $bg-light: #f8f8f8;
       transition: color 0.3s ease;
       margin-left: 16px;
       position: relative;
-
-      // 0115
       z-index: 1;
-      // 0115
 
       @media (max-width: 767px) {
         font-size: 16px;

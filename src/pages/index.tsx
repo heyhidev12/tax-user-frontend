@@ -210,10 +210,20 @@ export const getServerSideProps: GetServerSideProps<HomePageProps> = async () =>
 
     // Process experts
     let experts: Member[] = [];
-    if (expertsResponse.data?.items && Array.isArray(expertsResponse.data.items)) {
-      experts = [...expertsResponse.data.items].sort(
-        (a, b) => (a.displayOrder ?? 0) - (b.displayOrder ?? 0)
-      );
+    if (expertsResponse.data) {
+      // Handle different response formats: { items: Member[] } or Member[]
+      let expertsList: Member[] = [];
+      if (Array.isArray(expertsResponse.data)) {
+        expertsList = expertsResponse.data;
+      } else if (expertsResponse.data.items && Array.isArray(expertsResponse.data.items)) {
+        expertsList = expertsResponse.data.items;
+      }
+      
+      if (expertsList.length > 0) {
+        experts = [...expertsList].sort(
+          (a, b) => (a.displayOrder ?? 0) - (b.displayOrder ?? 0)
+        );
+      }
     }
 
     // Process awards - backend filters by isMainExposed=true and isExposed=true

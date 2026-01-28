@@ -12,15 +12,48 @@
     position: relative;
     z-index: 1;
     margin-top: -92px; // ← header balandligi
-    padding-top: 20%;
-    background-image: url("../../../public/images/pages/team_experts.png");
+    background-image: url("../../../public/images/pages/expert.png");
     background-size: cover;
     background-position: center;
-    min-height: 220px;
-    max-height: 400px !important;
+    height: 400px;
     width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    align-items: center;
+    justify-content: center;
+
+    .headerTitle {
+      font-family: $font-playfair;
+      font-weight: $font-weight-semibold;
+      font-size: 80px;
+      color: $white;
+      letter-spacing: -3px;
+      line-height: 0.98;
+    }
+
+    .headerSubtitle {
+      font-family: $font-pretendard;
+      font-weight: $font-weight-semibold;
+      font-size: 40px;
+      color: $white;
+      letter-spacing: -0.2px;
+      line-height: 1.5;
+    }
+
     @media (max-width: 767px) {
-      margin-top: -52px; // ← header balandligi
+      margin-top: -52px;
+      height: 220px;
+      gap: 16px;
+      padding-top: 32px;
+
+      .headerTitle {
+        font-size: 46px;
+      }
+
+      .headerSubtitle {
+        font-size: 17px;
+      }
     }
   }
 
@@ -60,25 +93,30 @@
   letter-spacing: -0.075px;
   color: $primary-70;
   text-align: center;
+
   @media (max-width: $breakpoint-tablet) {
     font-size: 15px;
   }
 }
 
 .heroTitle {
-  font-family: 'Arita KR', serif;
+  font-family: 'Arita Buri KR', serif;
   font-weight: 600;
   font-size: 68px;
   color: $gray-90;
   text-align: center;
   letter-spacing: -3px;
   margin-top: 24px;
+
   span {
     color: $primary-50;
   }
+
   @media (max-width: $breakpoint-tablet) {
     font-size: 28px;
-    margin-top: 32px;
+    margin-top: 16px;
+  letter-spacing: -1.2px;
+
   }
 }
 
@@ -123,6 +161,7 @@
   margin-top: 64px;
   background: var(--grayscale-5, #f8f8f8);
   padding: 64px 0;
+
   @media (max-width: $breakpoint-desktop) {
     margin-top: 40px;
     padding: 24px 20px;
@@ -157,6 +196,7 @@
     color: $gray-50;
     margin: 0;
     flex: 1;
+
     &.selected {
       color: $gray-90;
       font-weight: 500;
@@ -183,6 +223,7 @@
   padding: 0 5px 5px 5px;
   -webkit-box-shadow: 0px 5px 6px 3px rgba(0, 0, 0, 0.22);
   box-shadow: 0px 5px 6px 3px rgba(0, 0, 0, 0.22);
+
   &::-webkit-scrollbar {
     width: 4px;
   }
@@ -239,8 +280,7 @@
   align-items: flex-start;
   justify-content: center;
 
-  @media (max-width: $breakpoint-tablet) {
-  }
+  @media (max-width: $breakpoint-tablet) {}
 }
 
 .expertsListContent {
@@ -256,7 +296,7 @@
   display: flex;
   flex-direction: column;
   width: 100%;
-  gap: 80px;
+  gap: 64px;
 
   @media (max-width: $breakpoint-desktop) {
     gap: 40px;
@@ -267,7 +307,6 @@
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  width: 130px;
   flex-shrink: 0;
 
   @media (max-width: $breakpoint-desktop) {
@@ -280,9 +319,8 @@
   font-family: $font-noto;
   font-size: 42px;
   font-style: normal;
-  font-weight: 600;
-  line-height: 150%; /* 75px */
-  letter-spacing: -0.25px;
+  font-weight: 400;
+  letter-spacing: -1.25px;
   margin: 0;
 
   @media (max-width: $breakpoint-desktop) {
@@ -290,7 +328,7 @@
   }
 
   @media (max-width: $breakpoint-tablet) {
-    font-size:28px;
+    font-size: 28px;
   }
 }
 

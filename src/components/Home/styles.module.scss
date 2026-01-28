@@ -73,7 +73,7 @@
 
       h1 {
         color: #fff;
-        font-family: 'Arita KR', sans-serif;
+        font-family: 'Arita Buri KR', sans-serif;
         font-size: 68px;
         font-style: normal;
         font-weight: 700;
@@ -152,7 +152,7 @@
       font-style: normal;
       font-weight: 400;
       line-height: 150%;
-      letter-spacing: -0.84px;
+      letter-spacing: -1.6px;
       margin: 0 auto;
       margin-bottom: 113px;
       width: 80%;
@@ -161,7 +161,7 @@
         font-size: 19px;
         margin-bottom: 0;
         line-height: 1.7;
-        letter-spacing: -1.3px;
+        letter-spacing: -0.8px;
 
       
       }
@@ -319,13 +319,13 @@
           left: 0;
           width: 134%;
           overflow: hidden;
-          top: 60%;
+          top: 37%;
           transform: translateY(-50%);
           line-height: 1.1;
         }
 
         @media (max-width: 450px) {
-          top: 57%;
+          top: 50%;
           font-size: 70px;
           text-align: start;
           line-height: 1;
@@ -386,7 +386,7 @@
             height: auto;
             position: absolute;
             right: -20px;
-            bottom: 120px;
+            bottom: 10px;
             // border-radius: 4px;
           }
         }

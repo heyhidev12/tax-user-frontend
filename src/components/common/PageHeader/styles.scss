@@ -179,9 +179,9 @@ $color-breadcrumb: #bebec7;
   }
 
   &__subtitle {
-    font-family: "Pretendard", sans-serif;
+    font-family: $font-noto;
     font-weight: 500;
-    font-size: 16px;
+    font-size: 20px;
     line-height: 1.5;
     letter-spacing: 0;
     color: #00a89e;
@@ -341,6 +341,7 @@ $color-breadcrumb: #bebec7;
       }
       .page-header__subtitle {
         margin-top: 56px;
+        font-size: 15px;
       }
 
       .page-header__tabs {

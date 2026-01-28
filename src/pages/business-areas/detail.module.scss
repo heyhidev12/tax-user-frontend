@@ -10,20 +10,48 @@
   // @media (max-width: 767px) {
   //   overflow: visible;
   // }
-
   .headerImage {
     position: relative;
     z-index: 1;
     margin-top: -92px; // ← header balandligi
-    padding-top: 20%;
-    background-image: url("../../../public/images/pages/practice.png");
+    background-image: url("../../../public/images/pages/work.png");
     background-size: cover;
     background-position: center;
-    min-height: 220px;
-    max-height: 400px !important;
+    height: 400px;
     width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    align-items: center;
+    justify-content: center;
+
+    .headerTitle{
+      font-family: $font-playfair;
+      font-weight: $font-weight-semibold;
+      font-size: 80px;
+      color: $white;
+      letter-spacing: -3px;
+      line-height: 0.98;
+    }
+    .headerSubtitle{
+      font-family: $font-pretendard;
+      font-weight: $font-weight-semibold;
+      font-size: 40px;
+      color: $white;
+      letter-spacing: -0.2px;
+      line-height: 1.5;
+    }
     @media (max-width: 767px) {
-      margin-top: -52px; // ← header balandligi
+      margin-top: -52px; 
+      height: 220px;
+      gap: 16px;
+      padding-top: 32px;
+      .headerTitle{
+        font-size: 46px;
+      }
+      .headerSubtitle{
+        font-size: 17px;
+      }
     }
   }
 }
@@ -243,7 +271,7 @@
 .heroSection {
   position: relative;
 
-  height: 476px;
+  height: 600px;
   margin-top: 100px;
   margin-bottom: 0;
   overflow: hidden;
@@ -323,7 +351,8 @@
   @media (max-width: $breakpoint-tablet) {
     font-size: 15px;
     font-weight: $font-weight-regular;
-    margin-top: -8px;
+    margin-top: -4px;
+    text-align: left;
   }
 }
 
@@ -431,7 +460,7 @@
 
 .overviewFixedBannerTitleDesktop {
   color: $gray-90;
-  font-family: "Display Playfair", serif;
+  font-family: $font-noto;
   font-size: 28px;
   font-style: normal;
   font-weight: 300;
@@ -578,7 +607,7 @@
   text-transform: capitalize;
 
   @media (max-width: $breakpoint-tablet) {
-    font-size: 30px;
+    font-size: 38px;
   }
 }
 
@@ -598,7 +627,9 @@
     margin-bottom: 48px;
     position: relative;
     padding-left: 48px;
-    font-family: "Display Playfair", serif;
+    font-family: $font-noto;
+    letter-spacing: -1.5px;
+
 
     &::before {
       content: "";
@@ -689,7 +720,7 @@
   }
 
   @media (max-width: $breakpoint-tablet) {
-    font-size: 28px;
+    font-size: 38px;
   }
 }
 
@@ -697,7 +728,7 @@
   font-family: "Display Playfair", serif;
   font-size: 20px;
   line-height: 1.5;
-  letter-spacing: -0.16px;
+  letter-spacing: -1.5px;
   color: $gray-90;
   margin-top: 16px;
   display: flex;
@@ -819,6 +850,7 @@
     strong {
       font-weight: $font-weight-semibold;
       color: $gray-90;
+      font-size: 19px;
     }
 
     h1,
@@ -1245,7 +1277,7 @@
 
 .expertNameRow {
   display: flex;
-  align-items: center;
+  align-items: flex-end;
   gap: 4px;
 }
 
@@ -1267,7 +1299,7 @@
   font-family: $font-pretendard;
   font-weight: $font-weight-regular;
   font-size: 19px;
-  line-height: 1.5;
+  line-height: 1.8;
   letter-spacing: -0.095px;
   color: $gray-70;
   margin: 0;
@@ -1485,15 +1517,15 @@
 // News Section
 .newsContent {
   width: 100%;
-  margin-top: 48px;
+  margin-top: 8px;
   overflow: hidden;
 
   @media (max-width: $breakpoint-tablet) {
-    margin-top: 24px;
     overflow: visible;
-    margin-bottom: 40px;
+    margin: 0;
   }
 }
+
 
 .newsSwiper {
   width: 100%;
@@ -1501,6 +1533,7 @@
 
   :global(.swiper-wrapper) {
     display: flex;
+    padding: 40px 0;
   }
 
   :global(.swiper-slide) {
@@ -1516,7 +1549,7 @@
 }
 
 .newsCard {
-  overflow: hidden;
+  // overflow: hidden;
   cursor: pointer;
   transition:
     transform 0.3s ease,
@@ -1528,7 +1561,7 @@
   gap: 20px;
   background: #fff;
   box-shadow: 0 2px 10px 0 rgba(0, 0, 0, 0.08);
-  min-height: 392px;
+  aspect-ratio: 17 / 18;
   box-sizing: border-box;
 
   &:hover {
@@ -1664,14 +1697,14 @@
     padding: 60px 0 0 0;
   }
   &:last-of-type {
-    padding-bottom: 200px;
+    padding-bottom: 160px;
 
     @media (max-width: $breakpoint-desktop) {
       padding-bottom: 120px;
     }
 
     @media (max-width: $breakpoint-tablet) {
-      padding-bottom: 80px;
+      padding-bottom: 40px;
     }
   }
 }

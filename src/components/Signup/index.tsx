@@ -1043,7 +1043,10 @@ const Signup: React.FC = () => {
     <div className="auth-page-container">
       <Header variant="white" onMenuClick={() => setIsMenuOpen(true)} />
       <Menu isOpen={isMenuOpen} onClose={() => setIsMenuOpen(false)} />
-      <div className="header-img"></div>
+      <div className="header-img">
+        <h1 className="signup-header-title">REGISTER</h1>
+        <p className="signup-header-subtitle">세무법인 함께 회원 가입</p>
+      </div>
       <section className="auth-content-section">
         <StepIndicator steps={STEP_ITEMS} currentStep={step} />
         {step === 1 && renderStep1()}

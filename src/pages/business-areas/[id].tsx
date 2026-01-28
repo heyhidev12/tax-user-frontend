@@ -660,7 +660,10 @@ const BusinessAreaDetailPage: React.FC<BusinessAreaDetailPageProps> = ({
         />
         <Menu isOpen={isMenuOpen} onClose={() => setIsMenuOpen(false)} />
 
-      <div className={styles.headerImage}></div>
+        <div className={styles.headerImage}>
+        <h1 className={styles.headerTitle}> PRACTICE AREAS</h1>
+        <p className={styles.headerSubtitle}>업무분야</p>
+      </div>
       <div className="container">
         {/* Page Header with Selects */}
         <div className={styles.pageHeaderWrapper}>

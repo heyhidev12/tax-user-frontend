@@ -12,15 +12,44 @@
     position: relative;
     z-index: 1;
     margin-top: -92px; // ← header balandligi
-    padding-top: 20%;
-    background-image: url("../../../public/images/pages/practice.png");
+    background-image: url("../../../public/images/pages/work.png");
     background-size: cover;
     background-position: center;
-    min-height: 220px;
-    max-height: 400px;
+    height: 400px;
     width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    align-items: center;
+    justify-content: center;
+
+    .headerTitle{
+      font-family: $font-playfair;
+      font-weight: $font-weight-semibold;
+      font-size: 80px;
+      color: $white;
+      letter-spacing: -3px;
+      line-height: 0.98;
+    }
+    .headerSubtitle{
+      font-family: $font-pretendard;
+      font-weight: $font-weight-semibold;
+      font-size: 40px;
+      color: $white;
+      letter-spacing: -0.2px;
+      line-height: 1.5;
+    }
     @media (max-width: 767px) {
-      margin-top: -52px; // ← header balandligi
+      margin-top: -52px; 
+      height: 220px;
+      gap: 16px;
+      padding-top: 32px;
+      .headerTitle{
+        font-size: 46px;
+      }
+      .headerSubtitle{
+        font-size: 17px;
+      }
     }
   }
 

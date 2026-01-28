@@ -145,6 +145,11 @@ const TrustedExperts: React.FC<TrustedExpertsProps> = ({ experts }) => {
     }
   };
 
+  // Don't render if no experts
+  if (!experts || experts.length === 0) {
+    return null;
+  }
+
   return (
     <section ref={sectionRef} className={styles["trusted-experts"]}>
       <div className={styles["trusted-experts__square"]}></div>

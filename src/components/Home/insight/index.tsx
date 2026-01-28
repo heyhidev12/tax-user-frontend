@@ -54,6 +54,15 @@ const Insight: React.FC<InsightProps> = ({ articles }) => {
     return `${year}.${month}.${day}`;
   };
 
+  // Update swiper after articles load
+  useEffect(() => {
+    if (!swiperRef.current) return;
+
+    setTimeout(() => {
+      swiperRef.current?.update();
+    }, 100);
+  }, [articles]);
+
   // GSAP Animation - Cards slide from RIGHT with stagger, scrub enabled
   useEffect(() => {
     if (!sectionRef.current || articles.length === 0) return;
@@ -118,21 +127,19 @@ const Insight: React.FC<InsightProps> = ({ articles }) => {
         cards,
         {
           opacity: 0,
-          x: 420, // MUCH BIGGER ENTRY DISTANCE
+          y: 60
         },
         {
           opacity: 1,
-          x: 0,
-          stagger: 0.15,
-          ease: "none",
+          y: 0,
+          stagger: 0.12,
           scrollTrigger: {
             trigger: slider,
             start: "top 80%",
-            end: "+=1300", // LONG SCROLL DISTANCE
-            scrub: 1.4,    // SMOOTH DRAGGING
-          },
+          }
         }
       );
+      
       
   
     }, sectionRef);
@@ -186,6 +193,10 @@ const Insight: React.FC<InsightProps> = ({ articles }) => {
             spaceBetween={20}
             loop={false}
             grabCursor={true}
+            watchOverflow={true}
+            normalizeSlideIndex={true}
+            centeredSlides={false}
+            slidesOffsetAfter={40} 
             breakpoints={{
               0: {
                 slidesPerView: 1.2,
@@ -195,12 +206,11 @@ const Insight: React.FC<InsightProps> = ({ articles }) => {
                 slidesPerView: 2.8,
                 spaceBetween: 18,
               },
-
               768: {
                 slidesPerView: 3,
                 spaceBetween: 22,
               },
-              1280:{
+              1280: {
                 slidesPerView: 4,
                 spaceBetween: 20,
               }

@@ -446,7 +446,7 @@ export default function ServiceAreas({ initialData }: ServiceAreasProps) {
                 >
                   <span className={styles["service-tabs__point"]} />
 
-                  {group.majorCategory.name}
+                 <span className={styles["service-tabs__text"]}>{group.majorCategory.name}</span>
                 </button>
               ))}
             </div>

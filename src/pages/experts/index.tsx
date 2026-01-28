@@ -240,7 +240,10 @@ const ExpertsPage: React.FC = () => {
           isFixed={true}
         />
         <Menu isOpen={isMenuOpen} onClose={() => setIsMenuOpen(false)} />
-        <div className={styles.headerImage}></div>
+        <div className={styles.headerImage}>
+          <h1 className={styles.headerTitle}>TEAM OF EXPERTS</h1>
+          <p className={styles.headerSubtitle}>전문가 소개</p>
+        </div>
 
         <div className="container">
           <div className={styles.pageHeaderSection}>
@@ -386,7 +389,7 @@ const ExpertsPage: React.FC = () => {
         </div>
 
         {/* Floating Buttons */}
-        {/* <div className={styles.floatingButtons}>
+        <div className={styles.floatingButtons}>
         <FloatingButton
           variant="consult"
           label="상담 신청하기"
@@ -396,7 +399,7 @@ const ExpertsPage: React.FC = () => {
           variant="top"
           onClick={handleTopClick}
         />
-      </div> */}
+      </div>
       </div>
       <Footer />
     </>

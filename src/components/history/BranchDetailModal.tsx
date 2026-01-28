@@ -191,7 +191,6 @@ const BranchDetailModal: React.FC<BranchDetailModalProps> = ({
 
         <div className={styles.modalBody}>
           <div className={styles.modalScrollContent}>
-            <div className={styles.branchInfo}>
               <div className={styles.branchTitleRow}>
                 <h2 className={styles.branchName}>{branch.name}</h2>
                 {hasSocialLinks && (
@@ -232,7 +231,6 @@ const BranchDetailModal: React.FC<BranchDetailModalProps> = ({
                   </div>
                 )}
               </div>
-            </div>
 
             <div className={styles.mapSection}>
               <div ref={mapRef} className={styles.map} />

@@ -11,9 +11,9 @@ import Icon from "@/components/common/Icon";
 import DatePickerModal from "@/components/education/DatePickerModal";
 import ApplicationModal from "@/components/education/ApplicationModal";
 import { get as getClient, del } from "@/lib/api";
-import { get } from "@/lib/api-server";
+import { get, getTokenFromCookies } from "@/lib/api-server";
 import { API_ENDPOINTS } from "@/config/api";
-import type { EducationDetail, ApplicationStatus } from "@/types/education";
+import { type EducationDetail, type ApplicationStatus, MemberType } from "@/types/education";
 import styles from "./detail.module.scss";
 import { AccessTime, CalendarToday } from "@mui/icons-material";
 import FloatingButton from "@/components/common/FloatingButton";
@@ -48,6 +48,62 @@ const EducationDetailPage: React.FC<EducationDetailPageProps> = ({ education: in
   const [isApplicationModalOpen, setIsApplicationModalOpen] = useState(false);
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [isLoadingAuth, setIsLoadingAuth] = useState(true);
+  useEffect(() => {
+    if (!id || typeof id !== 'string') return;
+    
+    const fetchDetail = async () => {
+      try {
+        const response = await getClient<EducationDetail>(
+          `${API_ENDPOINTS.TRAINING_SEMINARS}/${id}`
+        );
+        
+        if (response.data) {
+          setEducation(response.data);
+          setError(null);
+        } else {
+          setError(response.error || "교육 정보를 찾을 수 없습니다.");
+        }
+      } catch (err) {
+        console.error("Failed to fetch education detail:", err);
+        setError("데이터를 불러오는 중 오류가 발생했습니다.");
+      }
+    };
+  
+    fetchDetail();
+  }, [id]);
+  
+  // Convert Vimeo URL to embed format
+  // Only call this when url is NOT null
+  const getVimeoEmbedUrl = (url: string): string => {
+    // If already in embed format, return as is
+    if (url.includes("player.vimeo.com/video/")) {
+      return url;
+    }
+
+    // Extract video ID from various Vimeo URL formats
+    // Formats: https://vimeo.com/1070109559, https://vimeo.com/video/1070109559, etc.
+    const patterns = [
+      /vimeo\.com\/video\/(\d+)/,  // https://vimeo.com/video/1070109559
+      /vimeo\.com\/(\d+)/,          // https://vimeo.com/1070109559
+      /vimeo\.com\/.*\/(\d+)/,      // Other variations
+    ];
+
+    for (const pattern of patterns) {
+      const match = url.match(pattern);
+      if (match && match[1]) {
+        return `https://player.vimeo.com/video/${match[1]}`;
+      }
+    }
+
+    // If no pattern matches, try to extract any numeric ID from the URL
+    const numericMatch = url.match(/(\d{8,})/); // Vimeo IDs are typically 8+ digits
+    if (numericMatch && numericMatch[1]) {
+      return `https://player.vimeo.com/video/${numericMatch[1]}`;
+    }
+
+    // If parsing fails, return the original URL (should not happen with valid Vimeo URLs)
+    return url;
+  };
   const [visibilityError, setVisibilityError] = useState<string | null>(null);
   // ✅ Fetch user's application from dedicated endpoint
   const [myApplication, setMyApplication] = useState<{ id: number; status: ApplicationStatus } | null>(null);
@@ -440,6 +496,8 @@ const EducationDetailPage: React.FC<EducationDetailPageProps> = ({ education: in
 
         <div className="container">
           <div className={styles.contentHeader}>
+            {/* Only render video when backend explicitly returns vimeoVideoUrl !== null */}
+            
             <div className={styles.labels}>
               {daysLeft > 0 ? (
                 <span className={styles.labelRed}>신청마감 D-{daysLeft}</span>
@@ -578,6 +636,17 @@ const EducationDetailPage: React.FC<EducationDetailPageProps> = ({ education: in
                 <Viewer initialValue={education.body} />
               </div>
             </div>
+            {education.vimeoVideoUrl && (
+              <div className={styles.videoWrapper}>
+                <iframe
+                  src={getVimeoEmbedUrl(education.vimeoVideoUrl)}
+                  title="Vimeo Video"
+                  frameBorder="0"
+                  allow="autoplay; fullscreen; picture-in-picture"
+                  allowFullScreen
+                ></iframe>
+              </div>
+            )}
           </div>
         </div>
 
@@ -637,8 +706,13 @@ export const getServerSideProps: GetServerSideProps<EducationDetailPageProps> = 
   const { id } = context.params!;
 
   try {
+    // Get token from cookies (backend will handle permissions internally)
+    const token = getTokenFromCookies(context);
+    
+    // Call API without query params - backend handles permissions via auth token
     const response = await get<EducationDetail>(
-      `${API_ENDPOINTS.TRAINING_SEMINARS}/${id}`
+      `${API_ENDPOINTS.TRAINING_SEMINARS}/${id}`,
+      { token: token || undefined }
     );
 
     if (response.data) {

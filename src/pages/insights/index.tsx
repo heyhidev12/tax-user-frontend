@@ -53,8 +53,13 @@ interface InsightItem {
   authorName?: string;
   viewCount ?: number;
   files: any[];
+  subMinorCategory?: InsightSubMinorCategory;
 }
 
+interface InsightSubMinorCategory { 
+  id: number;
+  name: string;
+}
 interface InsightResponse {
   items: InsightItem[];
   total: number;
@@ -1058,8 +1063,13 @@ const formatDateTime = (dateString?: string) => {
         isFixed={true}
       />
       <Menu isOpen={isMenuOpen} onClose={() => setIsMenuOpen(false)} />
-      <div className={isNewsletterCategory ? `${styles.headerImageNews} + ${styles.headerImage}` : `${styles.headerImage}`} />
-
+     {!isNewsletterCategory ? <div className={styles.headerImage}>
+        <h1 className={styles.headerTitle}>INSIGHTS</h1>
+        <p className={styles.headerSubtitle}>인사이트</p>
+      </div> : <div className={styles.headerImageNews + " " + styles.headerImage}>
+        <h1 className={styles.headerTitle}>EDUCATION</h1>
+        <p className={styles.headerSubtitle}>교육/세미나</p>
+      </div>}
       <div className={styles.content}>
         <div className="container">
           <div className={styles.pageHeaderWrapper}>
@@ -1219,10 +1229,9 @@ const formatDateTime = (dateString?: string) => {
                                 title={item.title}
                                 imageUrl={item.thumbnail?.url}
                                 category={
-                                  typeof item.subcategory?.name === "string"
-                                    ? item.subcategory.name
-                                    : typeof item.category?.name === "string"
-                                      ? item.category.name
+                                  typeof item.subMinorCategory?.name === "string"
+                                    ? item.subMinorCategory.name
+                                    
                                       : "카테고리명"
                                 }
                                 description={
