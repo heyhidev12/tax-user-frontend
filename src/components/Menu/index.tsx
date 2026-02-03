@@ -398,15 +398,10 @@ const Menu: React.FC<MenuProps> = ({ isOpen, onClose }) => {
             `${API_ENDPOINTS.INSIGHTS}/hierarchical${userParams}`
           );
           if (response.data && Array.isArray(response.data)) {
-            // Store raw data for re-filtering
             setRawHierarchicalData(response.data);
             
-            // Backend already filtered by memberType and isApproved
-            // Extract categories from hierarchical data - use category.name as label
             const allCategories = response.data
               .map(item => item.category)
-              .filter(cat => cat.isExposed !== false) // Filter for safety
-              .sort((a, b) => (a.displayOrder ?? 0) - (b.displayOrder ?? 0));
             
             setInsightCategories(allCategories);
           } else {
