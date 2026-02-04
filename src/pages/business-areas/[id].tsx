@@ -1137,7 +1137,6 @@ const BusinessAreaDetailPage: React.FC<BusinessAreaDetailPageProps> = ({
               label="상담 신청하기"
               onClick={handleConsultClick}
             />
-            <FloatingButton variant="top" onClick={handleTopClick} />
           </div>
         </div>
         <div className={styles.infoWrapper}>

@@ -1606,10 +1606,6 @@ const InsightsPage: React.FC<InsightsPageProps> = ({
           label="상담 신청하기"
           onClick={() => router.push("/consultation/apply")}
         />
-        <FloatingButton
-          variant="top"
-          onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-        />
       </div>
 
       <Footer />

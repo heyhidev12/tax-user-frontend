@@ -421,26 +421,26 @@ const ApplicationModal: React.FC<ApplicationModalProps> = ({
                         <path
                           d="M0.715088 10.009V3.37406C0.715088 2.7058 1.25682 2.16406 1.92509 2.16406H14.9051C15.5734 2.16406 16.1151 2.7058 16.1151 3.37406V16.6439C16.1151 17.3122 15.5734 17.8539 14.9051 17.8539H1.92539C1.25701 17.8539 0.715221 17.312 0.715385 16.6436L0.717315 8.7891"
                           stroke="#555555"
-                          stroke-width="1.43"
-                          stroke-miterlimit="10"
+                          strokeWidth="1.43"
+                          strokeMiterlimit="10"
                         />
                         <path
                           d="M16.1151 6.89844H0.715088"
                           stroke="#555555"
-                          stroke-width="1.43"
-                          stroke-miterlimit="10"
+                          strokeWidth="1.43"
+                          strokeMiterlimit="10"
                         />
                         <path
                           d="M4.87866 0V4.08519"
                           stroke="#555555"
-                          stroke-width="1.43"
-                          stroke-miterlimit="10"
+                          strokeWidth="1.43"
+                          strokeMiterlimit="10"
                         />
                         <path
                           d="M11.9492 0V4.08519"
                           stroke="#555555"
-                          stroke-width="1.43"
-                          stroke-miterlimit="10"
+                          strokeWidth="1.43"
+                          strokeMiterlimit="10"
                         />
                       </svg>
                       <p>

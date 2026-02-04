@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import type { Swiper as SwiperType } from "swiper";
 import "swiper/css";
@@ -11,6 +11,7 @@ import type { CategoryGroup } from "../index";
 import type { ServiceCard } from "./data";
 import ViewMore from "../../common/ViewMore";
 import { useRouter } from "next/router";
+import { useThrottledResize } from "@/hooks/useThrottledResize";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
@@ -20,33 +21,17 @@ interface ServiceAreasProps {
   initialData: CategoryGroup[];
 }
 
-export default function ServiceAreas({ initialData }: ServiceAreasProps) {
+const ServiceAreas = React.memo(function ServiceAreas({ initialData }: ServiceAreasProps) {
   const [activeTab, setActiveTab] = useState<string | null>(null);
   const [progress, setProgress] = useState(0.5);
   const [hoveredCard, setHoveredCard] = useState<number | null>(null);
-  const [isMobile, setIsMobile] = useState(false);
-  const [windowWidth, setWindowWidth] = useState<number>(0);
+  const { isMobile, windowWidth } = useThrottledResize();
   const swiperRef = useRef<SwiperType | null>(null);
   const categoryGroups = initialData;
   const sectionRef = useRef<HTMLDivElement>(null);
   const titleRef = useRef<HTMLDivElement>(null);
   const cardsContainerRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
-
-  useEffect(() => {
-    const checkScreenSize = () => {
-      const width = window.innerWidth;
-      setWindowWidth(width);
-      setIsMobile(width <= 768);
-    };
-
-    // Set initial value
-    if (typeof window !== "undefined") {
-      checkScreenSize();
-      window.addEventListener("resize", checkScreenSize);
-      return () => window.removeEventListener("resize", checkScreenSize);
-    }
-  }, []);
 
   // Set active tab to first group if available and no tab is selected
   useEffect(() => {
@@ -539,4 +524,6 @@ export default function ServiceAreas({ initialData }: ServiceAreasProps) {
       </div>
     </div>
   );
-}
+});
+
+export default ServiceAreas;

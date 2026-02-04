@@ -1,34 +1,45 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Pagination } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/pagination";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/dist/ScrollTrigger";
+import { useThrottledResize } from "@/hooks/useThrottledResize";
 import styles from "./vision.module.scss";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
 }
 
-export default function VisionSections() {
+const VIDEOS = [
+  "/videos/home/expertise.mp4",
+  "/videos/home/consulting.mp4",
+  "/videos/home/trust.mp4",
+] as const;
+
+const VisionSections = React.memo(function VisionSections() {
   const [active, setActive] = useState<null | number>(null);
-  const [isMobile, setIsMobile] = useState(false);
+  const { isMobile } = useThrottledResize();
   const containerRef = useRef<HTMLDivElement>(null);
   const titleRef = useRef<HTMLHeadingElement>(null);
   const descRef = useRef<HTMLParagraphElement>(null);
   const mobileContainerRef = useRef<HTMLDivElement>(null);
 
+  const handleMouseLeave = useCallback(() => setActive(null), []);
+  const handleMouseEnter = useCallback((index: number) => () => setActive(index), []);
+
+  // Play only active video, pause others (mobile perf)
   useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth <= 768);
-    };
-    checkMobile();
-    window.addEventListener("resize", checkMobile);
-    return () => window.removeEventListener("resize", checkMobile);
-  }, []);
+    if (isMobile || !containerRef.current) return;
+    const videoEls = containerRef.current.querySelectorAll("video");
+    videoEls.forEach((el, i) => {
+      if (active === i) el.play().catch(() => {});
+      else el.pause();
+    });
+  }, [active, isMobile]);
 
   // GSAP Animation for Desktop - RIGHT → CENTER, no pin
   useEffect(() => {
@@ -96,12 +107,6 @@ export default function VisionSections() {
 
     return () => ctx.revert();
   }, [isMobile]);
-
-  const videos = [
-    "/videos/home/expertise.mp4",
-    "/videos/home/consulting.mp4",
-    "/videos/home/trust.mp4",
-  ];
 
   const contents = [
     {
@@ -177,7 +182,7 @@ export default function VisionSections() {
                 {/* Video Background */}
                 <video
                   className={styles["vision-slide__video"]}
-                  src={videos[index]}
+                  src={VIDEOS[index]}
                   autoPlay
                   muted
                   loop
@@ -217,25 +222,33 @@ export default function VisionSections() {
     );
   }
 
-  // Desktop View
+  // Desktop View - all backgrounds mounted, opacity-only transitions
   return (
     <div ref={containerRef} className={styles["vision-container"]}>
-      {active === null ? (
-        <img
-          src="./images/home/vision.png"
-          alt=""
-          className={styles["background-img"]}
-        />
-      ) : (
+      {/* Background layers: all preloaded and mounted, visibility via opacity */}
+      <img
+        src="./images/home/vision.png"
+        alt=""
+        className={`${styles["background-img"]} ${active === null ? styles["background-active"] : ""}`}
+        loading="lazy"
+      />
+      {VIDEOS.map((src, index) => (
         <video
-          key={active}
-          className={styles["background-video"]}
-          src={videos[active]}
+          key={src}
+          ref={(el) => {
+            if (el && typeof window !== "undefined") {
+              el.load();
+            }
+          }}
+          className={`${styles["background-video"]} ${active === index ? styles["background-active"] : ""}`}
+          src={src}
+          preload={index === 0 ? "auto" : "metadata"}
           autoPlay
           muted
           loop
+          playsInline
         />
-      )}
+      ))}
 
       <div className={styles.overlay}>
         <h2 ref={titleRef} className={styles["section-title"]}>Our Vision</h2>
@@ -244,12 +257,12 @@ export default function VisionSections() {
           소개합니다.
         </p>
 
-        <div className={styles.grid} onMouseLeave={() => setActive(null)}>
+        <div className={styles.grid} onMouseLeave={handleMouseLeave}>
           {contents.map((item, index) => (
             <div
               key={index}
               className={`${styles["grid-item"]} ${active === index ? styles.active : ""}`}
-              onMouseEnter={() => setActive(index)}
+              onMouseEnter={handleMouseEnter(index)}
             >
               <h3>{item.title}</h3>
               <span className={styles.subtitle}>{item.subtitle}</span>
@@ -262,4 +275,6 @@ export default function VisionSections() {
       </div>
     </div>
   );
-}
+});
+
+export default VisionSections;

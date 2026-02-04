@@ -698,14 +698,6 @@ const InsightDetailPage: React.FC<InsightDetailPageProps> = ({
             label="상담 신청하기"
             onClick={() => router.push("/consultation/apply")}
           />
-          <FloatingButton
-            variant="top"
-            onClick={() => {
-              if (typeof window !== "undefined") {
-                window.scrollTo({ top: 0, behavior: "smooth" });
-              }
-            }}
-          />
         </div>
 
         <div className={styles.container}>

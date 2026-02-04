@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
+import { useThrottledResize } from "@/hooks/useThrottledResize";
 import styles from "./styles.module.scss";
 
 export type FloatingButtonVariant = "consult" | "top" | "top-mobile";
@@ -46,24 +47,13 @@ const TopIcon = () => (
   </svg>
 );
 
-const FloatingButton: React.FC<FloatingButtonProps> = ({
+const FloatingButton: React.FC<FloatingButtonProps> = React.memo(({
   variant = "consult",
   className = "",
   onClick,
   label = "상담 신청하기",
 }) => {
-  const [isMobile, setIsMobile] = useState(false);
-
-  useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
-
-    checkMobile(); // first run
-    window.addEventListener("resize", checkMobile);
-
-    return () => window.removeEventListener("resize", checkMobile);
-  }, []);
+  const { isMobile } = useThrottledResize();
   // Consult button with label and icon
   if (variant === "consult") {
     if (isMobile) {
@@ -110,6 +100,6 @@ const FloatingButton: React.FC<FloatingButtonProps> = ({
       <TopIcon />
     </button>
   );
-};
+});
 
 export default FloatingButton;

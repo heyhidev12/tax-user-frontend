@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/dist/ScrollTrigger";
 import styles from "../styles.module.scss";
@@ -14,7 +14,7 @@ interface HeroSectionProps {
   heroBanner: BannerMedia | null;
 }
 
-export default function HeroSection({ heroBanner }: HeroSectionProps) {
+const HeroSection = React.memo(function HeroSection({ heroBanner }: HeroSectionProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const titleRef = useRef<HTMLHeadingElement>(null);
   const subtitleRef = useRef<HTMLParagraphElement>(null);
@@ -111,4 +111,6 @@ export default function HeroSection({ heroBanner }: HeroSectionProps) {
       </div>
     </main>
   );
-}
+});
+
+export default HeroSection;

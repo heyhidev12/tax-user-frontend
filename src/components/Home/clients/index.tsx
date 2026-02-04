@@ -6,16 +6,27 @@ import { ScrollTrigger } from 'gsap/dist/ScrollTrigger';
 import styles from './style.module.scss';
 import ViewMore from '../../common/ViewMore';
 import type { KeyCustomer } from '../index';
+import { API_BASE_URL } from '@/config/api';
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
+}
+
+const FALLBACK_LOGO = '/images/logo/logo_main.png';
+
+function getClientLogoUrl(client: KeyCustomer): string {
+  const raw = client.logo?.url?.trim() || '';
+  if (!raw) return FALLBACK_LOGO;
+  if (raw.startsWith('http://') || raw.startsWith('https://')) return raw;
+  if (raw.startsWith('/') && API_BASE_URL) return `${API_BASE_URL.replace(/\/$/, '')}${raw}`;
+  return FALLBACK_LOGO;
 }
 
 interface ClientsProps {
   clients: KeyCustomer[];
 }
 
-const Clients: React.FC<ClientsProps> = ({ clients }) => {
+const Clients: React.FC<ClientsProps> = React.memo(({ clients }) => {
   const [direction, setDirection] = useState<'forward' | 'backward'>('forward');
   const [isPaused, setIsPaused] = useState(false);
   const row1Ref = useRef<HTMLDivElement>(null);
@@ -204,12 +215,11 @@ const Clients: React.FC<ClientsProps> = ({ clients }) => {
             {duplicatedRow1.map((client, index) => (
               <div key={`row1-${client.id}-${index}`} className={styles['clients-marquee__item']}>
                 <img 
-                  src={client.logo?.url || ""} 
+                  src={getClientLogoUrl(client)} 
                   alt={`Client ${client.id}`} 
                   className={styles['client-logo']}
                   onError={(e) => {
-                    (e.target as HTMLImageElement).src =
-                      "https://via.placeholder.com/180x50/e8e8e8/999999?text=Logo";
+                    (e.target as HTMLImageElement).src = FALLBACK_LOGO;
                   }}
                 />
               </div>
@@ -227,12 +237,11 @@ const Clients: React.FC<ClientsProps> = ({ clients }) => {
             {duplicatedRow2.map((client, index) => (
               <div key={`row2-${client.id}-${index}`} className={styles['clients-marquee__item']}>
                 <img 
-                  src={client.logo?.url || ""} 
+                  src={getClientLogoUrl(client)} 
                   alt={`Client ${client.id}`} 
                   className={styles['client-logo']}
                   onError={(e) => {
-                    (e.target as HTMLImageElement).src =
-                      "https://via.placeholder.com/180x50/e8e8e8/999999?text=Logo";
+                    (e.target as HTMLImageElement).src = FALLBACK_LOGO;
                   }}
                 />
               </div>
@@ -246,6 +255,6 @@ const Clients: React.FC<ClientsProps> = ({ clients }) => {
       </div>
     </section>
   );
-};
+});
 
 export default Clients;

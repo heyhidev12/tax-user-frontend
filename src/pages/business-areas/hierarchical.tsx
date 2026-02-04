@@ -506,10 +506,6 @@ const HierarchicalPage: React.FC = () => {
           label="상담 신청하기"
           onClick={handleConsultClick}
         />
-        <FloatingButton
-          variant="top"
-          onClick={handleTopClick}
-        />
       </div>
     </div>
   );

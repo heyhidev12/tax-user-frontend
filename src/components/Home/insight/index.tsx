@@ -9,6 +9,7 @@ import { ScrollTrigger } from "gsap/dist/ScrollTrigger";
 import "swiper/css";
 import styles from "./style.module.scss";
 import ViewMore from "../../common/ViewMore";
+import { useThrottledResize } from "@/hooks/useThrottledResize";
 import type { InsightItem } from "../index";
 
 if (typeof window !== "undefined") {
@@ -19,31 +20,15 @@ interface InsightProps {
   articles: InsightItem[];
 }
 
-const Insight: React.FC<InsightProps> = ({ articles }) => {
+const Insight: React.FC<InsightProps> = React.memo(({ articles }) => {
   const router = useRouter();
   const [progress, setProgress] = useState(0);
   const swiperRef = useRef<SwiperType | null>(null);
-  const [isMobile, setIsMobile] = useState(false);
-  const [windowWidth, setWindowWidth] = useState<number>(0);
+  const { isMobile, windowWidth } = useThrottledResize();
   const sectionRef = useRef<HTMLElement>(null);
   const headerRef = useRef<HTMLDivElement>(null);
   const numberRef = useRef<HTMLDivElement>(null);
   const titleWrapperRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const checkScreenSize = () => {
-      const width = window.innerWidth;
-      setWindowWidth(width);
-      setIsMobile(width <= 768);
-    };
-
-    // Set initial value
-    if (typeof window !== "undefined") {
-      checkScreenSize();
-      window.addEventListener("resize", checkScreenSize);
-      return () => window.removeEventListener("resize", checkScreenSize);
-    }
-  }, []);
 
   // Format date from ISO string to YYYY.MM.DD
   const formatDate = (dateString: string): string => {
@@ -146,7 +131,7 @@ const Insight: React.FC<InsightProps> = ({ articles }) => {
   
     return () => ctx.revert();
   }, [articles.length]);
-  
+
 
   const handleProgress = (swiper: SwiperType, progressValue: number) => {
     setProgress(progressValue);
@@ -271,6 +256,6 @@ const Insight: React.FC<InsightProps> = ({ articles }) => {
       </div>
     </section>
   );
-};
+});
 
 export default Insight;

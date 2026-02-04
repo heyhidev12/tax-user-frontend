@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import Navbar from "../common/Navbar/Navbar";
 import Footer from "@/components/Footer";
 import Awards from "./awards";
@@ -114,16 +114,18 @@ export default function Home({
 }: HomeProps) {
   const router = useRouter();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const handleMenuOpen = useCallback(() => setIsMenuOpen(true), []);
+  const handleMenuClose = useCallback(() => setIsMenuOpen(false), []);
 
   return (
     <div className={`page ${styles["home-page"]}`}>
       {/* <Navbar  /> */}
       <Header
           variant="white"
-          onMenuClick={() => setIsMenuOpen(true)}
+          onMenuClick={handleMenuOpen}
           isFixed={true}
         />
-        <Menu isOpen={isMenuOpen} onClose={() => setIsMenuOpen(false)} />
+        <Menu isOpen={isMenuOpen} onClose={handleMenuClose} />
       <HeroSection heroBanner={heroBanner} />
 
       <Section1 />
@@ -148,10 +150,6 @@ export default function Home({
           variant="consult"
           label="상담 신청하기"
           onClick={() => router.push("/consultation/apply")}
-        />
-        <FloatingButton
-          variant="top"
-          onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
         />
       </div>
 

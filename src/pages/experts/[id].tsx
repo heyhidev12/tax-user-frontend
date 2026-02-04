@@ -1168,7 +1168,6 @@ const ExpertDetailPage: React.FC<ExpertDetailPageProps> = ({
               onClick={handleConsultClick}
             />
           )}
-          <FloatingButton variant="top" onClick={handleTopClick} />
         </div>
       </div>
     </>

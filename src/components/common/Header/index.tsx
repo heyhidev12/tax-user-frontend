@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
+import { useThrottledScroll } from '@/hooks/useThrottledScroll';
 import styles from './styles.module.scss';
 
 export type HeaderVariant = 'transparent' | 'white' | 'black';
@@ -39,32 +40,8 @@ const Header: React.FC<HeaderProps> = ({
 }) => {
   const router = useRouter();
   const isWhite = variant === 'white';
-  const [isSticky, setIsSticky] = useState(false);
-
-  // Track scroll position and apply fixed position only after 400px
-  useEffect(() => {
-    if (!isFixed) {
-      // If isFixed is false, reset sticky state and don't track scroll
-      setIsSticky(false);
-      return;
-    }
-
-    const handleScroll = () => {
-      const shouldBeSticky = window.scrollY >= 400;
-      setIsSticky(shouldBeSticky);
-    };
-
-    // Check initial scroll position
-    handleScroll();
-
-    // Add scroll listener
-    window.addEventListener('scroll', handleScroll, { passive: true });
-
-    // Cleanup
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-    };
-  }, [isFixed]);
+  const rawSticky = useThrottledScroll(400);
+  const isSticky = isFixed ? rawSticky : false;
 
   // variant에 따라 고해상도 로고 이미지 선택
   // white → 빨간색 로고 (logo-hd.png)
