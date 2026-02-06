@@ -18,14 +18,34 @@ import '@/components/common/PageHeader/styles.scss';
 import '@/components/common/Card/styles.scss';
 import type { AppProps } from 'next/app';
 import Head from 'next/head';
+import { useRouter } from 'next/router';
 import ScrollToTopButton from '@/components/common/ScrollToTopButton';
+import { FooterProvider } from '@/context/FooterContext';
+
+// Pages that have FloatingButton and should show ScrollToTopButton
+const PAGES_WITH_FLOATING_BUTTON = [
+  '/',
+  '/experts',
+  '/experts/[id]',
+  '/history',
+  '/insights',
+  '/insights/[id]',
+  '/business-areas/hierarchical',
+  '/business-areas/[id]',
+  '/education',
+  '/education/[id]',
+];
 
 export default function App({ Component, pageProps }: AppProps) {
+  const router = useRouter();
+  const showScrollToTop = PAGES_WITH_FLOATING_BUTTON.includes(router.pathname);
+
   return (
-    <>
+    <FooterProvider>
       <Head>
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-      </Head><Script
+      </Head>
+      <Script
         strategy="afterInteractive"
         src={`https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_GA_ID}`}
       />
@@ -43,7 +63,7 @@ export default function App({ Component, pageProps }: AppProps) {
       </Script>
 
       <Component {...pageProps} />
-      <ScrollToTopButton />
-    </>
+      {showScrollToTop && <ScrollToTopButton />}
+    </FooterProvider>
   );
 }

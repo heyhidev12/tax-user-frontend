@@ -47,9 +47,10 @@ export interface Member {
     id: number;
     url: string;
   };
-  workAreas: Array<{
-    id: number;
-    value: string;
+  categories?: Array<{
+    categoryId: number;
+    categoryName: string;
+    displayOrder: number;
   }>;
   oneLineIntro: string;
   displayOrder: number;
@@ -91,6 +92,7 @@ export interface KeyCustomer {
   displayOrder: number;
   isMainExposed: boolean;
   isExposed: boolean;
+  websiteUrl?: string | null;
 }
 
 interface HomeProps {

@@ -11,6 +11,7 @@ import FloatingButton from "@/components/common/FloatingButton";
 import Card from "@/components/common/Card";
 import Icon from "@/components/common/Icon";
 import SEO from "@/components/common/SEO";
+import TermsModal, { TermsType } from "@/components/common/TermsModal";
 import { get as getClient, post } from "@/lib/api";
 import { get } from "@/lib/api-server";
 import { API_ENDPOINTS } from "@/config/api";
@@ -139,6 +140,19 @@ const InsightsPage: React.FC<InsightsPageProps> = ({
   const [emailError, setEmailError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [newsletterExposed, setNewsletterExposed] = useState(true);
+  
+  // Terms modal state
+  const [isTermsModalOpen, setIsTermsModalOpen] = useState(false);
+  const [activeTermsType, setActiveTermsType] = useState<TermsType>('privacy');
+  
+  const handleOpenTermsModal = (type: TermsType) => {
+    setActiveTermsType(type);
+    setIsTermsModalOpen(true);
+  };
+  
+  const handleCloseTermsModal = () => {
+    setIsTermsModalOpen(false);
+  };
 
   // Hierarchical data state
   const [hierarchicalData, setHierarchicalData] = useState<InsightHierarchicalData>([]);
@@ -1568,7 +1582,7 @@ const InsightsPage: React.FC<InsightsPageProps> = ({
                               onChange={setPrivacyAgreed}
                               label="[필수] 개인정보 처리 방침 이용 동의"
                             />
-                            <button className={styles.newsletterLink}>보기</button>
+                            <button className={styles.newsletterLink} onClick={() => handleOpenTermsModal('privacy')}>보기</button>
                           </div>
                           <div className={styles.newsletterCheckboxRow}>
                             <Checkbox
@@ -1577,7 +1591,7 @@ const InsightsPage: React.FC<InsightsPageProps> = ({
                               onChange={setOptionalAgreed}
                               label="[선택] OO OOOOO 이용 동의"
                             />
-                            <button className={styles.newsletterLink}>보기</button>
+                            <button className={styles.newsletterLink} onClick={() => handleOpenTermsModal('marketing')}>보기</button>
                           </div>
                         </div>
                         <Button
@@ -1609,6 +1623,13 @@ const InsightsPage: React.FC<InsightsPageProps> = ({
       </div>
 
       <Footer />
+      
+      {/* Terms Modal */}
+      <TermsModal
+        isOpen={isTermsModalOpen}
+        onClose={handleCloseTermsModal}
+        termsType={activeTermsType}
+      />
     </div>
     // </div>
   );

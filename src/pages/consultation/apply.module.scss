@@ -56,6 +56,9 @@
 
 .formSection {
   padding: 80px 320px 120px;
+  @media (max-width: 1360px) {
+    padding: 80px 80px 100px;
+  }
 }
 
 .form {
@@ -374,6 +377,24 @@
   :global(.checkbox__label) {
     color: $gray-80;
   }
+}
+
+.allAgreeWrapper {
+  border-radius: 8px;
+  padding: 16px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  transition: background-color 0.3s ease;
+  background: #f8f8f8;
+}
+
+.isChecked {
+  background-color: #e9f4f4;
+}
+
+.allAgreeItem {
+  width: 100%;
 }
 
 .viewLink {

@@ -397,11 +397,8 @@ const HistoryPage: React.FC = () => {
         if (response.error) {
           setCustomersError(response.error);
         } else if (response.data && response.data.items) {
-          // displayOrder로 정렬하고 isMainExposed가 true인 것만 필터링
-          const sorted = response.data.items
-            .filter((item) => item.isMainExposed)
-            .sort((a, b) => a.displayOrder - b.displayOrder);
-          setCustomersData(sorted);
+          // Use data as-is from API (no frontend filtering)
+          setCustomersData(response.data.items);
         } else {
           setCustomersError("데이터를 불러올 수 없습니다.");
         }
@@ -469,14 +466,11 @@ const HistoryPage: React.FC = () => {
         if (response.error) {
           setBranchesError(response.error);
         } else if (response.data && response.data.items) {
-          // Filter isExposed branches
-          const filtered = response.data.items.filter((item) => item.isExposed);
-
-          // Sort by distance if user location is available, otherwise by displayOrder
+          // Sort by distance if user location is available, otherwise use API order
           let sorted: BranchItem[];
           if (userLocation) {
             // Sort by distance (nearest first)
-            sorted = [...filtered].sort((a, b) => {
+            sorted = [...response.data.items].sort((a, b) => {
               // If branch doesn't have coordinates, put it at the end
               if (!a.latitude || !a.longitude) return 1;
               if (!b.latitude || !b.longitude) return -1;
@@ -497,8 +491,8 @@ const HistoryPage: React.FC = () => {
               return distanceA - distanceB;
             });
           } else {
-            // Fallback to displayOrder
-            sorted = [...filtered].sort((a, b) => a.displayOrder - b.displayOrder);
+            // Use data as-is from API (no frontend filtering/sorting)
+            sorted = response.data.items;
           }
 
           setBranchesData(sorted);
@@ -1004,10 +998,8 @@ const HistoryPage: React.FC = () => {
           {activeTab === "history" && (
             <div className={styles.content}>
               {sortedData.map((yearData, yearIndex) => {
-                // 각 연도의 항목들을 displayOrder로 정렬
-                const sortedItems = [...yearData.items].sort(
-                  (a, b) => a.displayOrder - b.displayOrder,
-                );
+                // Use data as-is from API (no frontend sorting by displayOrder)
+                const sortedItems = yearData.items;
 
                 // 월별로 그룹화
                 const groupedByMonth = sortedItems.reduce(
@@ -1100,9 +1092,8 @@ const HistoryPage: React.FC = () => {
                     </div>
                   ) : (
                     awardsData.map((yearData, index) => {
-                      const sortedItems = [...yearData.items]
-                        .filter((item) => item.isMainExposed)
-                        .sort((a, b) => a.displayOrder - b.displayOrder);
+                      // Use data as-is from API (no frontend filtering)
+                      const sortedItems = yearData.items;
 
                       if (sortedItems.length === 0) return null;
 

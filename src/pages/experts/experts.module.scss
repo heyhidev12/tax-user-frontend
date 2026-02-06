@@ -169,15 +169,29 @@
   }
 }
 
-.fieldSelector {
+// Filter Container
+.filterContainer {
   position: relative;
   width: 100%;
   max-width: 800px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+
+  @media (max-width: $breakpoint-tablet) {
+    gap: 12px;
+  }
+}
+
+// Work Area Select
+.fieldSelector {
+  position: relative;
+  width: 100%;
 }
 
 .fieldSelectorInput {
   width: 100%;
-  padding: 20px;
+  padding: 16px 20px;
   cursor: pointer;
   transition: all 0.3s ease;
   display: flex;
@@ -206,6 +220,46 @@
   &:hover {
     border-color: $gray-60;
   }
+
+  &:focus-within{
+    border-color: $primary-50;
+  }
+
+  @media (max-width: $breakpoint-tablet) {
+    padding: 12px 16px;
+  }
+}
+
+.dropdownArrow {
+  flex-shrink: 0;
+  color: $gray-50;
+}
+
+.selectClearButton {
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: $gray-20;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: $gray-60;
+  padding: 0;
+  line-height: 1;
+
+  svg {
+    display: block;
+    margin: auto;
+  }
+
+  &:hover {
+    background: $gray-30;
+    color: $gray-90;
+  }
 }
 
 .dropdownMenu {
@@ -213,7 +267,6 @@
   top: 100%;
   left: 0;
   width: 100%;
-  max-width: 800px;
   background: #fff;
   z-index: 1001;
   max-height: 300px;
@@ -221,8 +274,8 @@
   overflow-x: hidden;
   isolation: isolate;
   padding: 0 5px 5px 5px;
-  -webkit-box-shadow: 0px 5px 6px 3px rgba(0, 0, 0, 0.22);
-  box-shadow: 0px 5px 6px 3px rgba(0, 0, 0, 0.22);
+  border-radius: 0 0 8px 8px;
+  box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.15);
 
   &::-webkit-scrollbar {
     width: 4px;
@@ -235,10 +288,8 @@
   &::-webkit-scrollbar-thumb {
     background: $gray-30;
     border-radius: 100px;
-    margin-right: 9px;
   }
 
-  // Firefox scrollbar
   scrollbar-width: thin;
   scrollbar-color: $gray-30 transparent;
 
@@ -247,12 +298,15 @@
   }
 }
 
+.dropdownContent {
+  padding-top: 8px;
+}
+
 .dropdownItem {
-  padding: 16px 12px;
+  padding: 12px 16px;
   cursor: pointer;
   transition: background-color 0.2s ease;
   border-radius: 6px;
-  // margin-bottom: 2px;
 
   p {
     font-family: $font-pretendard;
@@ -270,7 +324,110 @@
 }
 
 .dropdownItemActive {
-  background: $gray-10;
+  background: rgba(0, 168, 158, 0.1);
+
+  p {
+    color: $primary-60;
+  }
+}
+
+.searchInputWrapper {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 16px 20px;
+  border-radius: 8px;
+  border: 1px solid var(--grayscale-20, #e4e4e4);
+  background: var(--Primary-0, #fff);
+  transition: all 0.3s ease;
+
+  &:hover {
+    border-color: $gray-60;
+  }
+
+  &:focus-within {
+    border-color: $primary-50;
+  }
+
+  @media (max-width: $breakpoint-tablet) {
+    padding: 12px 16px;
+  }
+}
+
+.searchInput {
+  flex: 1;
+  border: none;
+  outline: none;
+  font-family: $font-pretendard;
+  font-weight: 400;
+  font-size: 15px;
+  line-height: 1.5;
+  color: $gray-90;
+  background: transparent;
+
+  &::placeholder {
+    color: $gray-50;
+  }
+}
+
+.clearButton {
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: $gray-20;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: $gray-60;
+  padding: 0;
+  line-height: 1;
+
+  svg {
+    display: block;
+    margin: auto;
+  }
+
+  &:hover {
+    background: $gray-30;
+    color: $gray-90;
+  }
+}
+
+.searchIconButton {
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: $gray-50;
+  padding: 0;
+
+  &:hover {
+    color: $primary-50;
+  }
+}
+
+.searchHint {
+  font-family: $font-pretendard;
+  font-weight: 400;
+  font-size: 13px;
+  color: $gray-50;
+  margin: 0;
+
+  @media (max-width: $breakpoint-tablet) {
+    font-size: 12px;
+  }
 }
 
 // Experts List Section
@@ -368,6 +525,222 @@
   width: 100%;
 }
 
+// Results count
+.resultsCount {
+  font-family: $font-pretendard;
+  font-weight: 400;
+  font-size: 15px;
+  color: $gray-60;
+  margin: 8px 0 0 0;
+
+  @media (max-width: $breakpoint-tablet) {
+    font-size: 13px;
+  }
+}
+
+// Pagination
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 40px;
+  padding-bottom: 40px;
+
+  @media (max-width: $breakpoint-tablet) {
+    gap: 4px;
+    margin-top: 24px;
+    padding-bottom: 24px;
+  }
+}
+
+.paginationArrow {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid $gray-20;
+  border-radius: 8px;
+  background: #fff;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: $gray-70;
+
+  &:hover:not(:disabled) {
+    border-color: $primary-50;
+    color: $primary-50;
+  }
+
+  &:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+
+  @media (max-width: $breakpoint-tablet) {
+    width: 36px;
+    height: 36px;
+  }
+}
+
+.paginationNumbers {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.paginationNumber {
+  min-width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  font-family: $font-pretendard;
+  font-weight: 500;
+  font-size: 15px;
+  color: $gray-70;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: $gray-10;
+  }
+
+  @media (max-width: $breakpoint-tablet) {
+    min-width: 36px;
+    height: 36px;
+    font-size: 14px;
+  }
+}
+
+.paginationNumberActive {
+  background: $primary-50;
+  color: #fff;
+
+  &:hover {
+    background: $primary-60;
+  }
+}
+
+.paginationEllipsis {
+  min-width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: $font-pretendard;
+  font-weight: 500;
+  font-size: 15px;
+  color: $gray-50;
+
+  @media (max-width: $breakpoint-tablet) {
+    min-width: 32px;
+    height: 36px;
+    font-size: 14px;
+  }
+}
+
+// Empty state
+.emptyContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 20px;
+  text-align: center;
+
+  @media (max-width: $breakpoint-tablet) {
+    padding: 60px 20px;
+  }
+}
+
+// Initial empty state (before any search)
+.initialEmptyContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 120px 20px;
+  text-align: center;
+  background: $gray-5;
+  border-radius: 16px;
+  margin-top: 20px;
+
+  @media (max-width: $breakpoint-tablet) {
+    padding: 80px 20px;
+    margin-top: 16px;
+  }
+}
+
+.emptyIcon {
+  color: $gray-30;
+  margin-bottom: 24px;
+}
+
+.emptyTitle {
+  font-family: $font-pretendard;
+  font-weight: 600;
+  font-size: 20px;
+  color: $gray-90;
+  margin: 0 0 8px 0;
+
+  @media (max-width: $breakpoint-tablet) {
+    font-size: 18px;
+  }
+}
+
+.emptyDescription {
+  font-family: $font-pretendard;
+  font-weight: 400;
+  font-size: 15px;
+  color: $gray-60;
+  margin: 0;
+
+  @media (max-width: $breakpoint-tablet) {
+    font-size: 14px;
+  }
+}
+
+// Loading container
+.loadingContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 20px;
+
+  p {
+    font-family: $font-pretendard;
+    font-weight: 400;
+    font-size: 15px;
+    color: $gray-60;
+  }
+}
+
+// Error container
+.errorContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 20px;
+
+  p {
+    font-family: $font-pretendard;
+    font-weight: 400;
+    font-size: 15px;
+    color: #e74c3c;
+  }
+}
+
+// Highlight matched text
+.highlight {
+  background-color: rgba(0, 168, 158, 0.2);
+  color: $primary-70;
+  padding: 0 2px;
+  border-radius: 2px;
+}
 
 // Floating Buttons
 .floatingButtons {

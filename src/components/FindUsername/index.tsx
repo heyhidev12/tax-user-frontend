@@ -8,6 +8,7 @@ import Tab from '@/components/common/Tab';
 import Button from '@/components/common/Button';
 import { post } from '@/lib/api';
 import { API_ENDPOINTS } from '@/config/api';
+import { formatPhoneInput, validatePhone } from '@/lib/phoneValidation';
 
 type TabType = 'sms' | 'email';
 type StepType = 'input' | 'verification' | 'result';
@@ -54,9 +55,9 @@ const FindUsername: React.FC = () => {
         return;
       }
 
-      const cleanPhone = phoneNumber.replace(/[^0-9]/g, '');
-      if (cleanPhone.length < 10 || cleanPhone.length > 11) {
-        setError('올바른 휴대폰 번호를 입력해주세요.');
+      const phoneResult = validatePhone(phoneNumber);
+      if (!phoneResult.valid) {
+        setError(phoneResult.error ?? '올바른 휴대폰 번호를 입력해주세요.');
         return;
       }
     } else {
@@ -76,8 +77,9 @@ const FindUsername: React.FC = () => {
     try {
       let response;
       if (activeTab === 'sms') {
+        const phoneResult = validatePhone(phoneNumber);
         response = await post(API_ENDPOINTS.AUTH.FIND_ID_PHONE_SEND, {
-          phoneNumber: phoneNumber.replace(/[^0-9]/g, ''),
+          phoneNumber: phoneResult.normalized,
         });
       } else {
         response = await post(API_ENDPOINTS.AUTH.FIND_ID_EMAIL_SEND, { email });
@@ -119,10 +121,15 @@ const FindUsername: React.FC = () => {
     try {
       let response;
       if (activeTab === 'sms') {
-        const cleanPhone = phoneNumber.replace(/[^0-9]/g, '');
+        const phoneResult = validatePhone(phoneNumber);
+        if (!phoneResult.valid) {
+          setError(phoneResult.error ?? '휴대폰 번호를 확인해주세요.');
+          setIsLoading(false);
+          return;
+        }
         response = await post<{ loginId: string }>(API_ENDPOINTS.AUTH.FIND_ID_PHONE_VERIFY, {
           name: name,
-          phoneNumber: cleanPhone,
+          phoneNumber: phoneResult.normalized,
           verificationCode: verificationCode,
         });
       } else {
@@ -167,10 +174,35 @@ const FindUsername: React.FC = () => {
   const handleFindPassword = () => router.push('/find-password');
   const handleGoToLogin = () => router.push('/login');
 
+  // Check if input form is valid
+  const isInputFormValid = name && (activeTab === 'sms' ? phoneNumber : email) && !isLoading;
+
+  // Handle Enter key for input form
+  const handleInputFormKeyDown = useCallback((e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && isInputFormValid) {
+      e.preventDefault();
+      handleRequestVerification();
+    }
+  }, [isInputFormValid, handleRequestVerification]);
+
+  // Handle Enter key for verification form
+  const handleVerificationFormKeyDown = useCallback((e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && verificationCode && isTimerActive && !isLoading) {
+      e.preventDefault();
+      handleVerifyCode();
+    }
+  }, [verificationCode, isTimerActive, isLoading, handleVerifyCode]);
+
   const renderInputForm = () => (
-    <>
+    <div onKeyDown={handleInputFormKeyDown} style={{ display: 'contents' }}>
       <div className="find-username-form-container">
-        <form className="find-username-form" onSubmit={(e) => { e.preventDefault(); handleRequestVerification(); }}>
+        <form
+          className="find-username-form"
+          onSubmit={(e) => {
+            e.preventDefault();
+            handleRequestVerification();
+          }}
+        >
           <div className="find-username-form-fields">
             <TextField
               variant="line"
@@ -187,9 +219,9 @@ const FindUsername: React.FC = () => {
                   variant="line"
                   label="휴대폰 번호"
                   type="tel"
-                  placeholder="휴대폰 번호를 입력해주세요"
+                  placeholder="01000000000"
                   value={phoneNumber}
-                  onChange={setPhoneNumber}
+                  onChange={(val) => setPhoneNumber(formatPhoneInput(val))}
                   fullWidth
                 />
                 <Button
@@ -228,7 +260,7 @@ const FindUsername: React.FC = () => {
         <Button
           type="primary"
           size="large"
-          disabled={!name || (activeTab === 'sms' ? !phoneNumber : !email) || isLoading}
+          disabled={!isInputFormValid}
           onClick={handleRequestVerification}
         >
           {isLoading ? '확인 중...' : '확인'}
@@ -244,11 +276,11 @@ const FindUsername: React.FC = () => {
           회원가입
         </Button>
       </div>
-    </>
+    </div>
   );
 
   const renderVerificationForm = () => (
-    <>
+    <div onKeyDown={handleVerificationFormKeyDown} style={{ display: 'contents' }}>
       {activeTab === 'email' && (
         <p className="auth-verification-subtitle">
           <span>"{email}"</span>(으)로 전달된<br />
@@ -329,13 +361,14 @@ const FindUsername: React.FC = () => {
           type={verificationCode && isTimerActive && !error ? "primary" : "secondary"}
           size="large"
           disabled={!verificationCode || !isTimerActive || isLoading}
-          onClick={handleVerifyCode}
+          onClick={() => handleVerifyCode()}
         >
           {isLoading ? '확인 중...' : '확인'}
         </Button>
       </div>
-    </>
+    </div>
   );
+
   const renderResult = () => (
     <>
       <div className="find-username-result-container">

@@ -214,14 +214,31 @@ const Clients: React.FC<ClientsProps> = React.memo(({ clients }) => {
           >
             {duplicatedRow1.map((client, index) => (
               <div key={`row1-${client.id}-${index}`} className={styles['clients-marquee__item']}>
-                <img 
-                  src={getClientLogoUrl(client)} 
-                  alt={`Client ${client.id}`} 
-                  className={styles['client-logo']}
-                  onError={(e) => {
-                    (e.target as HTMLImageElement).src = FALLBACK_LOGO;
-                  }}
-                />
+                {client.websiteUrl ? (
+                  <a 
+                    href={client.websiteUrl} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                  >
+                    <img 
+                      src={getClientLogoUrl(client)} 
+                      alt={`Client ${client.id}`} 
+                      className={styles['client-logo']}
+                      onError={(e) => {
+                        (e.target as HTMLImageElement).src = FALLBACK_LOGO;
+                      }}
+                    />
+                  </a>
+                ) : (
+                  <img 
+                    src={getClientLogoUrl(client)} 
+                    alt={`Client ${client.id}`} 
+                    className={styles['client-logo']}
+                    onError={(e) => {
+                      (e.target as HTMLImageElement).src = FALLBACK_LOGO;
+                    }}
+                  />
+                )}
               </div>
             ))}
           </div>
@@ -236,14 +253,31 @@ const Clients: React.FC<ClientsProps> = React.memo(({ clients }) => {
           >
             {duplicatedRow2.map((client, index) => (
               <div key={`row2-${client.id}-${index}`} className={styles['clients-marquee__item']}>
-                <img 
-                  src={getClientLogoUrl(client)} 
-                  alt={`Client ${client.id}`} 
-                  className={styles['client-logo']}
-                  onError={(e) => {
-                    (e.target as HTMLImageElement).src = FALLBACK_LOGO;
-                  }}
-                />
+                {client.websiteUrl ? (
+                  <a 
+                    href={client.websiteUrl} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                  >
+                    <img 
+                      src={getClientLogoUrl(client)} 
+                      alt={`Client ${client.id}`} 
+                      className={styles['client-logo']}
+                      onError={(e) => {
+                        (e.target as HTMLImageElement).src = FALLBACK_LOGO;
+                      }}
+                    />
+                  </a>
+                ) : (
+                  <img 
+                    src={getClientLogoUrl(client)} 
+                    alt={`Client ${client.id}`} 
+                    className={styles['client-logo']}
+                    onError={(e) => {
+                      (e.target as HTMLImageElement).src = FALLBACK_LOGO;
+                    }}
+                  />
+                )}
               </div>
             ))}
           </div>

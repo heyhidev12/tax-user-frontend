@@ -8,8 +8,14 @@ import Checkbox from "@/components/common/Checkbox";
 import StepIndicator from "@/components/common/StepIndicator";
 import Button from "@/components/common/Button";
 import Icon from "@/components/common/Icon";
+import TermsModal, { TermsType } from "@/components/common/TermsModal";
 import { get, post } from "@/lib/api";
 import { API_ENDPOINTS } from "@/config/api";
+import { formatPhoneInput, validatePhone } from "@/lib/phoneValidation";
+import {
+  getPasswordRules,
+  validatePassword as validatePasswordUtil,
+} from "@/lib/passwordValidation";
 import Footer from "../Footer";
 import { MemberType as EducationMemberType } from "@/types/education";
 
@@ -47,6 +53,20 @@ const Signup: React.FC = () => {
     privacy: false,
     marketing: false,
   });
+  
+  // Terms modal state
+  const [isTermsModalOpen, setIsTermsModalOpen] = useState(false);
+  const [activeTermsType, setActiveTermsType] = useState<TermsType>('privacy');
+  
+  const handleOpenTermsModal = (type: TermsType) => {
+    setActiveTermsType(type);
+    setIsTermsModalOpen(true);
+  };
+  
+  const handleCloseTermsModal = () => {
+    setIsTermsModalOpen(false);
+  };
+  
   const [memberType, setMemberType] = useState<MemberType>("general");
   const [userId, setUserId] = useState("");
   const [isUserIdChecked, setIsUserIdChecked] = useState(false);
@@ -132,29 +152,7 @@ const Signup: React.FC = () => {
     return () => clearInterval(interval);
   }, [isTimerActive, timeLeft]);
 
-  // 비밀번호 확인 검증 (입력 중에는 오류를 표시하지 않음)
-  useEffect(() => {
-    if (!passwordConfirm) {
-      setPasswordConfirmError("");
-      return;
-    }
-    // 비밀번호가 입력되어 있고, 확인 비밀번호가 비밀번호와 같은 길이이거나 더 길 때만 검증
-    if (password && passwordConfirm) {
-      // 비밀번호와 확인 비밀번호의 길이가 같을 때만 검증 (입력 중이 아닐 때)
-      if (passwordConfirm.length === password.length) {
-        if (password !== passwordConfirm) {
-          setPasswordConfirmError("비밀번호가 일치하지 않습니다.");
-        } else {
-          setPasswordConfirmError("");
-        }
-      } else {
-        // 입력 중에는 오류를 표시하지 않음
-        setPasswordConfirmError("");
-      }
-    } else {
-      setPasswordConfirmError("");
-    }
-  }, [password, passwordConfirm]);
+  // Live confirm match: no useEffect; we set passwordConfirmError in onChange of confirm field and when password changes
 
   const handleAllAgree = () => {
     const newValue = !terms.all;
@@ -256,22 +254,16 @@ const Signup: React.FC = () => {
     setPhoneError("");
     setVerificationCodeError("");
 
-    if (!phone) {
-      setPhoneError("휴대폰번호를 입력해주세요");
-      return;
-    }
-
-    // 휴대폰 번호 형식 정리 (숫자만 추출)
-    const cleanPhone = phone.replace(/[^0-9]/g, "");
-    if (cleanPhone.length < 10 || cleanPhone.length > 11) {
-      setPhoneError("올바른 휴대폰 번호를 입력해주세요");
+    const { valid, normalized, error } = validatePhone(phone);
+    if (!valid) {
+      setPhoneError(error ?? "휴대폰번호를 입력해주세요");
       return;
     }
 
     setIsLoading(true);
     try {
       const response = await post(API_ENDPOINTS.AUTH.PHONE_SEND, {
-        phone: cleanPhone,
+        phone: normalized,
       });
 
       if (response.error) {
@@ -300,18 +292,16 @@ const Signup: React.FC = () => {
       return;
     }
 
-    if (!phone) {
-      setVerificationCodeError("휴대폰 번호를 먼저 입력해주세요.");
+    const { valid, normalized, error } = validatePhone(phone);
+    if (!valid) {
+      setVerificationCodeError(error ?? "휴대폰 번호를 먼저 입력해주세요.");
       return;
     }
 
     setIsLoading(true);
     try {
-      // Strip non-numeric characters from phone number
-      const cleanPhone = phone.replace(/[^0-9]/g, "");
-
       const response = await post(API_ENDPOINTS.AUTH.PHONE_VERIFY, {
-        phone: cleanPhone,
+        phone: normalized,
         code: verificationCode,
       });
 
@@ -376,76 +366,21 @@ const Signup: React.FC = () => {
     [emailLocal, emailDomain]
   );
 
-  const validatePassword = useCallback(
-    (pwd: string, showError: boolean = false) => {
-      if (!pwd) {
-        setPasswordError("");
-        return;
-      }
-      // 입력 중에는 오류를 표시하지 않음 (6자 이상 입력 후에만 검증)
-      if (!showError && pwd.length < 6) {
-        setPasswordError("");
-        return;
-      }
-      const hasUppercase = /[A-Z]/.test(pwd);
-      const hasLowercase = /[a-z]/.test(pwd);
-      const hasNumber = /[0-9]/.test(pwd);
-      const hasSpecial = /[!@#$%^&*(),.?":{}|<>]/.test(pwd);
-      const typeCount = [
-        hasUppercase,
-        hasLowercase,
-        hasNumber,
-        hasSpecial,
-      ].filter(Boolean).length;
+  // Real-time password rules (for live feedback while typing)
+  const passwordRules = useMemo(() => getPasswordRules(password), [password]);
+  const isPasswordValid = passwordRules.valid;
 
-      if (pwd.length < 6 || pwd.length > 12) {
-        setPasswordError("영문자, 숫자, 특수문자 중 2가지 이상 조합, 6~12자");
-      } else if (typeCount < 2) {
-        setPasswordError("영문자, 숫자, 특수문자 중 2가지 이상 조합, 6~12자");
-      } else {
-        setPasswordError("");
-      }
-    },
-    []
-  );
-
-  const validatePasswordConfirm = useCallback(
-    (pwd: string, confirm: string, showError: boolean = false) => {
-      if (!confirm) {
-        setPasswordConfirmError("");
-        return;
-      }
-      // 입력 중에는 오류를 표시하지 않음 (비밀번호가 입력된 후에만 검증)
-      if (!showError && !pwd) {
-        setPasswordConfirmError("");
-        return;
-      }
-      if (pwd !== confirm) {
-        setPasswordConfirmError("비밀번호가 일치하지 않습니다.");
-      } else {
-        setPasswordConfirmError("");
-      }
-    },
-    []
-  );
-
-  // 비밀번호 유효성 검사 (6-12자, 영문자/숫자/특수문자 중 2가지 이상)
-  const isPasswordValid = useMemo(() => {
-    if (!password || password.length < 6 || password.length > 12) {
-      return false;
+  const updatePasswordConfirmError = useCallback((pwd: string, confirm: string) => {
+    if (!confirm) {
+      setPasswordConfirmError("");
+      return;
     }
-    const hasUppercase = /[A-Z]/.test(password);
-    const hasLowercase = /[a-z]/.test(password);
-    const hasNumber = /[0-9]/.test(password);
-    const hasSpecial = /[!@#$%^&*(),.?":{}|<>]/.test(password);
-    const typeCount = [
-      hasUppercase,
-      hasLowercase,
-      hasNumber,
-      hasSpecial,
-    ].filter(Boolean).length;
-    return typeCount >= 2;
-  }, [password]);
+    if (pwd !== confirm) {
+      setPasswordConfirmError("비밀번호가 일치하지 않습니다.");
+    } else {
+      setPasswordConfirmError("");
+    }
+  }, []);
 
   const isPasswordMatch =
     password === passwordConfirm && passwordConfirm !== "";
@@ -460,6 +395,43 @@ const Signup: React.FC = () => {
     isPhoneVerified &&
     isPasswordValid &&
     isPasswordMatch;
+
+  // Handle Enter key for Step 1
+  const handleStep1KeyDown = useCallback((e: React.KeyboardEvent) => {
+    if (e.key === "Enter" && isRequiredTermsAgreed) {
+      e.preventDefault();
+      handleStep1Submit();
+    }
+  }, [isRequiredTermsAgreed]);
+
+  // Handle Enter key for Step 2 form
+  const handleStep2KeyDown = useCallback((e: React.KeyboardEvent) => {
+    if (e.key !== "Enter") return;
+    
+    // Get the target element
+    const target = e.target as HTMLElement;
+    const isTextArea = target.tagName === "TEXTAREA";
+    
+    // Don't handle Enter in textarea
+    if (isTextArea) return;
+    
+    // If phone verification is active and not verified, pressing Enter in verification code should verify
+    if (isTimerActive && !isPhoneVerified && verificationCode.trim()) {
+      // Check if we're in the verification code input
+      const isInVerificationInput = target.closest('.signup-verification-code-group');
+      if (isInVerificationInput) {
+        e.preventDefault();
+        handleVerifyCode();
+        return;
+      }
+    }
+    
+    // If form is valid, submit
+    if (isStep2Valid && !isLoading) {
+      e.preventDefault();
+      handleStep2Submit();
+    }
+  }, [isTimerActive, isPhoneVerified, verificationCode, isStep2Valid, isLoading, handleVerifyCode]);
 
   const validateAllFields = useCallback(() => {
     let hasError = false;
@@ -476,20 +448,23 @@ const Signup: React.FC = () => {
       hasError = true;
     }
 
-    // 휴대폰 번호 검증
-    if (!phone) {
-      setPhoneError("휴대폰번호를 입력해주세요");
+    // 휴대폰 번호 검증 (010 + 8자리)
+    const phoneResult = validatePhone(phone);
+    if (!phoneResult.valid) {
+      setPhoneError(phoneResult.error ?? "휴대폰번호를 입력해주세요");
       hasError = true;
     }
 
     // 비밀번호 검증
     if (password) {
-      validatePassword(password, true);
+      const pwdResult = validatePasswordUtil(password);
+      if (!pwdResult.valid) setPasswordError(pwdResult.error ?? "");
     }
 
     // 비밀번호 확인 검증
-    if (passwordConfirm) {
-      validatePasswordConfirm(password, passwordConfirm, true);
+    if (passwordConfirm && password !== passwordConfirm) {
+      setPasswordConfirmError("비밀번호가 일치하지 않습니다.");
+      hasError = true;
     }
 
     return !hasError;
@@ -501,8 +476,6 @@ const Signup: React.FC = () => {
     password,
     passwordConfirm,
     validateEmail,
-    validatePassword,
-    validatePasswordConfirm,
   ]);
 
   const handleStep2Submit = async (e?: React.FormEvent) => {
@@ -529,7 +502,11 @@ const Signup: React.FC = () => {
         other: EducationMemberType.OTHER,
       };
 
-      const cleanPhone = phone.replace(/[^0-9]/g, "");
+      const phoneResult = validatePhone(phone);
+      if (!phoneResult.valid) {
+        setPhoneError(phoneResult.error ?? "휴대폰 번호를 확인해주세요.");
+        return;
+      }
 
       const response = await post(API_ENDPOINTS.AUTH.SIGN_UP, {
         loginId: userId,
@@ -537,7 +514,7 @@ const Signup: React.FC = () => {
         passwordConfirm: passwordConfirm,
         name: name,
         email: fullEmail,
-        phoneNumber: cleanPhone,
+        phoneNumber: phoneResult.normalized,
         memberType: memberTypeMap[memberType],
         newsletterSubscribed: newsletter,
         termsAgreed: terms.terms && terms.privacy,
@@ -578,7 +555,7 @@ const Signup: React.FC = () => {
   };
 
   const renderStep1 = () => (
-    <>
+    <div onKeyDown={handleStep1KeyDown}>
       <div className="auth-form-container">
         <div className="signup-terms-container">
           <div
@@ -602,7 +579,7 @@ const Signup: React.FC = () => {
                 label="[필수] 개인정보 처리 방침 이용 동의"
                 onChange={() => handleTermChange("privacy")}
               />
-              <button type="button" className="signup-view-link">
+              <button type="button" className="signup-view-link" onClick={() => handleOpenTermsModal('privacy')}>
                 보기
               </button>
             </div>
@@ -613,7 +590,7 @@ const Signup: React.FC = () => {
                 label="[필수] OO OOOOO 이용 동의"
                 onChange={() => handleTermChange("terms")}
               />
-              <button type="button" className="signup-view-link">
+              <button type="button" className="signup-view-link" onClick={() => handleOpenTermsModal('terms')}>
                 보기
               </button>
             </div>
@@ -624,7 +601,7 @@ const Signup: React.FC = () => {
                 label="[선택] OO OOOOO 이용 동의"
                 onChange={() => handleTermChange("marketing")}
               />
-              <button type="button" className="signup-view-link">
+              <button type="button" className="signup-view-link" onClick={() => handleOpenTermsModal('marketing')}>
                 보기
               </button>
             </div>
@@ -643,11 +620,11 @@ const Signup: React.FC = () => {
           다음
         </Button>
       </div>
-    </>
+    </div>
   );
 
   const renderStep2 = () => (
-    <>
+    <div onKeyDown={handleStep2KeyDown}>
       <div className="auth-form-container">
         <form className="auth-form" onSubmit={handleStep2Submit}>
           <div className="auth-input-group">
@@ -843,13 +820,13 @@ const Signup: React.FC = () => {
               <TextField
                 variant="line"
                 type="tel"
-                placeholder="휴대폰 번호를 입력해주세요"
+                placeholder="01000000000"
                 value={phone}
                 onChange={(val) => {
-                  setPhone(val);
-                  if (val) {
-                    setPhoneError("");
-                  }
+                  const digits = formatPhoneInput(val);
+                  setPhone(digits);
+                  const { valid, error } = validatePhone(digits);
+                  setPhoneError(digits && !valid ? (error ?? "") : "");
                 }}
                 readOnly={isPhoneVerified}
                 className="signup-phone-input"
@@ -943,16 +920,13 @@ const Signup: React.FC = () => {
               value={password}
               onChange={(val) => {
                 setPassword(val);
-                // 입력 중에는 오류를 표시하지 않음 (6자 이상 입력 후에만 검증)
-                if (val.length >= 6) {
-                  validatePassword(val, true);
-                } else {
+                if (!val) {
                   setPasswordError("");
+                } else {
+                  const result = validatePasswordUtil(val);
+                  setPasswordError(result.valid ? "" : (result.error ?? ""));
                 }
-                // 비밀번호가 변경되면 비밀번호 확인도 다시 검증
-                if (passwordConfirm) {
-                  validatePasswordConfirm(val, passwordConfirm, true);
-                }
+                updatePasswordConfirmError(val, passwordConfirm);
               }}
               showPasswordToggle
               error={!!passwordError}
@@ -977,6 +951,7 @@ const Signup: React.FC = () => {
               value={passwordConfirm}
               onChange={(val) => {
                 setPasswordConfirm(val);
+                updatePasswordConfirmError(password, val);
               }}
               showPasswordToggle
               error={!!passwordConfirmError}
@@ -1002,12 +977,13 @@ const Signup: React.FC = () => {
           type={isStep2Valid ? "primary" : "secondary"}
           size="large"
           disabled={!isStep2Valid || isLoading}
-          onClick={handleStep2Submit}
+          htmlType="submit"
+          onClick={() => isStep2Valid && handleStep2Submit()}
         >
           {isLoading ? "가입 중..." : "다음"}
         </Button>
       </div>
-    </>
+    </div>
   );
 
   const renderStep3 = () => (
@@ -1054,6 +1030,13 @@ const Signup: React.FC = () => {
         {step === 3 && renderStep3()}
       </section>
       <Footer />
+      
+      {/* Terms Modal */}
+      <TermsModal
+        isOpen={isTermsModalOpen}
+        onClose={handleCloseTermsModal}
+        termsType={activeTermsType}
+      />
     </div>
   );
 };

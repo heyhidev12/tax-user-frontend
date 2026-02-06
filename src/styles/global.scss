@@ -145,8 +145,9 @@ textarea {
   }
 }
 
-// Print Styles - 인쇄 시 헤더, 메뉴, 푸터 숨김
+// Print Styles - 인쇄 시 헤더, 메뉴, 푸터, 플로팅 버튼 숨김
 @media print {
+  // Basic body print settings
   body {
     background-color: white !important;
     color: black !important;
@@ -154,21 +155,69 @@ textarea {
     print-color-adjust: exact !important;
   }
 
-  // Header 숨김 (header HTML element)
-  header {
+  // Reset html overflow for print
+  html {
+    overflow: visible !important;
+  }
+
+  // Header 숨김 (header HTML element and common header classes)
+  header,
+  [class*="header"],
+  [class*="Header"] {
     display: none !important;
   }
 
   // Menu 숨김
   .menu-wrapper,
   .menu-overlay,
-  .menu-container {
+  .menu-container,
+  [class*="menu"],
+  [class*="Menu"] {
     display: none !important;
   }
 
   // Footer 숨김
   footer,
-  .footer {
+  .footer,
+  [class*="footer"],
+  [class*="Footer"] {
     display: none !important;
+  }
+
+  // Floating buttons and fixed elements 숨김
+  [class*="floatingButton"],
+  [class*="FloatingButton"],
+  [class*="floating"],
+  [class*="Floating"] {
+    display: none !important;
+  }
+
+  // Fixed position elements should be hidden or reset
+  [style*="position: fixed"],
+  [style*="position:fixed"] {
+    position: static !important;
+  }
+
+  // Ensure container uses full width
+  .container {
+    max-width: 100% !important;
+    padding: 0 10mm !important;
+  }
+
+  // Hide scroll-related elements
+  ::-webkit-scrollbar {
+    display: none !important;
+  }
+
+  // Page settings
+  @page {
+    size: A4;
+    margin: 15mm 10mm;
+  }
+
+  // Ensure colors print correctly
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
   }
 }

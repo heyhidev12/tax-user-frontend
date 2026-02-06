@@ -26,6 +26,12 @@ const Viewer = dynamic(
   { ssr: false },
 );
 
+interface MemberCategory {
+  categoryId: number;
+  categoryName: string;
+  displayOrder: number;
+}
+
 export interface MemberDetail {
   id: number;
   name: string;
@@ -37,7 +43,7 @@ export interface MemberDetail {
     id: number;
     url: string;
   };
-  workAreas: string[] | Array<{ id: number; value: string }>;
+  categories?: MemberCategory[];
   affiliation: string;
   phoneNumber: string;
   email: string;
@@ -72,7 +78,7 @@ interface Expert {
     id: number;
     url: string;
   };
-  workAreas?: string[] | Array<{ id: number; value: string }>;
+  categories?: MemberCategory[];
   tags?: string[];
 }
 
@@ -203,13 +209,13 @@ const ExpertDetailPage: React.FC<ExpertDetailPageProps> = ({
 
   useEffect(() => {
     if (
-      data?.workAreas &&
-      data.workAreas.length > 0 &&
+      data?.categories &&
+      data.categories.length > 0 &&
       typeof id === "string"
     ) {
       fetchRelatedExperts();
     }
-  }, [data?.workAreas, id]);
+  }, [data?.categories, id]);
 
   const getUserAuthState = () => {
     if (typeof window === 'undefined') {
@@ -283,16 +289,15 @@ const ExpertDetailPage: React.FC<ExpertDetailPageProps> = ({
 
   const fetchRelatedExperts = async () => {
     try {
-      if (!data?.workAreas || data.workAreas.length === 0) return;
+      if (!data?.categories || data.categories.length === 0) return;
 
-      // Get first work area ID
-      const firstWorkArea = data.workAreas[0];
-      const workAreaId =
-        typeof firstWorkArea === "object" ? firstWorkArea.id : null;
+      // Get first category ID (categories are already sorted by displayOrder from backend)
+      const firstCategory = data.categories[0];
+      const categoryId = firstCategory.categoryId;
 
-      if (!workAreaId) return;
+      if (!categoryId) return;
 
-      const url = `${API_ENDPOINTS.MEMBERS}?page=1&limit=20&workArea=${workAreaId}`;
+      const url = `${API_ENDPOINTS.MEMBERS}?page=1&limit=20&categoryId=${categoryId}`;
       const membersResponse = await getClient<
         Expert[] | { items: Expert[]; data: Expert[] }
       >(url);
@@ -310,14 +315,13 @@ const ExpertDetailPage: React.FC<ExpertDetailPageProps> = ({
         }
 
         // Filter out current expert and transform data
+        // Use categories from backend (already sorted by displayOrder)
         expertsList = expertsList
           .filter((expert) => expert.id !== data?.id)
           .map((expert) => ({
             ...expert,
-            tags: expert.workAreas
-              ? expert.workAreas.map((area) =>
-                typeof area === "string" ? area : area.value,
-              )
+            tags: expert.categories
+              ? expert.categories.map((cat) => cat.categoryName)
               : expert.tags || [],
             tel: expert.tel || expert.phoneNumber,
             position: expert.position || expert.affiliation || "세무사",
@@ -491,28 +495,19 @@ const ExpertDetailPage: React.FC<ExpertDetailPageProps> = ({
                     <h1 className={styles.heroName}>{data.name}</h1>
                     <span className={styles.heroPosition}>세무사</span>
                   </div>
-                  {!isMobile && data.workAreas && data.workAreas.length > 0 && (
+                  {!isMobile && data.categories && data.categories.length > 0 && (
                     <div
                       className={`${styles.sidebarWorkAreas} ${styles.mainWorkAreas}`}
                     >
                       <div className={styles.sidebarWorkAreasTags}>
-                        {data.workAreas.map((area, index) => {
-                          const areaName =
-                            typeof area === "string"
-                              ? area
-                              : area?.value || String(area?.id || "");
-                          const indicator =
-                            index === 0 ? "■■■" : index === 1 ? "■■□" : "■□□";
-                          return (
-                            <span
-                              key={index}
-                              className={styles.sidebarWorkAreaTag}
-                            >
-                              {areaName}
-                              {indicator}
-                            </span>
-                          );
-                        })}
+                        {data.categories.map((cat) => (
+                          <span
+                            key={cat.categoryId}
+                            className={styles.sidebarWorkAreaTag}
+                          >
+                            {cat.categoryName}
+                          </span>
+                        ))}
                       </div>
                     </div>
                   )}
@@ -549,27 +544,18 @@ const ExpertDetailPage: React.FC<ExpertDetailPageProps> = ({
                       </div>
                     )}
                   </div>
-                  {isMobile && data.workAreas && data.workAreas.length > 0 && (
+                  {isMobile && data.categories && data.categories.length > 0 && (
                     <div className={styles.sidebarWorkAreas}>
                       <h2>주요 업무 분야</h2>
                       <div className={styles.sidebarWorkAreasTags}>
-                        {data.workAreas.map((area, index) => {
-                          const areaName =
-                            typeof area === "string"
-                              ? area
-                              : area?.value || String(area?.id || "");
-                          const indicator =
-                            index === 0 ? "■■■" : index === 1 ? "■■□" : "■□□";
-                          return (
-                            <span
-                              key={index}
-                              className={styles.sidebarWorkAreaTag}
-                            >
-                              {areaName}
-                              {indicator}
-                            </span>
-                          );
-                        })}
+                        {data.categories.map((cat) => (
+                          <span
+                            key={cat.categoryId}
+                            className={styles.sidebarWorkAreaTag}
+                          >
+                            {cat.categoryName}
+                          </span>
+                        ))}
                       </div>
                     </div>
                   )}
@@ -663,30 +649,17 @@ const ExpertDetailPage: React.FC<ExpertDetailPageProps> = ({
                             </div>
                           )}
                         </div>
-                        {data.workAreas && data.workAreas.length > 0 && (
+                        {data.categories && data.categories.length > 0 && (
                           <div className={styles.sidebarWorkAreas}>
                             <div className={styles.sidebarWorkAreasTags}>
-                              {data.workAreas.map((area, index) => {
-                                const areaName =
-                                  typeof area === "string"
-                                    ? area
-                                    : area?.value || String(area?.id || "");
-                                const indicator =
-                                  index === 0
-                                    ? "■■■"
-                                    : index === 1
-                                      ? "■■□"
-                                      : "■□□";
-                                return (
-                                  <span
-                                    key={index}
-                                    className={styles.sidebarWorkAreaTag}
-                                  >
-                                    {areaName}
-                                    {indicator}
-                                  </span>
-                                );
-                              })}
+                              {data.categories.map((cat) => (
+                                <span
+                                  key={cat.categoryId}
+                                  className={styles.sidebarWorkAreaTag}
+                                >
+                                  {cat.categoryName}
+                                </span>
+                              ))}
                             </div>
                           </div>
                         )}
@@ -985,26 +958,14 @@ const ExpertDetailPage: React.FC<ExpertDetailPageProps> = ({
 
                                 {expert.tags && expert.tags.length > 0 && (
                                   <div className={styles.expertTags}>
-                                    {" "}
-                                    {expert.tags.map((tag, tagIndex) => {
-                                      let indicator = "";
-                                      if (tagIndex === 0) {
-                                        indicator = " ■■■";
-                                      } else if (tagIndex === 1) {
-                                        indicator = " ■■□";
-                                      } else if (tagIndex === 2) {
-                                        indicator = " ■□□";
-                                      }
-                                      return (
-                                        <span
-                                          key={tagIndex}
-                                          className={styles.expertTag}
-                                        >
-                                          {" "}
-                                          {tag} {indicator}{" "}
-                                        </span>
-                                      );
-                                    })}{" "}
+                                    {expert.tags.map((tag, tagIndex) => (
+                                      <span
+                                        key={tagIndex}
+                                        className={styles.expertTag}
+                                      >
+                                        {tag}
+                                      </span>
+                                    ))}
                                   </div>
                                 )}
                               </div>

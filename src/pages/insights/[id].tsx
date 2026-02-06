@@ -170,7 +170,7 @@ const InsightDetailPage: React.FC<InsightDetailPageProps> = ({
     }
 
     if (typeof window !== "undefined") {
-      post(`${API_ENDPOINTS.INSIGHTS}/${id}/increment-view`).catch(() => {});
+      post(`${API_ENDPOINTS.INSIGHTS}/${id}/increment-view`).catch(() => { });
     }
 
     setPrevInsight(null);
@@ -196,7 +196,7 @@ const InsightDetailPage: React.FC<InsightDetailPageProps> = ({
               if (memberType === 'INSURANCE') {
                 isApproved = user.isApproved || null;
               }
-            } catch (e) {}
+            } catch (e) { }
           }
         }
 
@@ -257,7 +257,7 @@ const InsightDetailPage: React.FC<InsightDetailPageProps> = ({
             }
           }
         }
-      } catch (err) {}
+      } catch (err) { }
     })();
   }, [id, insight]);
 
@@ -295,28 +295,28 @@ const InsightDetailPage: React.FC<InsightDetailPageProps> = ({
   const handleBackToList = () => {
     const urlParams = new URLSearchParams(window.location.search);
     const query: Record<string, string> = {};
-    
+
     const category = urlParams.get('category');
     const sub = urlParams.get('sub');
     const search = urlParams.get('search');
-  
+
     if (category) {
       query.category = category;
     } else if (insight?.category?.id) {
       query.category = String(insight.category.id);
     }
-    
+
     // sub=0 bo'lsa ham qo'shamiz
     if (sub) {
       query.sub = sub;
     } else if (insight?.subcategory?.id !== undefined) {
       query.sub = String(insight.subcategory.id);
     }
-    
+
     if (search) {
       query.search = search;
     }
-  
+
     router.push({
       pathname: "/insights",
       query: query
@@ -328,7 +328,7 @@ const InsightDetailPage: React.FC<InsightDetailPageProps> = ({
       const currentUrl = new URL(window.location.href);
       const queryParams = new URLSearchParams(currentUrl.search);
       const query: Record<string, string> = {};
-      
+
       queryParams.forEach((value, key) => {
         query[key] = value;
       });
@@ -345,7 +345,7 @@ const InsightDetailPage: React.FC<InsightDetailPageProps> = ({
       const currentUrl = new URL(window.location.href);
       const queryParams = new URLSearchParams(currentUrl.search);
       const query: Record<string, string> = {};
-      
+
       queryParams.forEach((value, key) => {
         query[key] = value;
       });
@@ -378,7 +378,7 @@ const InsightDetailPage: React.FC<InsightDetailPageProps> = ({
           url,
         });
         return;
-      } catch (err) {}
+      } catch (err) { }
     }
 
     try {
@@ -541,7 +541,7 @@ const InsightDetailPage: React.FC<InsightDetailPageProps> = ({
         setComments(commentsWithIsMine);
         setCommentTotal(response.data.total || 0);
       }
-    } catch (err) {}
+    } catch (err) { }
   };
 
   const handleSubmitComment = async () => {
@@ -769,7 +769,18 @@ const InsightDetailPage: React.FC<InsightDetailPageProps> = ({
                             size={24}
                             className={styles.attachmentIcon}
                           />
-                          <span className={styles.attachmentName}>
+                          <span className={styles.attachmentName} onClick={() => {
+                            if (file.id) {
+                              const fileName =
+                                file.name ||
+                                file.originalName ||
+                                file.url?.split("/").pop() ||
+                                "첨부 파일";
+                              handleDownload(file.id, fileName);
+                            } else {
+                              alert("파일 정보를 찾을 수 없습니다.");
+                            }
+                          }}>
                             {file.name ||
                               file.originalName ||
                               file.url?.split("/").pop() ||

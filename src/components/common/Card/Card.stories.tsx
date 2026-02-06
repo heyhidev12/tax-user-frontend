@@ -259,9 +259,9 @@ export const Profile: Story = {
     tel: '031-425-4259',
     email: 'name@together.tax',
     tags: [
-      { label: '제조', level: '■■■' },
-      { label: '증여', level: '■■□' },
-      { label: '미용업기장', level: '■□□' },
+      { label: '제조' },
+      { label: '증여' },
+      { label: '미용업기장' },
     ],
     imageUrl: profileImage,
     variant: 'profile',
@@ -282,9 +282,9 @@ export const ProfileMobile: Story = {
     tel: '031-425-4259',
     email: 'name@together.tax',
     tags: [
-      { label: '제조', level: '■■■' },
-      { label: '증여', level: '■■□' },
-      { label: '미용업기장', level: '■□□' },
+      { label: '제조' },
+      { label: '증여' },
+      { label: '미용업기장' },
     ],
     imageUrl: profileImage,
     variant: 'profile',
@@ -420,9 +420,9 @@ export const Showcase: Story = {
               tel="031-425-4259"
               email="name@together.tax"
               tags={[
-                { label: '제조', level: '■■■' },
-                { label: '증여', level: '■■□' },
-                { label: '미용업기장', level: '■□□' },
+                { label: '제조' },
+                { label: '증여' },
+                { label: '미용업기장' },
               ]}
               imageUrl={profileImage}
               variant="profile"
@@ -437,8 +437,8 @@ export const Showcase: Story = {
               tel="031-425-4259"
               email="name@together.tax"
               tags={[
-                { label: '제조', level: '■■■' },
-                { label: '증여', level: '■■□' },
+                { label: '제조' },
+                { label: '증여' },
               ]}
               imageUrl={profileImage}
               variant="profile"

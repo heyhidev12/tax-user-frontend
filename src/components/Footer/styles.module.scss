@@ -62,6 +62,11 @@
         }
       }
 
+      // Family Sites Dropdown Container
+      .familySiteDropdown {
+        position: relative;
+      }
+
       .family-btn {
         background: transparent;
         height: 56px;
@@ -80,10 +85,74 @@
           text-align: center;
         }
 
-        &:hover {
+        &:hover:not(:disabled) {
           background: #fff;
           color: #111;
         }
+
+        &--disabled {
+          opacity: 0.5;
+          cursor: not-allowed;
+
+          &:hover {
+            background: transparent;
+            color: #fff;
+          }
+        }
+      }
+
+      .dropdownArrow {
+        display: inline-block;
+        transition: transform 0.2s ease;
+      }
+
+      .dropdownArrowOpen {
+        transform: rotate(90deg);
+      }
+
+      // Family Sites Dropdown List
+      .familySiteList {
+        position: absolute;
+        bottom: 100%;
+        left: 0;
+        right: 0;
+        min-width: 200px;
+        max-height: 240px;
+        overflow-y: auto;
+        margin-bottom: 8px;
+        background: #fff;
+        border-radius: 8px;
+        box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.15);
+        list-style: none;
+        padding: 8px 0;
+        z-index: 100;
+
+        @media (max-width: 767px) {
+          min-width: 180px;
+          max-height: 200px;
+        }
+      }
+
+      .familySiteItem {
+        padding: 12px 16px;
+        font-size: 15px;
+        color: #333;
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+
+        @media (max-width: 767px) {
+          padding: 10px 14px;
+          font-size: 13px;
+        }
+
+        &:hover {
+          background-color: #f5f5f5;
+        }
+      }
+
+      .familySiteItemFocused {
+        background-color: #e8f4ff;
+        outline: none;
       }
     }
   }

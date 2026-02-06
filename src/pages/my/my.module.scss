@@ -385,9 +385,9 @@
   flex-direction: column;
   gap: 48px;
 
-  // @media (max-width: $breakpoint-desktop) {
-  //   padding-left: 0;
-  // }
+  @media (max-width: $breakpoint-desktop) {
+    width: 100%;
+  }
 }
 
 .contentTitle {
@@ -508,6 +508,27 @@
 
   &:hover:not(:disabled) {
     background-color: rgba(229, 67, 67, 0.1);
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+.newsletterSubscribeButton {
+  @include pretendard-15-regular;
+  color: $primary-50;
+  background: transparent;
+  border: none;
+  text-decoration: underline;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: absolute;
+  right: 12px;
+
+  &:hover:not(:disabled) {
+    background-color: rgba(0, 132, 124, 0.1);
   }
 
   &:disabled {
@@ -1752,6 +1773,13 @@
   width: 100%;
 }
 
+.saveProfileButtonWrapper {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  margin-top: 40px;
+}
+
 .passwordVerifyButton {
   width: 240px;
   height: 56px;
@@ -1787,6 +1815,10 @@
   width: 100%;
   padding: 72px 200px 88px 200px;
   border: 1px solid $gray-20;
+  @media (max-width: $breakpoint-desktop) {
+    padding: 80px 60px;
+  }
+
 }
 
 .editFormField {
@@ -2665,6 +2697,23 @@
 
   &:hover:not(:disabled) {
     border-bottom: 1px solid #e54343;
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+.mobileNewsletterSubscribeButton {
+  @include pretendard-13-regular;
+  color: $primary-50;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border-bottom: 1px solid transparent;
+
+  &:hover:not(:disabled) {
+    border-bottom: 1px solid $primary-50;
   }
 
   &:disabled {

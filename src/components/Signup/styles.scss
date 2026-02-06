@@ -116,8 +116,17 @@
   flex-direction: column;
   justify-content: center;
   width: 100%;
-  @media (max-width:767px) {
-      padding: 24px 16px 40px !important;
+  // Fixed width to prevent layout shift between steps
+  min-width: 800px;
+  box-sizing: border-box;
+
+  @media (max-width: 1024px) {
+    min-width: 700px;
+  }
+  
+  @media (max-width: 767px) {
+    min-width: 335px;
+    padding: 24px 16px 40px !important;
   }
 }
 // .auth-content-section{
@@ -178,6 +187,9 @@
   .checkbox__label {
     @include pretendard-15-regular;
     color: #2d2d2d; // #D8D8D8
+    @media (max-width: 767px) {
+      font-size: 13px;
+    }
   }
 
   .button {
@@ -211,6 +223,7 @@
 // Step 1 Button Wrapper
 .signup-step1-button-wrapper {
   width: 100%;
+  max-width: 800px;
   margin-top: 56px; // Figma 디자인: 48px gap
   display: flex;
   justify-content: center;
@@ -229,9 +242,10 @@
       background: $gray-40; // #555 (grayscale-70)
       color: white; // #8E8E8E (grayscale-50)
     }
-     @media (max-width: 767px) {
-    width: 100%;
-  }
+    
+    @media (max-width: 767px) {
+      width: 100%;
+    }
   }
 }
 
@@ -662,6 +676,11 @@
   max-width: 800px;
   margin-top: 56px; // Figma 디자인: 폼 컨테이너와 버튼 그룹 사이 56px 간격
 
+  @media (max-width: 767px) {
+    flex-direction: row;
+    gap: 12px;
+  }
+
   .button {
     // 이전 버튼
     &:first-child {
@@ -670,6 +689,10 @@
       background: transparent;
       border: 1px solid $primary-50;
       color: $primary-50;
+      
+      @media (max-width: 767px) {
+        flex: 1;
+      }
     }
 
     // 다음 버튼
@@ -682,6 +705,11 @@
       &:disabled {
         background-color: $gray-40; // #555555
         color: $gray-0; // #8E8E8E
+      }
+      
+      @media (max-width: 767px) {
+        width: auto;
+        flex: 2;
       }
     }
   }

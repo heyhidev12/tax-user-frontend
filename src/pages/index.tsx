@@ -53,9 +53,10 @@ interface Member {
     id: number;
     url: string;
   };
-  workAreas: Array<{
-    id: number;
-    value: string;
+  categories?: Array<{
+    categoryId: number;
+    categoryName: string;
+    displayOrder: number;
   }>;
   oneLineIntro: string;
   displayOrder: number;
@@ -97,6 +98,7 @@ interface KeyCustomer {
   displayOrder: number;
   isMainExposed: boolean;
   isExposed: boolean;
+  websiteUrl?: string | null;
 }
 
 interface HomePageProps {
@@ -158,7 +160,7 @@ export const getServerSideProps: GetServerSideProps<HomePageProps> = async () =>
       get<{ items: InsightItem[] }>(`${API_ENDPOINTS.INSIGHTS}?page=1&limit=10`).catch(() => ({
         data: { items: [] },
       })),
-      get<{ items: KeyCustomer[] }>(`${API_ENDPOINTS.KEY_CUSTOMERS}?page=1&limit=20`).catch(() => ({
+      get<{ items: KeyCustomer[] }>(`${API_ENDPOINTS.KEY_CUSTOMERS}?page=1&limit=20&isMainExposed=true`).catch(() => ({
         data: { items: [] },
       })),
     ]);
@@ -252,10 +254,10 @@ export const getServerSideProps: GetServerSideProps<HomePageProps> = async () =>
       );
     }
 
-    // Process clients
+    // Process clients - backend filters by isMainExposed=true
     let clients: KeyCustomer[] = [];
     if (clientsResponse.data?.items && Array.isArray(clientsResponse.data.items)) {
-      clients = clientsResponse.data.items.filter((item) => item.isMainExposed === true);
+      clients = clientsResponse.data.items;
     }
 
     return {

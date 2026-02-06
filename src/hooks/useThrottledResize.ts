@@ -5,13 +5,13 @@ const RESIZE_THROTTLE_MS = 150;
 /**
  * Throttled resize handler to prevent excessive state updates and re-renders.
  * Returns isMobile (width <= 768) and windowWidth.
+ * 
+ * Important: Always initializes with default values to prevent hydration mismatch,
+ * then updates to actual values after mount.
  */
 export function useThrottledResize() {
-  const [state, setState] = useState(() => {
-    if (typeof window === "undefined") return { isMobile: false, windowWidth: 1024 };
-    const w = window.innerWidth;
-    return { isMobile: w <= 768, windowWidth: w };
-  });
+  // Always start with consistent default values to prevent hydration mismatch
+  const [state, setState] = useState({ isMobile: false, windowWidth: 1024 });
 
   useEffect(() => {
     let rafId: number | null = null;
@@ -22,7 +22,7 @@ export function useThrottledResize() {
       setState({ isMobile: w <= 768, windowWidth: w });
     };
 
-    check(); // Initial check on mount (client-only)
+    check(); // Initial check on mount (client-only) - updates to real values
 
     const handler = () => {
       const now = Date.now();

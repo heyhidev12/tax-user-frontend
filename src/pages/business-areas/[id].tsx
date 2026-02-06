@@ -75,7 +75,7 @@ interface Expert {
     id: number;
     url: string;
   };
-  workAreas?: string[] | Array<{ id: number; value: string }>;
+  categories?: Array<{ categoryId: number; categoryName: string; displayOrder: number }>;
   tags?: string[]; // 전문 분야 태그
 }
 
@@ -233,7 +233,7 @@ const BusinessAreaDetailPage: React.FC<BusinessAreaDetailPageProps> = ({
   // Client-side: fetch related data (experts, news)
   useEffect(() => {
     if (id && typeof id === "string" && data?.id) {
-      console.log("Fetching related data for workArea:", data);
+      console.log("Fetching related data for category:", data);
       fetchRelatedData();
       setImageError(false); // 새 데이터 로드 시 이미지 에러 상태 초기화
     }
@@ -468,10 +468,10 @@ const BusinessAreaDetailPage: React.FC<BusinessAreaDetailPageProps> = ({
 
   const fetchRelatedData = async () => {
     try {
-      // 관련 업무 세무사 가져오기 (workArea 파라미터 사용)
+      // 관련 업무 세무사 가져오기 (categoryId 파라미터 사용)
       if (data?.minorCategory.id && typeof id === "string") {
         try {
-          const url = `${API_ENDPOINTS.MEMBERS}?page=1&limit=20&workArea=${data?.minorCategory.id}`;
+          const url = `${API_ENDPOINTS.MEMBERS}?page=1&limit=20&categoryId=${data?.minorCategory.id}`;
           console.log("Calling members API:", url);
           const membersResponse = await getClient<
             Expert[] | { items: Expert[]; data: Expert[] }
@@ -490,13 +490,11 @@ const BusinessAreaDetailPage: React.FC<BusinessAreaDetailPageProps> = ({
               };
               expertsList = response.items || response.data || [];
             }
-            // workAreas를 tags로 변환
+            // categories를 tags로 변환
             expertsList = expertsList.map((expert) => ({
               ...expert,
-              tags: expert.workAreas
-                ? expert.workAreas.map((area) =>
-                  typeof area === "string" ? area : area.value,
-                )
+              tags: expert.categories
+                ? expert.categories.map((cat) => cat.categoryName)
                 : expert.tags || [],
               tel: expert.tel || expert.phoneNumber,
               position: expert.position || expert.affiliation || "세무사",
@@ -1270,26 +1268,14 @@ const BusinessAreaDetailPage: React.FC<BusinessAreaDetailPageProps> = ({
 
                                 {expert.tags && expert.tags.length > 0 && (
                                   <div className={styles.expertTags}>
-                                    {" "}
-                                    {expert.tags.map((tag, tagIndex) => {
-                                      let indicator = "";
-                                      if (tagIndex === 0) {
-                                        indicator = " ■■■";
-                                      } else if (tagIndex === 1) {
-                                        indicator = " ■■□";
-                                      } else if (tagIndex === 2) {
-                                        indicator = " ■□□";
-                                      }
-                                      return (
-                                        <span
-                                          key={tagIndex}
-                                          className={styles.expertTag}
-                                        >
-                                          {" "}
-                                          {tag} {indicator}{" "}
-                                        </span>
-                                      );
-                                    })}{" "}
+                                    {expert.tags.map((tag, tagIndex) => (
+                                      <span
+                                        key={tagIndex}
+                                        className={styles.expertTag}
+                                      >
+                                        {tag}
+                                      </span>
+                                    ))}
                                   </div>
                                 )}
                               </div>

@@ -483,9 +483,11 @@
 
 .attachmentIcon {
   flex-shrink: 0;
+  
 }
 
 .attachmentName {
+  cursor: pointer;
   font-family: $font-pretendard;
   font-weight: $font-weight-medium;
   font-size: 15px;

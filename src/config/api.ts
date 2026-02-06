@@ -77,6 +77,12 @@ export const API_ENDPOINTS = {
     PAGE: '/newsletter-page',
   },
 
+  // Footer
+  FOOTER: {
+    POLICIES: '/footer/policies',
+    FAMILY_SITES: '/footer/family-sites',
+  },
+
   // Data Rooms (자료실)
   // DATA_ROOMS: '/data-rooms',
 } as const;

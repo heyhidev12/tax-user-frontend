@@ -19,6 +19,7 @@
   flex-direction: column;
   align-items: center;
   padding: 100px 24px 280px;
+  width: 100%;
 
   @media (max-width: $breakpoint-tablet) {
     padding: 100px 20px 88px;
@@ -337,6 +338,24 @@ border: 1px solid  #E4E4E4;
   // Icon 컴포넌트가 포함되어 있으므로 ::before 제거
   svg {
     flex-shrink: 0;
+  }
+}
+
+// Live password rule feedback (shown while typing)
+.auth-password-rules {
+  @include pretendard-13-regular;
+  list-style: none;
+  padding: 0;
+  margin: 6px 0 0;
+  color: #888;
+  letter-spacing: -0.065px;
+
+  li {
+    margin-bottom: 2px;
+
+    &.ok {
+      color: #1C51B6;
+    }
   }
 }
 

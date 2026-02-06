@@ -19,7 +19,7 @@ export interface CardLabel {
 
 export interface ProfileTag {
   label: string;
-  level: string; // "■■■" 같은 형태
+  level?: string; // Optional: "■■■" 같은 형태 (deprecated - no longer used)
 }
 
 export interface CardProps {
@@ -137,7 +137,7 @@ const Card: React.FC<CardProps> = ({
             <div className="card__profile-tags">
               {tags.map((tag, index) => (
                 <span key={index} className="card__profile-tag">
-                  {tag.label} {tag.level}
+                  {tag.label}{tag.level ? ` ${tag.level}` : ''}
                 </span>
               ))}
             </div>

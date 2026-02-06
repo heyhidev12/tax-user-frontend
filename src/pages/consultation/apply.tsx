@@ -7,8 +7,10 @@ import PageHeader from '@/components/common/PageHeader';
 import Checkbox from '@/components/common/Checkbox';
 import Button from '@/components/common/Button';
 import SEO from '@/components/common/SEO';
+import TermsModal, { TermsType } from '@/components/common/TermsModal';
 import { get, post } from '@/lib/api';
 import { API_ENDPOINTS } from '@/config/api';
+import { formatPhoneInput, validatePhone } from '@/lib/phoneValidation';
 import styles from './apply.module.scss';
 
 interface ConsultationFormData {
@@ -82,6 +84,19 @@ const ConsultationApplyPage: React.FC = () => {
   const [isSubmitAttempted, setIsSubmitAttempted] = useState(false);
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [focusedField, setFocusedField] = useState<string | null>(null);
+  
+  // Terms modal state
+  const [isTermsModalOpen, setIsTermsModalOpen] = useState(false);
+  const [activeTermsType, setActiveTermsType] = useState<TermsType>('privacy');
+  
+  const handleOpenTermsModal = (type: TermsType) => {
+    setActiveTermsType(type);
+    setIsTermsModalOpen(true);
+  };
+  
+  const handleCloseTermsModal = () => {
+    setIsTermsModalOpen(false);
+  };
 
   // API에서 가져온 데이터
   const [consultationFields, setConsultationFields] = useState<SelectOption[]>([]);
@@ -114,22 +129,22 @@ const ConsultationApplyPage: React.FC = () => {
     }
 
     // 상담 분야 (카테고리) 가져오기
-    // expertId가 있거나 expert-specific workAreas가 이미 로드되었으면 스킵
+    // expertId가 있거나 expert-specific categories가 이미 로드되었으면 스킵
     const fetchCategories = async () => {
       // router가 준비되지 않았으면 나중에 다시 시도
       if (!router.isReady) {
         return;
       }
 
-      // expertId가 있으면 스킵 (expert-specific workAreas가 로드될 것임)
+      // expertId가 있으면 스킵 (expert-specific categories가 로드될 것임)
       if (router.query.expertId) {
         console.log('[Consultation Apply] Skipping initial categories fetch, expertId present');
         return;
       }
 
-      // expert-specific workAreas가 이미 로드되었으면 스킵
+      // expert-specific categories가 이미 로드되었으면 스킵
       if (expertWorkAreasLoadedRef.current) {
-        console.log('[Consultation Apply] Skipping initial categories fetch, expert workAreas already loaded');
+        console.log('[Consultation Apply] Skipping initial categories fetch, expert categories already loaded');
         return;
       }
 
@@ -178,77 +193,60 @@ const ConsultationApplyPage: React.FC = () => {
         const expertResponse = await get<{
           id: number;
           name: string;
-          workAreas: string[] | Array<{ id: number; value: string }>;
+          categories?: Array<{ categoryId: number; categoryName: string; displayOrder: number }>;
         }>(`${API_ENDPOINTS.MEMBERS}/${expertId}`);
 
         if (expertResponse.data) {
           const expert = expertResponse.data;
 
-          // 첫 번째 workArea ID 추출
-          let firstWorkAreaId: string | null = null;
-          if (expert.workAreas && expert.workAreas.length > 0) {
-            const firstWorkArea = expert.workAreas[0];
-
-            if (typeof firstWorkArea === 'object' && firstWorkArea.id) {
-              firstWorkAreaId = firstWorkArea.id.toString();
-              console.log('[Consultation Apply] Extracted workAreaId from object:', firstWorkAreaId);
-            } else if (typeof firstWorkArea === 'string') {
-              // workArea가 문자열인 경우, 전체 카테고리에서 ID 찾기
-              const categoriesResponse = await get<CategoryItem[]>(API_ENDPOINTS.BUSINESS_AREAS_CATEGORIES);
-              if (categoriesResponse.data) {
-                const matchingCategory = categoriesResponse.data.find(
-                  cat => cat.name === firstWorkArea
-                );
-                if (matchingCategory) {
-                  firstWorkAreaId = matchingCategory.id.toString();
-                  console.log('[Consultation Apply] Found workAreaId from categories:', firstWorkAreaId);
-                } else {
-                  console.log('[Consultation Apply] Could not find matching category for:', firstWorkArea);
-                }
-              }
-            }
+          // 첫 번째 category ID 추출
+          let firstCategoryId: string | null = null;
+          if (expert.categories && expert.categories.length > 0) {
+            const firstCategory = expert.categories[0];
+            firstCategoryId = firstCategory.categoryId.toString();
+            console.log('[Consultation Apply] Extracted categoryId from categories:', firstCategoryId);
           } else {
-            console.log('[Consultation Apply] Expert has no workAreas');
+            console.log('[Consultation Apply] Expert has no categories');
           }
 
           // 1. 먼저 전문가의 업무 분야 목록 가져오기
-          console.log('[Consultation Apply] Step 1: Fetching workAreas for expert');
+          console.log('[Consultation Apply] Step 1: Fetching categories for expert');
           const categoriesResponse = await get<CategoryItem[]>(
             `${API_ENDPOINTS.BUSINESS_AREAS_CATEGORIES}?memberId=${expertId}`
           );
 
           if (categoriesResponse.data && categoriesResponse.data.length > 0) {
-            const workAreaOptions: SelectOption[] = categoriesResponse.data
+            const categoryOptions: SelectOption[] = categoriesResponse.data
               .filter(item => item.isExposed)
               .map(item => ({
                 value: item.id.toString(),
                 label: item.name
               }));
-            console.log('[Consultation Apply] Step 1: Fetched workAreas:', workAreaOptions.length, workAreaOptions);
+            console.log('[Consultation Apply] Step 1: Fetched categories:', categoryOptions.length, categoryOptions);
             // 전문가의 모든 업무 분야를 consultationFields에 설정 (드롭다운에 모두 표시됨)
-            setConsultationFields(workAreaOptions);
+            setConsultationFields(categoryOptions);
             expertWorkAreasLoadedRef.current = true; // 플래그 설정하여 초기 fetch가 덮어쓰지 않도록 함
 
-            // 첫 번째 workArea ID가 가져온 목록에 있는지 확인
-            let workAreaIdToSet = firstWorkAreaId;
-            if (firstWorkAreaId) {
-              const workAreaExists = workAreaOptions.some(opt => opt.value === firstWorkAreaId);
-              if (!workAreaExists && workAreaOptions.length > 0) {
-                // 첫 번째 workArea가 목록에 없으면, 목록의 첫 번째 항목 사용
-                workAreaIdToSet = workAreaOptions[0].value;
-                console.log('[Consultation Apply] First workArea not in list, using first available:', workAreaIdToSet);
+            // 첫 번째 category ID가 가져온 목록에 있는지 확인
+            let categoryIdToSet = firstCategoryId;
+            if (firstCategoryId) {
+              const categoryExists = categoryOptions.some(opt => opt.value === firstCategoryId);
+              if (!categoryExists && categoryOptions.length > 0) {
+                // 첫 번째 category가 목록에 없으면, 목록의 첫 번째 항목 사용
+                categoryIdToSet = categoryOptions[0].value;
+                console.log('[Consultation Apply] First category not in list, using first available:', categoryIdToSet);
               }
-            } else if (workAreaOptions.length > 0) {
-              // workAreaId를 찾지 못했지만 목록이 있으면 첫 번째 사용
-              workAreaIdToSet = workAreaOptions[0].value;
-              console.log('[Consultation Apply] No workAreaId found, using first available:', workAreaIdToSet);
+            } else if (categoryOptions.length > 0) {
+              // categoryId를 찾지 못했지만 목록이 있으면 첫 번째 사용
+              categoryIdToSet = categoryOptions[0].value;
+              console.log('[Consultation Apply] No categoryId found, using first available:', categoryIdToSet);
             }
 
-            // 2. 해당 workArea의 전문가 목록 가져오기
-            if (workAreaIdToSet) {
-              console.log('[Consultation Apply] Step 2: Fetching experts for workArea:', workAreaIdToSet);
+            // 2. 해당 category의 전문가 목록 가져오기
+            if (categoryIdToSet) {
+              console.log('[Consultation Apply] Step 2: Fetching experts for category:', categoryIdToSet);
               const expertsResponse = await get<MembersResponse>(
-                `${API_ENDPOINTS.MEMBERS}?page=1&limit=100&workArea=${workAreaIdToSet}`
+                `${API_ENDPOINTS.MEMBERS}?page=1&limit=100&categoryId=${categoryIdToSet}`
               );
 
               if (expertsResponse.data?.items) {
@@ -266,18 +264,18 @@ const ConsultationApplyPage: React.FC = () => {
                   setTaxAccountants(expertOptions);
 
                   // 3. 양쪽 모두 설정
-                  console.log('[Consultation Apply] Step 3: Setting both expert and workArea');
+                  console.log('[Consultation Apply] Step 3: Setting both expert and category');
                   setFormData(prev => ({
                     ...prev,
                     taxAccountant: expertId,
-                    consultationField: workAreaIdToSet!
+                    consultationField: categoryIdToSet!
                   }));
                   console.log('[Consultation Apply] Step 3 complete: Both values set', {
                     taxAccountant: expertId,
-                    consultationField: workAreaIdToSet
+                    consultationField: categoryIdToSet
                   });
                 } else {
-                  console.warn('[Consultation Apply] Expert not found in workArea list, setting expert only');
+                  console.warn('[Consultation Apply] Expert not found in category list, setting expert only');
                   setTaxAccountants(expertOptions);
                   setFormData(prev => ({
                     ...prev,
@@ -286,16 +284,16 @@ const ConsultationApplyPage: React.FC = () => {
                   }));
                 }
               } else {
-                console.warn('[Consultation Apply] No experts found for workArea');
+                console.warn('[Consultation Apply] No experts found for category');
                 setFormData(prev => ({
                   ...prev,
                   taxAccountant: expertId,
-                  consultationField: workAreaIdToSet!
+                  consultationField: categoryIdToSet!
                 }));
               }
             } else {
-              // workArea를 찾을 수 없으면 전문가만 설정
-              console.log('[Consultation Apply] No workArea to set, setting expert only');
+              // category를 찾을 수 없으면 전문가만 설정
+              console.log('[Consultation Apply] No category to set, setting expert only');
               setFormData(prev => ({
                 ...prev,
                 taxAccountant: expertId,
@@ -303,7 +301,7 @@ const ConsultationApplyPage: React.FC = () => {
               }));
             }
           } else {
-            console.warn('[Consultation Apply] No workAreas found for expert, setting expert only');
+            console.warn('[Consultation Apply] No categories found for expert, setting expert only');
             setFormData(prev => ({
               ...prev,
               taxAccountant: expertId,
@@ -373,7 +371,7 @@ const ConsultationApplyPage: React.FC = () => {
       const fetchExpertsForField = async () => {
         try {
           const expertsResponse = await get<MembersResponse>(
-            `${API_ENDPOINTS.MEMBERS}?page=1&limit=100&workArea=${categoryId}`
+            `${API_ENDPOINTS.MEMBERS}?page=1&limit=100&categoryId=${categoryId}`
           );
 
           if (expertsResponse.data?.items) {
@@ -463,7 +461,7 @@ const ConsultationApplyPage: React.FC = () => {
     if (value) {
       try {
         const response = await get<MembersResponse>(
-          `${API_ENDPOINTS.MEMBERS}?page=1&limit=100&workArea=${value}`
+          `${API_ENDPOINTS.MEMBERS}?page=1&limit=100&categoryId=${value}`
         );
         if (response.data?.items) {
           const options: SelectOption[] = response.data.items
@@ -472,7 +470,7 @@ const ConsultationApplyPage: React.FC = () => {
               value: item.id.toString(),
               label: item.name
             }));
-          console.log('[handleFieldChange] Fetched experts for workArea:', options.length, 'experts');
+          console.log('[handleFieldChange] Fetched experts for category:', options.length, 'experts');
           setTaxAccountants(options);
 
           // 이전에 선택된 세무사가 새로운 목록에 있는지 확인
@@ -537,14 +535,14 @@ const ConsultationApplyPage: React.FC = () => {
               value: item.id.toString(),
               label: item.name
             }));
-          console.log('[handleAccountantChange] Fetched workAreas for expert:', options.length, 'workAreas');
+          console.log('[handleAccountantChange] Fetched categories for expert:', options.length, 'categories');
           setConsultationFields(options);
 
           // 이전에 선택된 분야가 새로운 목록에 있는지 확인
           const isValidField = previousConsultationField &&
             options.some(opt => opt.value === previousConsultationField);
 
-          console.log('[handleAccountantChange] isValidField:', isValidField, 'for workAreaId:', previousConsultationField);
+          console.log('[handleAccountantChange] isValidField:', isValidField, 'for categoryId:', previousConsultationField);
 
           // 유효하지 않으면 분야 선택 초기화
           setFormData(prev => ({
@@ -594,7 +592,8 @@ const ConsultationApplyPage: React.FC = () => {
   };
 
   const handleInputChange = (field: keyof ConsultationFormData) => (value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+    const nextValue = field === 'phone' ? formatPhoneInput(value) : value;
+    setFormData(prev => ({ ...prev, [field]: nextValue }));
     // 필드 값 변경 시 해당 필드의 API 오류 초기화
     if (fieldErrors[field]) {
       setFieldErrors(prev => {
@@ -607,6 +606,18 @@ const ConsultationApplyPage: React.FC = () => {
 
   const handleCheckboxChange = (field: 'privacyAgreement' | 'termsAgreement') => (checked: boolean) => {
     setFormData(prev => ({ ...prev, [field]: checked }));
+  };
+
+  // Agreements (required)
+  const isRequiredAgreementsChecked =
+    formData.privacyAgreement && formData.termsAgreement;
+
+  const handleAllAgreementsChange = (checked: boolean) => {
+    setFormData(prev => ({
+      ...prev,
+      privacyAgreement: checked,
+      termsAgreement: checked,
+    }));
   };
 
   const handleBlur = (field: string) => {
@@ -627,8 +638,11 @@ const ConsultationApplyPage: React.FC = () => {
         return !formData.taxAccountant ? '담당 세무사를 선택해주세요' : null;
       case 'name':
         return !formData.name ? '이름을 입력해주세요' : null;
-      case 'phone':
-        return !formData.phone ? '휴대폰 번호를 입력해주세요' : null;
+      case 'phone': {
+        if (!formData.phone) return '휴대폰 번호를 입력해주세요';
+        const phoneResult = validatePhone(formData.phone);
+        return phoneResult.valid ? null : (phoneResult.error ?? null);
+      }
       case 'additionalRequest':
         return !formData.additionalRequest ? '추가 요청사항을 입력해주세요' : null;
       case 'privacyAgreement':
@@ -668,11 +682,13 @@ const ConsultationApplyPage: React.FC = () => {
   };
 
   const isFormValid = () => {
+    const phoneResult = formData.phone ? validatePhone(formData.phone) : { valid: false };
     return (
       formData.consultationField &&
       formData.taxAccountant &&
       formData.name &&
       formData.phone &&
+      phoneResult.valid &&
       formData.additionalRequest &&
       formData.privacyAgreement &&
       formData.termsAgreement
@@ -693,9 +709,16 @@ const ConsultationApplyPage: React.FC = () => {
       const selectedField = consultationFields.find(f => f.value === formData.consultationField);
       const selectedAccountant = taxAccountants.find(a => a.value === formData.taxAccountant);
 
+      const phoneResult = validatePhone(formData.phone);
+      if (!phoneResult.valid) {
+        setFieldErrors(prev => ({ ...prev, phone: phoneResult.error ?? undefined }));
+        setIsSubmitting(false);
+        return;
+      }
+
       const apiRequestBody: ConsultationApiRequest = {
         name: formData.name,
-        phoneNumber: formData.phone.replace(/-/g, ''), // 하이픈 제거
+        phoneNumber: phoneResult.normalized,
         consultingField: selectedField?.label || formData.consultationField,
         assignedTaxAccountant: selectedAccountant?.label || formData.taxAccountant,
         content: formData.additionalRequest,
@@ -1062,7 +1085,7 @@ const ConsultationApplyPage: React.FC = () => {
                         ref={phoneInputRef}
                         type="tel"
                         className={`${styles.textInput} ${getFieldError('phone') ? styles.textInputError : ''}`}
-                        placeholder="휴대폰 번호를 입력해주세요"
+                        placeholder="01000000000"
                         value={formData.phone}
                         onChange={(e) => handleInputChange('phone')(e.target.value)}
                         onFocus={() => setFocusedField('phone')}
@@ -1126,6 +1149,20 @@ const ConsultationApplyPage: React.FC = () => {
 
                 {/* 동의 체크박스 */}
                 <div className={styles.agreements}>
+                  <div
+                    className={`${styles.agreementItemWrapper} ${styles.allAgreeWrapper} ${
+                      isRequiredAgreementsChecked ? styles.isChecked : ""
+                    }`}
+                  >
+                    <div className={`${styles.agreementItem} ${styles.allAgreeItem}`}>
+                      <Checkbox
+                        variant="square"
+                        checked={isRequiredAgreementsChecked}
+                        label="모두 동의"
+                        onChange={handleAllAgreementsChange}
+                      />
+                    </div>
+                  </div>
                   <div className={styles.agreementItemWrapper}>
                     <div className={styles.agreementItem}>
                       <Checkbox
@@ -1134,7 +1171,7 @@ const ConsultationApplyPage: React.FC = () => {
                         onChange={handleCheckboxChange('privacyAgreement')}
                         label="[필수] 개인정보 처리 방침 이용 동의"
                       />
-                      <button type="button" className={styles.viewLink}>
+                      <button type="button" className={styles.viewLink} onClick={() => handleOpenTermsModal('privacy')}>
                         보기
                       </button>
                     </div>
@@ -1150,7 +1187,7 @@ const ConsultationApplyPage: React.FC = () => {
                         onChange={handleCheckboxChange('termsAgreement')}
                         label="[필수] OO OOOOO 이용 동의"
                       />
-                      <button type="button" className={styles.viewLink}>
+                      <button type="button" className={styles.viewLink} onClick={() => handleOpenTermsModal('terms')}>
                         보기
                       </button>
                     </div>
@@ -1168,7 +1205,7 @@ const ConsultationApplyPage: React.FC = () => {
                 <Button
                   type="primary"
                   size="large"
-                  disabled={!isFormValid() || isSubmitting}
+                  disabled={!isFormValid() || !isRequiredAgreementsChecked || isSubmitting}
                   htmlType="submit"
                   className={styles.submitButton}
                 >
@@ -1221,6 +1258,13 @@ const ConsultationApplyPage: React.FC = () => {
           </div>
         </div>
       )}
+      
+      {/* Terms Modal */}
+      <TermsModal
+        isOpen={isTermsModalOpen}
+        onClose={handleCloseTermsModal}
+        termsType={activeTermsType}
+      />
       </div>
     </>
   );

@@ -264,13 +264,13 @@ const TrustedExperts: React.FC<TrustedExpertsProps> = ({ experts }) => {
                     <span className={styles["expert-card__name"]}>
                       {expert.name}
                     </span>
-                    {expert.workAreas && expert.workAreas.length > 0 && (
+                    {expert.categories && expert.categories.length > 0 && (
                       <>
                         <span className={styles["expert-card__divider"]}>
                           |
                         </span>
                         <span className={styles["expert-card__position"]}>
-                          {expert.workAreas[0].value}
+                          {expert.categories[0].categoryName}
                         </span>
                       </>
                     )}

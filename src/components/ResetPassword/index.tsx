@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { useRouter } from 'next/router';
 import Header from '@/components/common/Header';
 import Menu from '@/components/Menu';
@@ -6,6 +6,7 @@ import { TextField } from '@/components/common/TextField';
 import Button from '@/components/common/Button';
 import { post } from '@/lib/api';
 import { API_ENDPOINTS } from '@/config/api';
+import { getPasswordRules, validatePassword } from '@/lib/passwordValidation';
 import Footer from '../Footer';
 
 const ResetPassword: React.FC = () => {
@@ -13,6 +14,8 @@ const ResetPassword: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [passwordError, setPasswordError] = useState('');
+  const [confirmError, setConfirmError] = useState('');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [token, setToken] = useState('');
@@ -31,18 +34,27 @@ const ResetPassword: React.FC = () => {
     }
   }, [router.isReady, router.query.token]);
 
-  // 비밀번호 유효성 검사 (8-16자, 영문/숫자/특수문자 중 2가지 이상)
-  const isPasswordValid = useMemo(() => {
-    if (!newPassword || newPassword.length < 8 || newPassword.length > 16) {
-      return false;
+  const passwordRules = useMemo(() => getPasswordRules(newPassword), [newPassword]);
+  const isPasswordValid = passwordRules.valid;
+
+  // Check if form is valid
+  const isFormValid = token && isPasswordValid && newPassword === confirmPassword && confirmPassword && !isLoading;
+
+  // Handle Enter key for form
+  const handleFormKeyDown = useCallback((e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && isFormValid) {
+      e.preventDefault();
+      handlePasswordChange();
     }
-    const hasUppercase = /[A-Z]/.test(newPassword);
-    const hasLowercase = /[a-z]/.test(newPassword);
-    const hasNumber = /[0-9]/.test(newPassword);
-    const hasSpecial = /[!@#$%^&*(),.?":{}|<>]/.test(newPassword);
-    const typeCount = [hasUppercase, hasLowercase, hasNumber, hasSpecial].filter(Boolean).length;
-    return typeCount >= 2;
-  }, [newPassword]);
+  }, [isFormValid]);
+
+  const updateConfirmError = useCallback((pwd: string, confirm: string) => {
+    if (!confirm) {
+      setConfirmError('');
+      return;
+    }
+    setConfirmError(pwd === confirm ? '' : '비밀번호가 일치하지 않습니다.');
+  }, []);
 
   const handlePasswordChange = async (e?: React.FormEvent) => {
     e?.preventDefault();
@@ -59,7 +71,8 @@ const ResetPassword: React.FC = () => {
     }
 
     if (!isPasswordValid) {
-      setError('비밀번호는 8~16자, 영문/숫자/특수문자 중 2가지 이상 조합이어야 합니다.');
+      const res = validatePassword(newPassword);
+      setPasswordError(res.error ?? '비밀번호는 6~12자, 영문/숫자/특수문자 중 2가지 이상 조합이어야 합니다.');
       return;
     }
 
@@ -122,34 +135,51 @@ const ResetPassword: React.FC = () => {
             </div>
           </div>
         ) : (
-          <>
+          <div onKeyDown={handleFormKeyDown} style={{ display: 'contents' }}>
             <div className="find-username-form-container">
               <form className="find-username-form" onSubmit={handlePasswordChange}>
                 <div className="find-username-form-fields">
-                  <TextField
-                    variant="line"
-                    label="새로운 비밀번호"
-                    type="password"
-                    placeholder="비밀번호를 입력해주세요 (8~16자)"
-                    value={newPassword}
-                    onChange={setNewPassword}
-                    showPasswordToggle
-                    fullWidth
-                  />
+                  <div className="auth-input-group">
+                    <TextField
+                      variant="line"
+                      label="새로운 비밀번호"
+                      type="password"
+                      placeholder="비밀번호를 입력해주세요 (6~12자)"
+                      value={newPassword}
+                      onChange={(val) => {
+                        setNewPassword(val);
+                        if (!val) {
+                          setPasswordError('');
+                        } else {
+                          const res = validatePassword(val);
+                          setPasswordError(res.valid ? '' : (res.error ?? ''));
+                        }
+                        updateConfirmError(val, confirmPassword);
+                      }}
+                      showPasswordToggle
+                      error={!!passwordError}
+                      fullWidth
+                    />
+                    {passwordError && <p className="auth-error-message">{passwordError}</p>}
+                  </div>
 
-                  <div className="find-username-password-confirm-wrapper">
+                  <div className="find-username-password-confirm-wrapper auth-input-group">
                     <TextField
                       variant="line"
                       label="새로운 비밀번호 확인"
                       type="password"
                       placeholder="새로운 비밀번호를 다시 입력해주세요"
                       value={confirmPassword}
-                      onChange={setConfirmPassword}
+                      onChange={(val) => {
+                        setConfirmPassword(val);
+                        updateConfirmError(newPassword, val);
+                      }}
                       showPasswordToggle
-                      error={error ? true : false}
+                      error={!!confirmError}
                       fullWidth
                     />
-                    {error && <p className="auth-error-message">{error}</p>}
+                    {confirmError && <p className="auth-error-message">{confirmError}</p>}
+                    {error && !confirmError && <p className="auth-error-message">{error}</p>}
                   </div>
                 </div>
               </form>
@@ -159,13 +189,13 @@ const ResetPassword: React.FC = () => {
               <Button
                 type="primary"
                 size="large"
-                disabled={!newPassword || !confirmPassword || isLoading || !token}
-                onClick={handlePasswordChange}
+                disabled={!isFormValid}
+                onClick={() => handlePasswordChange()}
               >
                 {isLoading ? '변경 중...' : '비밀번호 변경'}
               </Button>
             </div>
-          </>
+          </div>
         )}
       </section>
       <Footer />
