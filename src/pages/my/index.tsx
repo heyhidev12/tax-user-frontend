@@ -1411,7 +1411,11 @@ const MyPage: React.FC = () => {
                         <div className={styles.mobileFormRow}>
                           <p className={styles.mobileFormLabel}>이메일</p>
                           <p className={styles.mobileFormValue}>
-                            {displayProfile.email || "-"}
+                            {displayProfile.email
+                              ? displayProfile.email.includes("@")
+                                ? `${displayProfile.email.split("@")[0].slice(0, 5)}...@${displayProfile.email.split("@")[1]}`
+                                : displayProfile.email
+                              : "-"}
                           </p>
                         </div>
                         <div className={styles.mobileFormRow}>

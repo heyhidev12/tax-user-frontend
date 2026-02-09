@@ -466,7 +466,7 @@ const ExpertsPage: React.FC = () => {
                     className={styles.searchInput}
                     maxLength={50}
                   />
-                  {searchKeyword && (
+                  {searchKeyword ? (
                     <button
                       type="button"
                       onClick={handleClearSearch}
@@ -475,15 +475,16 @@ const ExpertsPage: React.FC = () => {
                     >
                       <Close sx={{ fontSize: 16 }} />
                     </button>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={handleSearchSubmit}
+                      className={styles.searchIconButton}
+                      aria-label="검색"
+                    >
+                      <Icon type="search" size={20} />
+                    </button>
                   )}
-                  <button
-                    type="button"
-                    onClick={handleSearchSubmit}
-                    className={styles.searchIconButton}
-                    aria-label="검색"
-                  >
-                    <Icon type="search" size={20} />
-                  </button>
                 </div>
               </div>
             </div>

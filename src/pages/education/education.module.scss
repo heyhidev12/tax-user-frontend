@@ -245,7 +245,6 @@
   display: flex;
   justify-content: flex-end;
   position: relative;
-  padding-bottom: 20px;
   margin-bottom: 48px;
   border-bottom: 2px solid $gray-90;
 
@@ -253,7 +252,6 @@
     max-width: none;
     flex: 1;
     border-bottom: none;
-    padding-bottom: 8px;
   }
 }
 
@@ -269,6 +267,7 @@
   border: 1px solid transparent;
   font-size: 15px;
   color: $gray-90;
+  margin-bottom: 20px;
   &::placeholder {
     color: $gray-40;
   }
@@ -277,6 +276,7 @@
   }
   @media (max-width: $breakpoint-tablet) {
     max-width: 100%;
+    margin-bottom: 8px;
   }
 }
 
@@ -289,6 +289,7 @@
   z-index: 1;
   @media (max-width: $breakpoint-tablet) {
     left: 16px;
+    top: calc(50% - 4px);
   }
 }
 

@@ -188,15 +188,16 @@ const InsightsPage: React.FC<InsightsPageProps> = ({
   });
   const [isLoadingHierarchical, setIsLoadingHierarchical] = useState(false);
 
-  // Initialize newsletter mode from query params immediately on mount/route change
+  // Sync category state from query params on mount/route change (menu navigation, etc.)
   useEffect(() => {
     if (!router.isReady) return;
 
     const category = String(router.query.category || "");
-
+    const sub = String(router.query.sub || "0");
 
     if (category === 'newsletter') {
       setIsNewsletterMode(true);
+      setSelectedCategoryId(null);
       setSelectValue("newsletter"); // Set select value immediately
 
       // Remove sub parameter if present (newsletter doesn't use sub)
@@ -210,10 +211,27 @@ const InsightsPage: React.FC<InsightsPageProps> = ({
           { shallow: true }
         );
       }
+    } else if (category && !isNaN(Number(category))) {
+      // Numeric category — sync selectedCategoryId & selectedSubcategoryId from URL
+      const categoryId = parseInt(category, 10);
+      const subcategoryId = parseInt(sub, 10) || 0;
+
+      setIsNewsletterMode(false);
+      if (categoryId !== selectedCategoryId) {
+        setSelectedCategoryId(categoryId);
+        setCurrentPage(1);
+        setSearchQuery("");
+        setSortField(null);
+        setSortOrder("asc");
+      }
+      if (subcategoryId !== selectedSubcategoryId) {
+        setSelectedSubcategoryId(subcategoryId);
+      }
+      setSelectValue(String(categoryId));
     } else {
       setIsNewsletterMode(false);
     }
-  }, [router.isReady, router.query.category, router]);
+  }, [router.isReady, router.query.category, router.query.sub]);
 
   // 로그인된 사용자 정보로 뉴스레터 폼 미리 채우기
   useEffect(() => {

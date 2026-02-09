@@ -151,6 +151,7 @@ const HistoryPage: React.FC = () => {
       displayOrder: number;
       isMainExposed: boolean;
       isExposed: boolean;
+      websiteUrl?: string | null;
     }>
   >([]);
   const [customersLoading, setCustomersLoading] = useState(true);
@@ -1540,11 +1541,25 @@ const HistoryPage: React.FC = () => {
                     {customersData.map((item) => (
                       <div key={item.id} className={styles.customerCard}>
                         <div className={styles.customerLogo}>
-                          <img
-                            src={item.logo.url}
-                            alt="Customer Logo"
-                            className={styles.customerLogoImage}
-                          />
+                          {item.websiteUrl ? (
+                            <a
+                              href={item.websiteUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            >
+                              <img
+                                src={item.logo.url}
+                                alt="Customer Logo"
+                                className={styles.customerLogoImage}
+                              />
+                            </a>
+                          ) : (
+                            <img
+                              src={item.logo.url}
+                              alt="Customer Logo"
+                              className={styles.customerLogoImage}
+                            />
+                          )}
                         </div>
                       </div>
                     ))}
