@@ -735,7 +735,6 @@ const ConsultationApplyPage: React.FC = () => {
       }
 
       setIsSuccessModalOpen(true);
-      console.log("GA EVENT FIRED");
 
       if (window.gtag) {
         window.gtag("event", "consultation_submit", {
