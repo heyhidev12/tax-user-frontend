@@ -1120,20 +1120,12 @@
   color: #fff;
 }
 
-.statusReceived {
-  background-color: $primary-50;
-  color: #f8f8fc;
-}
 
 .statusPending {
   background-color: $gray-10;
-  color: $gray-90;
+  color: $gray-70;
 }
 
-.statusWaiting {
-  background-color: $gray-10;
-  color: $gray-90;
-}
 
 // Pagination
 .pagination {
@@ -3444,6 +3436,13 @@
   display: flex;
   gap: 4px;
   margin-top: 12px;
+
+  .labelRed,.labelWhite,.labelGray{
+    padding: 7px;
+    @include pretendard-13-semibold;
+    padding: 2px 5px;
+    line-height: 1.5;
+  }
 }
 
 .mobileCardLabelStatus {
@@ -3528,7 +3527,7 @@
 
 .mobileMemberCardStatus {
   @include pretendard-13-semibold;
-  padding: 4px 6px;
+  padding: 2px 5px;
   border-radius: 4px;
 }
 
@@ -3537,16 +3536,10 @@
   color: #fff;
 }
 
-.mobileMemberCardStatusReceived {
-  background-color: $gray-10;
-  color: $gray-90;
-}
 
 .mobileMemberCardStatusWaiting {
   background-color: $gray-10;
-  color: $gray-90;
-  font-size: 11px;
-  line-height: 1.5;
+  color: $gray-70;
 }
 
 .mobileMemberCardContent {

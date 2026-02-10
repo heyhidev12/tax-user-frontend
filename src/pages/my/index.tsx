@@ -1158,7 +1158,7 @@ const MyPage: React.FC = () => {
         return "상담완료";
       case ConsultationStatus.PENDING:
       default:
-        return "대기중";
+        return "접수완료";
     }
   };
 
