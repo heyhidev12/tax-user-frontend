@@ -1,3 +1,4 @@
+@use "sass:color";
 // Variables
 $primary-teal: #00a89e;
 $text-dark: #002c2c;
@@ -279,7 +280,7 @@ $bg-light: #f8f8f8;
       }
 
       &:hover {
-        color: darken($text-light, 20%);
+        color: color.adjust($text-light, $lightness: -20%);
       }
 
       &.active {
@@ -497,7 +498,7 @@ $bg-light: #f8f8f8;
     }
 
     .service-card__arrow {
-      background: darken($primary-teal, 5%);
+      background: color.adjust($primary-teal, $lightness: -5%);
     }
   }
 

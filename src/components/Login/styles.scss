@@ -1,3 +1,4 @@
+@use "sass:color";
 // Reuse the original library login styles for layout & visual design
 // Variables
 $primary-teal: #00a89e;
@@ -273,7 +274,7 @@ $bg-light: #f8f8f8;
   margin-top: 16px;
 
   &:hover {
-    background: darken($primary-teal, 5%);
+    background: color.adjust($primary-teal, $lightness: -5%);
   }
 
   @media (max-width: 767px) {

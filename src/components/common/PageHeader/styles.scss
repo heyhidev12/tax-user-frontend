@@ -1,6 +1,6 @@
 // PageHeader 디자인 시스템
 // Figma: 보험단 스타일가이드 - PageHeader 컴포넌트
-@import "../../../styles/_variables.scss";
+@use "../../../styles/_variables.scss" as *;
 
 // 색상 변수
 $color-white: #ffffff;

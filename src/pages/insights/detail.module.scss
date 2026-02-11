@@ -1,4 +1,4 @@
-@import "../../styles/variables";
+@use "../../styles/variables" as *;
 
 .page {
   min-height: 100vh;
@@ -275,8 +275,6 @@
 
 .bodyContent {
   color: $gray-90;
-  leading-trim: both;
-  text-edge: cap;
   font-family: "IBM Plex Mono";
   font-size: 17px;
   font-style: normal;
@@ -296,8 +294,6 @@
   // Toast UI Viewer 스타일 오버라이드
   :global(.toastui-editor-contents) {
     color: $gray-90 !important;
-    leading-trim: both;
-    text-edge: cap;
     font-family: "IBM Plex Mono";
     font-size: 17px;
     font-style: normal;

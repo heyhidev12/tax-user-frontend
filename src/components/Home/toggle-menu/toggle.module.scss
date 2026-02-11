@@ -1,3 +1,4 @@
+@use "sass:color";
 // ==========================================
 // Toggle Menu Styles
 // ==========================================
@@ -245,7 +246,7 @@ $bg-color: #f8f8f8;
 
   &:hover {
     .menuTitle {
-      color: darken($text-gray, 15%);
+      color: color.adjust($text-gray, $lightness: -15%);
     }
   }
 
