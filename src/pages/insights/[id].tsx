@@ -64,6 +64,7 @@ export interface InsightDetail {
   attachments?: Attachment[];
   files?: any[];
   authorName?: string;
+  subMinorCategory?: { id: number; name: string };
 }
 
 interface InsightNavigation {
@@ -705,17 +706,13 @@ const InsightDetailPage: React.FC<InsightDetailPageProps> = ({
             <div className={styles.headerSection}>
               <div className={styles.titleWrapper}>
                 <div className={styles.category}>
-                  {typeof insight.subcategory?.name === "string"
-                    ? insight.subcategory.name
-                    : typeof insight.category?.name === "string"
-                      ? insight.category.name
-                      : "카테고리명"}
+                  {insight.subMinorCategory ? insight.subMinorCategory.name : "카테고리 명"}
                 </div>
                 <h1 className={styles.title}>{insight.title}</h1>
               </div>
               <div className={styles.meta}>
                 <div className={styles.metaLeft}>
-                  <span className={styles.author}>{insight.authorName}</span>
+                  <span className={styles.author}>{insight.authorName || "작성자"}</span>
                   <span className={styles.divider}></span>
                   <span className={styles.date}>
                     {formatDate(insight.createdAt)}

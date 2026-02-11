@@ -260,6 +260,11 @@
     background: $gray-30;
     color: $gray-90;
   }
+
+  @media (max-width: $breakpoint-tablet) {
+    width: 18px;
+    height: 18px;
+  }
 }
 
 .dropdownMenu {
@@ -396,6 +401,10 @@
   &:hover {
     background: $gray-30;
     color: $gray-90;
+  }
+  @media (max-width: $breakpoint-tablet) {
+    width: 18px;
+    height: 18px;
   }
 }
 

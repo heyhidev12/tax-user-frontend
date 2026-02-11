@@ -1213,17 +1213,14 @@ const InsightsPage: React.FC<InsightsPageProps> = ({
                                 title={item.title}
                                 imageUrl={item.thumbnail?.url}
                                 category={
-                                  typeof item.subMinorCategory?.name === "string"
-                                    ? item.subMinorCategory.name
-
-                                    : "카테고리명"
+                                  item.subMinorCategory ? item.subMinorCategory.name : "카테고리 명"
                                 }
                                 description={
                                   plainContent.length > 150
                                     ? `${plainContent.substring(0, 150)}...`
                                     : plainContent
                                 }
-                                author={item.authorName ? item.authorName : "작성자명"}
+                                author={item.authorName || "작성자"}
                                 date={
                                   item.createdAt
                                     ? formatDate(item.createdAt)
@@ -1287,13 +1284,7 @@ const InsightsPage: React.FC<InsightsPageProps> = ({
                                 <div className={styles.libraryCardContent}>
                                   <div className={styles.libraryCardHeader}>
                                     <p className={styles.libraryCardCategory}>
-                                      {typeof item.subcategory?.name ===
-                                        "string"
-                                        ? item.subcategory.name
-                                        : typeof item.category?.name ===
-                                          "string"
-                                          ? item.category.name
-                                          : "카테고리명"}
+                                      {item.subMinorCategory ? item.subMinorCategory.name : "카테고리 명"}
                                     </p>
                                     <h3
                                       className={
@@ -1314,7 +1305,7 @@ const InsightsPage: React.FC<InsightsPageProps> = ({
                                     <span
                                       className={styles.libraryCardAuthor}
                                     >
-                                      {item.authorName}
+                                      {item.authorName || "작성자"}
                                     </span>
                                     <span className={styles.cardDivider} />
                                     <span className={styles.libraryCardDate}>
@@ -1432,11 +1423,7 @@ const InsightsPage: React.FC<InsightsPageProps> = ({
                               <div
                                 className={`${styles.libraryListCell} ${styles.categoryCell}`}
                               >
-                                {typeof item.subcategory?.name === "string"
-                                  ? item.subcategory.name
-                                  : typeof item.category?.name === "string"
-                                    ? item.category.name
-                                    : "카테고리 명"}
+                                {item.subMinorCategory ? item.subMinorCategory.name : "카테고리 명"}
                               </div>
                               <div
                                 className={`${styles.libraryListCell} ${styles.titleCell}`}
@@ -1453,7 +1440,7 @@ const InsightsPage: React.FC<InsightsPageProps> = ({
                                 </span>
                               </div>
                               <div className={styles.libraryListCell}>
-                                {item.authorName || "작성자명"}
+                                {item.authorName || "작성자"}
                               </div>
                               <div className={styles.libraryListCell}>
                                 {item.createdAt
@@ -1477,13 +1464,7 @@ const InsightsPage: React.FC<InsightsPageProps> = ({
                             >
                               <div className={styles.mobileListRowTop}>
                                 <span className={styles.mobileListCategory}>
-                                  {typeof item.subcategory?.name ===
-                                    "string"
-                                    ? item.subcategory.name
-                                    : typeof item.category?.name ===
-                                      "string"
-                                      ? item.category.name
-                                      : "카테고리 명"}
+                                  {item.subMinorCategory ? item.subMinorCategory.name : "카테고리 명"}
                                 </span>
                                 <span className={styles.mobileListDate}>
                                   {item.createdAt
@@ -1502,7 +1483,7 @@ const InsightsPage: React.FC<InsightsPageProps> = ({
                                 )}
                               </div>
                               <div className={styles.mobileListAuthor}>
-                                "작성자명"
+                                {item.authorName || "작성자"}
                               </div>
                               <div className={styles.mobileListBottom}>
                                 <span className={styles.mobileListNo}>

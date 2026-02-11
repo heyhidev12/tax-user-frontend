@@ -1481,11 +1481,9 @@ const BusinessAreaDetailPage: React.FC<BusinessAreaDetailPageProps> = ({
                               )}
                               <div className={styles.newsInfo}>
                                 <div className={styles.newsHeader}>
-                                  {  news.subMinorCategory && (
-                                    <p className={styles.newsCategory}>
-                                      {news.subMinorCategory?.name}
+                                  <p className={styles.newsCategory}>
+                                      {news.subMinorCategory ? news.subMinorCategory.name : "카테고리 명"}
                                     </p>
-                                  )}
                                   <h3 className={styles.newsTitle}>
                                     {news.title}
                                   </h3>

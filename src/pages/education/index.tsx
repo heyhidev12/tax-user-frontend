@@ -315,15 +315,9 @@ const EducationPage: React.FC<EducationPageProps> = ({
     return dateString.replace(/\./g, '.');
   };
 
-  // Filter list items based on visibility and sort by recruitmentEndDate (ascending)
+  // Filter list items based on visibility (backend already returns correct order with sort=deadline)
   const visibleEducationList = listItems
-    .filter(isItemVisible)
-    .sort((a, b) => {
-      // Sort by recruitment end date (earliest first)
-      const dateA = new Date(a.recruitmentEndDate).getTime();
-      const dateB = new Date(b.recruitmentEndDate).getTime();
-      return dateA - dateB;
-    });
+    .filter(isItemVisible);
 
   // 모집 마감일까지 남은 일수 계산
   const getDaysUntilDeadline = (endDate: string) => {

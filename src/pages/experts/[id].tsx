@@ -1057,7 +1057,7 @@ const ExpertDetailPage: React.FC<ExpertDetailPageProps> = ({
                                       {
                                           news?.subMinorCategory
                                           ? news.subMinorCategory.name
-                                          : "카테고리"}
+                                          : "카테고리 명"}
                                     </p>
                                   )}
                                   <h3 className={styles.newsTitle}>

@@ -53,13 +53,13 @@ interface MembersResponse {
   limit?: number;
 }
 
-const ITEMS_PER_PAGE = 16;
+
 
 const ExpertsPage: React.FC = () => {
   const router = useRouter();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
-  
+  const ITEMS_PER_PAGE = isMobile ? 8 : 16;
   // Category Select state
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(null);
@@ -221,7 +221,7 @@ const ExpertsPage: React.FC = () => {
     } finally {
       setIsLoadingExperts(false);
     }
-  }, []);
+  }, [ITEMS_PER_PAGE]);
 
   // Handle category select change
   const handleCategorySelect = (category: Category) => {
