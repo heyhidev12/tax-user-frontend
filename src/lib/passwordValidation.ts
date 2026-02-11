@@ -3,11 +3,11 @@
  * letters / numbers / special characters.
  */
 
-export const PASSWORD_MIN_LENGTH = 6;
-export const PASSWORD_MAX_LENGTH = 12;
+export const PASSWORD_MIN_LENGTH = 8;
+export const PASSWORD_MAX_LENGTH = 16;
 
 export const PASSWORD_ERROR_INVALID =
-  "비밀번호는 6~12자이며 영문, 숫자, 특수문자 중 2가지 이상을 조합해야 합니다.";
+  "비밀번호는 8~16자이며 영문, 숫자, 특수문자 중 2가지 이상을 조합해야 합니다.";
 export const PASSWORD_ERROR_MISMATCH = "비밀번호가 일치하지 않습니다.";
 
 export interface PasswordRules {
