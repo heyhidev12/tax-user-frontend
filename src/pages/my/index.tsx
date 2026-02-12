@@ -2141,7 +2141,7 @@ const MyPage: React.FC = () => {
                                     src="/images/common/calendar-icon.svg"
                                     alt=""
                                   />
-                                  <span>{item.participationDate} 종료</span>
+                                  <span>{item.participationDate.replaceAll("-", ".") } {item.participationTime.split("~")[0]}</span>
                                 </div>
                               </div>
                             </div>
@@ -2327,7 +2327,7 @@ const MyPage: React.FC = () => {
                                 <span className={styles.mobileMemberCardDivider}>
                                 </span>
                                 <span className={styles.mobileMemberCardDate}>
-                                  {item.date}
+                                  {item.date.replaceAll("-", ".")}
                                 </span>
                               </div>
                             </div>
@@ -3391,7 +3391,7 @@ const MyPage: React.FC = () => {
                                               />
                                             </svg>
                                             <p className={styles.cardDate}>
-                                              {item.participationDate}{" "}
+                                              {item.participationDate.replaceAll("-", ".")}{" "}
                                               {item.participationTime}
                                             </p>
                                           </div>
@@ -3586,7 +3586,7 @@ const MyPage: React.FC = () => {
                                         className={styles.tableCell}
                                         style={{ width: "100px" }}
                                       >
-                                        {item.date}
+                                        {item.date.replaceAll("-", ".")}
                                       </p>
                                       <p
                                         className={styles.tableCell}
@@ -3791,12 +3791,12 @@ const MyPage: React.FC = () => {
               <div className={styles.modalBody}>
                 <div className={styles.modalStatusRow}>
                   <span className={styles.statusLeft}>기장</span>
-                  <p className={styles.modalDate}>{selectedConsultation!.date}</p>
+                  <p className={styles.modalDate}>{selectedConsultation!.date.replaceAll("-", ".")}</p>
                 </div>
 
                 <div className={styles.modalStatusRow2}>
                   <p className={styles.modalDateTitle}>
-                    {selectedConsultation!.date} 상담 신청 내용
+                    {selectedConsultation!.date.replaceAll("-", ".")} 상담 신청 내용
                   </p>
 
                   <span

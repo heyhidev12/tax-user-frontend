@@ -399,13 +399,15 @@
   min-height: 120px;
 
   .overviewFixedBanner.expanded & {
-    padding: 15px 0;
+    padding: 20px 0;
     align-items: flex-start;
+    @media  (max-width: $breakpoint-tablet) {
+      padding: 15px 0;
+    }
   }
 
   @media (max-width: $breakpoint-desktop) {
     gap: 48px;
-    padding: 15px 0;
   }
 
   @media (max-width: $breakpoint-tablet) {
