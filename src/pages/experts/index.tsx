@@ -397,7 +397,7 @@ const ExpertsPage: React.FC = () => {
                     <p className={selectedCategoryName ? styles.selected : ""}>
                       {selectedCategoryName || "분야를 선택해주세요"}
                     </p>
-                    {selectedCategoryId ? (
+                    {/* {selectedCategoryId ? (
                       <button
                         type="button"
                         onClick={(e) => {
@@ -409,7 +409,7 @@ const ExpertsPage: React.FC = () => {
                       >
                         <Close sx={{ fontSize: 16 }} />
                       </button>
-                    ) : (
+                    ) : ( */}
                       <Icon
                         type="chevron-down-white"
                         size={20}
@@ -421,7 +421,7 @@ const ExpertsPage: React.FC = () => {
                           transition: "transform 0.3s ease",
                         }}
                       />
-                    )}
+                    {/* // )} */}
                   </div>
                   {isDropdownOpen && (
                     <div className={styles.dropdownMenu}>
@@ -466,7 +466,7 @@ const ExpertsPage: React.FC = () => {
                     className={styles.searchInput}
                     maxLength={50}
                   />
-                  {searchKeyword ? (
+                  {/* {searchKeyword ? (
                     <button
                       type="button"
                       onClick={handleClearSearch}
@@ -484,7 +484,7 @@ const ExpertsPage: React.FC = () => {
                     >
                       <Icon type="search" size={20} />
                     </button>
-                  )}
+                  )} */}
                 </div>
               </div>
             </div>

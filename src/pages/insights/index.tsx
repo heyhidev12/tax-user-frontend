@@ -422,9 +422,15 @@ const InsightsPage: React.FC<InsightsPageProps> = ({
     newsletterEmail.trim() !== '' &&
     validateEmail(newsletterEmail) &&
     privacyAgreed;
-  // 자료실 노출 타입 - category.type에서 설정
-  const [libraryDisplayType, setLibraryDisplayType] =
-    useState<LibraryDisplayType>(initialLibraryDisplayType || "gallery");
+  // Helper: map category.type → display type (single source of truth)
+  const mapCategoryTypeToDisplayType = (type: string | undefined): LibraryDisplayType | null => {
+    switch (type?.toUpperCase()) {
+      case "A": return "gallery";
+      case "B": return "snippet";
+      case "C": return "list";
+      default: return null;
+    }
+  };
 
   // Helper function to check if user is logged in and get memberType & isApproved
   const getUserAuthState = () => {
@@ -597,6 +603,12 @@ const InsightsPage: React.FC<InsightsPageProps> = ({
     if (isNewsletterCategory) return;
     if (!selectedCategoryId || selectedSubcategoryId === null) return;
 
+    // Wait for hierarchical data to load so we have the real category.type
+    const currentCategory = hierarchicalData.find(
+      (item) => item.category.id === selectedCategoryId
+    );
+    if (!currentCategory) return;
+
     const fetchInsights = async () => {
       try {
         setIsLoadingHierarchical(true);
@@ -607,14 +619,14 @@ const InsightsPage: React.FC<InsightsPageProps> = ({
         // Add pagination
         params.append('page', String(currentPage));
 
-        // Get page size based on category type
-        const categoryType = selectedCategory?.category.type?.toUpperCase() || "A";
+        // Get page size based on category type — derived directly from API data
+        const categoryType = currentCategory.category.type?.toUpperCase();
         const pageSizeMap: Record<string, number> = {
           A: 9,  // Gallery
           B: 6,  // Snippet
           C: 10, // List
         };
-        const limit = pageSizeMap[categoryType] || 9;
+        const limit = (categoryType && pageSizeMap[categoryType]) || 9;
         params.append('limit', String(limit));
 
         // Add category filter
@@ -653,15 +665,6 @@ const InsightsPage: React.FC<InsightsPageProps> = ({
           setInsights(response.data.items || []);
           setTotal(response.data.total || 0);
           setTotalPages(Math.ceil((response.data.total || 0) / limit));
-
-          // Set display type based on category.type
-          if (categoryType === "A") {
-            setLibraryDisplayType("gallery");
-          } else if (categoryType === "B") {
-            setLibraryDisplayType("snippet");
-          } else if (categoryType === "C") {
-            setLibraryDisplayType("list");
-          }
         }
       } catch (err) {
         console.error("Failed to fetch insights:", err);
@@ -677,7 +680,8 @@ const InsightsPage: React.FC<InsightsPageProps> = ({
     selectedSubcategoryId,
     currentPage,
     searchQuery, // 검색어 변경 시 다시 fetch
-    isNewsletterCategory
+    isNewsletterCategory,
+    hierarchicalData, // Re-run when hierarchical data loads so we get the real category.type
   ]);
 
   // 검색 핸들러 (Enter 키 또는 검색 버튼 클릭 시)
@@ -778,12 +782,25 @@ const InsightsPage: React.FC<InsightsPageProps> = ({
     setCurrentPage(1);
   };
 
-  // getSortedInsights is no longer needed - sorting is applied before pagination in useEffect
-  // This function is kept for backward compatibility with existing UI code
+  // Sort the current page's insights client-side based on sortField/sortOrder
   const getSortedInsights = () => {
-    // Sorting is already applied in the useEffect before pagination
-    // This just returns the already-sorted-and-paginated insights
-    return insights;
+    if (!sortField) return insights;
+
+    return [...insights].sort((a, b) => {
+      let aVal = "";
+      let bVal = "";
+
+      if (sortField === "category") {
+        aVal = a.subMinorCategory?.name || "";
+        bVal = b.subMinorCategory?.name || "";
+      } else if (sortField === "author") {
+        aVal = a.authorName || "";
+        bVal = b.authorName || "";
+      }
+
+      const comparison = aVal.localeCompare(bVal, "ko");
+      return sortOrder === "asc" ? comparison : -comparison;
+    });
   };
 
   // 카테고리 선택 변경 핸들러 (NEW FORMAT: category only)
@@ -865,48 +882,6 @@ const InsightsPage: React.FC<InsightsPageProps> = ({
     setCurrentPage(page);
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
-
-  // 게시물 클릭 핸들러
-  // const handleItemClick = (id: number) => {
-  //   // 현재 query parametrlarini olish
-  //   const query: Record<string, string> = {};
-
-  //   // 현재 URL dan barcha query parametrlarini olish
-  //   const currentUrl = new URL(window.location.href);
-  //   const queryParams = new URLSearchParams(currentUrl.search);
-
-  //   // Barcha mavjud parametrlarni o'tkazish
-  //   queryParams.forEach((value, key) => {
-  //     if (['category', 'sub', 'subMinor', 'search', 'q', 'page'].includes(key)) {
-  //       query[key] = value;
-  //     }
-  //   });
-
-  //   // category bo'lsa qo'shamiz
-  //   if (selectedCategoryId) {
-  //     query.category = String(selectedCategoryId);
-  //   }
-
-  //   // sub=0 ("전체") bo'lmasa qo'shamiz
-  //   if (selectedSubcategoryId !== null && selectedSubcategoryId !== undefined && selectedSubcategoryId !== 0) {
-  //     query.sub = String(selectedSubcategoryId);
-  //   }
-
-  //   // search query ni saqlash
-  //   if (searchQuery.trim()) {
-  //     query.query = searchQuery.trim();
-  //   }
-
-  //   // page ni reset qilish (detail page ga o'tganda)
-  //   delete query.page;
-
-  //   console.log("🔗 Navigating to detail with query:", query);
-
-  //   router.push({
-  //     pathname: `/insights/${id}`,
-  //     query: query
-  //   });
-  // };
 
   // 날짜 포맷팅
   const formatDate = (dateString: string) => {
@@ -1036,6 +1011,13 @@ const InsightsPage: React.FC<InsightsPageProps> = ({
     ? hierarchicalData.find((item) => item.category.id === selectedCategoryId)
     : null;
 
+  // Derive display type directly from category.type (single source of truth)
+  // Falls back to SSR-provided value before hierarchicalData loads
+  const libraryDisplayType: LibraryDisplayType =
+    mapCategoryTypeToDisplayType(selectedCategory?.category.type)
+    || initialLibraryDisplayType
+    || "gallery";
+
   // Get subcategories for current category (including virtual "전체")
   const getCurrentSubcategories = () => {
     if (isNewsletterCategory || !selectedCategoryId || hierarchicalData.length === 0) {
@@ -1138,7 +1120,7 @@ const InsightsPage: React.FC<InsightsPageProps> = ({
             {!isNewsletterCategory && (
               <>
                 <div className={styles.columnTitleSection}>
-                  <p className={styles.columnSubtitle}>Column</p>
+                  <p className={styles.columnSubtitle}>{selectedCategory?.category.name === "칼럼" ? "Column" : selectedCategory?.category.name}</p>
                   <h2 className={styles.columnTitle}>{selectedCategory?.category.name}</h2>
                 </div>
 
@@ -1713,7 +1695,7 @@ export const getServerSideProps: GetServerSideProps<InsightsPageProps> = async (
         );
 
         if (categoryData) {
-          const categoryType = categoryData.category.type?.toUpperCase() || "A";
+          const categoryType = categoryData.category.type?.toUpperCase();
           if (categoryType === "A") {
             displayType = "gallery";
           } else if (categoryType === "B") {

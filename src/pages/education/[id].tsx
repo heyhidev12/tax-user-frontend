@@ -106,7 +106,7 @@ const EducationDetailPage: React.FC<EducationDetailPageProps> = ({ education: in
   };
   const [visibilityError, setVisibilityError] = useState<string | null>(null);
   // ✅ Fetch user's application from dedicated endpoint
-  const [myApplication, setMyApplication] = useState<{ id: number; status: ApplicationStatus } | null>(null);
+  const [myApplication, setMyApplication] = useState<{ id: number; status: ApplicationStatus; participationDate?: string } | null>(null);
   const [isLoadingMyApplication, setIsLoadingMyApplication] = useState(false);
 
   // 사용자 정보 가져오기 (CSR - auth-related)
@@ -156,7 +156,7 @@ const EducationDetailPage: React.FC<EducationDetailPageProps> = ({ education: in
       
       try {
         setIsLoadingMyApplication(true);
-        const response = await getClient<{ id: number; status: ApplicationStatus } | null>(
+        const response = await getClient<{ id: number; status: ApplicationStatus; participationDate?: string } | null>(
           `${API_ENDPOINTS.TRAINING_SEMINARS}/${id}/my-application`
         );
         
@@ -403,7 +403,7 @@ const EducationDetailPage: React.FC<EducationDetailPageProps> = ({ education: in
       alert("신청이 취소되었습니다.");
       // ✅ Refetch my application status from API to ensure accuracy
       try {
-        const refetchResponse = await getClient<{ id: number; status: ApplicationStatus } | null>(
+        const refetchResponse = await getClient<{ id: number; status: ApplicationStatus; participationDate?: string } | null>(
           `${API_ENDPOINTS.TRAINING_SEMINARS}/${id}/my-application`
         );
         if (refetchResponse.data) {
@@ -624,11 +624,16 @@ const EducationDetailPage: React.FC<EducationDetailPageProps> = ({ education: in
                 <div className={styles.dateSelector}>
                   <div className={styles.dateInput}>
                     <CalendarToday />
-                    <p>{selectedDate || "참여 날짜 선택"}</p>
+                    <p>
+                      {(buttonState === "waiting" || buttonState === "confirmed")
+                        ? myApplication?.participationDate || selectedDate || "참여 날짜 선택"
+                        : selectedDate || "참여 날짜 선택"}
+                    </p>
                   </div>
                   <button
                     className={styles.dateButton}
                     onClick={() => setIsDatePickerOpen(true)}
+                    disabled={buttonState === "waiting" || buttonState === "confirmed"}
                   >
                     날짜 선택
                   </button>
@@ -692,7 +697,7 @@ const EducationDetailPage: React.FC<EducationDetailPageProps> = ({ education: in
               // ✅ Refetch my application status from API after successful application
               if (userProfile && id) {
                 try {
-                  const response = await getClient<{ id: number; status: ApplicationStatus } | null>(
+                  const response = await getClient<{ id: number; status: ApplicationStatus; participationDate?: string } | null>(
                     `${API_ENDPOINTS.TRAINING_SEMINARS}/${id}/my-application`
                   );
                   if (response.data) {

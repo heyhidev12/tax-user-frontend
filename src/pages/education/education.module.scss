@@ -496,6 +496,7 @@
       background: transparent;
       display: flex;
       flex-direction: column;
+      border-radius: 4px;
     }
   }
   .cardContent {
@@ -594,7 +595,7 @@
 
   @media (max-width: $breakpoint-tablet) {
     padding: 0;
-    border-radius: 4px;
+    border-radius: 8px;
   }
 }
 

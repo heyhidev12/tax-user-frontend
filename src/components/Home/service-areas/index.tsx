@@ -8,7 +8,6 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/dist/ScrollTrigger";
 import styles from "./service.module.scss";
 import type { CategoryGroup } from "../index";
-import type { ServiceCard } from "./data";
 import ViewMore from "../../common/ViewMore";
 import { useRouter } from "next/router";
 import { useThrottledResize } from "@/hooks/useThrottledResize";
@@ -19,6 +18,12 @@ if (typeof window !== "undefined") {
 
 interface ServiceAreasProps {
   initialData: CategoryGroup[];
+}
+interface ServiceCard {
+  id: number;
+  title: string;
+  tags: string[];
+  image: string;
 }
 
 const ServiceAreas = React.memo(function ServiceAreas({ initialData }: ServiceAreasProps) {
